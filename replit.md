@@ -6,7 +6,8 @@ Opus is a full-stack productivity application designed for young professionals t
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+- **Communication style**: Simple, everyday language
+- **GitHub commits**: When user says "run commit", execute `tsx scripts/commit-to-github.ts` to sync documentation to GitHub
 
 ## Recent Changes (October 2025)
 
