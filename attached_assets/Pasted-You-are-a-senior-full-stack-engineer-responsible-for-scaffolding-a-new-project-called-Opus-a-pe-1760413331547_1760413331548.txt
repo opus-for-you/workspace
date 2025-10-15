@@ -1,0 +1,189 @@
+You are a senior full-stack engineer responsible for scaffolding a new project called **Opus**, a personal and client management app for young professionals. 
+
+Your task is to:
+1. Create the full project file structure.
+2. Initialize both frontend and backend environments.
+3. Configure TailwindCSS, Express, and PostgreSQL.
+4. Initialize and connect a GitHub repository.
+5. Generate documentation files automatically.
+
+Follow all instructions carefully.
+
+---
+
+## 🔧 Tech Stack
+
+- Frontend: React + TailwindCSS (mobile-first)
+- Backend: Node.js + Express
+- Database: PostgreSQL
+- Hosting: local only (no deployment)
+- Version control: GitHub repo
+- Documentation: Auto-generate README.md and `/docs` folder
+
+---
+
+## 🧩 MVP Modules
+
+Create basic scaffolding for these features (CRUD-ready):
+
+1. **Auth** — JWT-based signup/login/logout, with protected backend routes.
+2. **Dashboard** — overview of goals, tasks, and connection reminders.
+3. **Connections** — CRUD: name, relationship, last_touch, notes.
+4. **Goals** — CRUD: title, description, target_date, progress.
+5. **Tasks** — CRUD: title, description, due_date, goal_id, status.
+   - Include ability to schedule push notifications (use node-cron placeholder).
+6. **Weekly Review** — text reflection: week_start, summary, wins, lessons, next_steps.
+
+Add placeholders and stubs for functionality that will be expanded later.
+
+---
+
+## 🗂️ Project Structure
+
+Create the following exact folder and file structure:
+
+opus-app/
+│
+├── /client
+│ ├── /src
+│ │ ├── /components
+│ │ ├── /pages
+│ │ ├── /context
+│ │ ├── /lib
+│ │ ├── App.js
+│ │ └── index.js
+│ ├── tailwind.config.js
+│ ├── postcss.config.js
+│ ├── package.json
+│ └── README.md
+│
+├── /server
+│ ├── /routes
+│ │ ├── auth.js
+│ │ ├── tasks.js
+│ │ ├── connections.js
+│ │ ├── goals.js
+│ │ └── review.js
+│ ├── /controllers
+│ ├── /models
+│ ├── /middleware
+│ ├── /config
+│ │ ├── db.js
+│ │ └── env.js
+│ ├── server.js
+│ └── package.json
+│
+├── /docs
+│ ├── architecture.md
+│ ├── api_endpoints.md
+│ ├── roadmap.md
+│ └── setup_guide.md
+│
+├── .env.example
+├── .gitignore
+└── README.md
+
+yaml
+Copy code
+
+---
+
+## ⚙️ Setup Instructions for the Agent
+
+### Frontend
+1. Create `/client` as a React app using Vite:
+npm create vite@latest client -- --template react
+
+markdown
+Copy code
+2. Install TailwindCSS and configure it:
+cd client
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+markdown
+Copy code
+3. Set up Tailwind in `/client/src/index.css` and `/client/tailwind.config.js`.
+4. Add placeholder pages for: Login, Signup, Dashboard, Connections, Tasks, Goals, Weekly Review.
+
+### Backend
+1. Create `/server` folder.
+2. Initialize Node + Express backend:
+cd server
+npm init -y
+npm install express pg sequelize jsonwebtoken bcryptjs cors dotenv node-cron
+
+markdown
+Copy code
+3. Create routes `/auth`, `/tasks`, `/connections`, `/goals`, `/review`.
+4. Configure PostgreSQL connection in `/server/config/db.js` using Sequelize.
+5. Include placeholder models and controller logic.
+6. Add a test route (`GET /api/health`) that returns `{status: "OK"}`.
+
+### Database
+- Use PostgreSQL.
+- Set up models for: User, Task, Goal, Connection, Review.
+- Add associations as needed (e.g., User hasMany Tasks).
+
+---
+
+## 🧠 AI Integration Placeholder
+
+Create `/client/src/lib/ai.js` with:
+```js
+export async function generateReflectionPrompt(userData) {
+// Placeholder for OpenAI/Anthropic call
+return "AI reflection placeholder";
+}
+🧰 GitHub Repository Setup
+Initialize a new Git repository in the root folder:
+
+csharp
+Copy code
+git init
+Create .gitignore for Node, React, and environment files.
+
+Create a new public repository on GitHub named opus-app.
+
+Connect Replit project to GitHub:
+
+csharp
+Copy code
+git remote add origin https://github.com/<your-username>/opus-app.git
+git branch -M main
+git add .
+git commit -m "Initial project scaffold"
+git push -u origin main
+📘 Documentation Generation
+Create README.md at the root with:
+
+Project overview
+
+Setup and run instructions
+
+File structure summary
+
+Populate /docs with:
+
+architecture.md — describe React + Node + Postgres layout
+
+api_endpoints.md — list backend endpoints and example payloads
+
+roadmap.md — outline next milestones (AI integration, analytics, collaboration)
+
+setup_guide.md — describe local environment setup in Replit
+
+✅ Deliverables
+When complete, you should provide:
+
+The full directory tree confirmation
+
+GitHub repo URL
+
+Local run instructions (concurrent servers for client & backend)
+
+.env.example file with required variables
+
+Confirmation that frontend + backend start locally without errors
+
+Begin now.
