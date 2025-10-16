@@ -38,7 +38,7 @@ export default function AuthPage() {
       <div className="flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome to Opus</h1>
+            <h1 className="text-3xl font-serif font-light tracking-tight mb-2">Welcome to Opus</h1>
             <p className="text-muted-foreground">Your personal productivity command center</p>
           </div>
 

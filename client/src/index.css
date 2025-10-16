@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* LIGHT MODE */
+/* EDITORIAL LIGHT MODE */
 :root {
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
@@ -14,80 +16,99 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 0 0% 98%;
+  /* Editorial Color Palette */
+  --background: 0 0% 98%;  /* Ivory */
 
-  --foreground: 222 20% 12%;
+  --foreground: 0 0% 11%;  /* Charcoal */
 
-  --border: 220 8% 88%;
+  --border: 0 0% 91%;  /* Pearl */
 
-  --card: 0 0% 100%;
+  --card: 0 0% 100%;  /* Pure white */
 
-  --card-foreground: 222 20% 12%;
+  --card-foreground: 0 0% 11%;  /* Charcoal */
 
-  --card-border: 220 8% 92%;
+  --card-border: 0 0% 91%;  /* Pearl */
 
-  --sidebar: 220 6% 96%;
+  --sidebar: 0 0% 96%;  /* Alabaster */
 
-  --sidebar-foreground: 222 20% 12%;
+  --sidebar-foreground: 0 0% 11%;  /* Charcoal */
 
-  --sidebar-border: 220 8% 90%;
+  --sidebar-border: 0 0% 91%;  /* Pearl */
 
-  --sidebar-primary: 210 100% 48%;
+  --sidebar-primary: 208 50% 35%;  /* Ocean */
 
-  --sidebar-primary-foreground: 210 12% 98%;
+  --sidebar-primary-foreground: 0 0% 100%;  /* Pure */
 
-  --sidebar-accent: 220 10% 92%;
+  --sidebar-accent: 0 0% 96%;  /* Alabaster */
 
-  --sidebar-accent-foreground: 222 18% 18%;
+  --sidebar-accent-foreground: 0 0% 11%;  /* Charcoal */
 
-  --sidebar-ring: 210 100% 48%;
+  --sidebar-ring: 208 50% 35%;  /* Ocean */
 
-  --popover: 220 8% 94%;
+  --popover: 0 0% 100%;  /* Pure */
 
-  --popover-foreground: 222 20% 12%;
+  --popover-foreground: 0 0% 11%;  /* Charcoal */
 
-  --popover-border: 220 10% 86%;
+  --popover-border: 0 0% 91%;  /* Pearl */
 
-  --primary: 210 100% 48%;
+  --primary: 208 50% 35%;  /* Ocean - primary actions */
 
-  --primary-foreground: 210 12% 98%;
+  --primary-foreground: 0 0% 100%;  /* Pure */
 
-  --secondary: 220 12% 88%;
+  --secondary: 0 0% 96%;  /* Alabaster */
 
-  --secondary-foreground: 222 18% 18%;
+  --secondary-foreground: 0 0% 11%;  /* Charcoal */
 
-  --muted: 220 14% 90%;
+  --muted: 0 0% 96%;  /* Alabaster */
 
-  --muted-foreground: 220 12% 35%;
+  --muted-foreground: 0 0% 54%;  /* Stone */
 
-  --accent: 220 16% 86%;
+  --accent: 0 0% 96%;  /* Alabaster */
 
-  --accent-foreground: 222 18% 18%;
+  --accent-foreground: 0 0% 11%;  /* Charcoal */
 
-  --destructive: 0 84% 48%;
+  --destructive: 4 42% 46%;  /* Rust */
 
-  --destructive-foreground: 0 8% 98%;
+  --destructive-foreground: 0 0% 100%;  /* Pure */
 
-  --input: 220 12% 75%;
-  --ring: 210 100% 48%;
-  --chart-1: 210 100% 42%;
-  --chart-2: 142 76% 38%;
-  --chart-3: 280 65% 52%;
-  --chart-4: 38 92% 45%;
-  --chart-5: 190 85% 42%;
+  /* Editorial semantic colors */
+  --ink: 0 0% 4%;  /* Darkest text */
+  --charcoal: 0 0% 11%;  /* Primary text */
+  --graphite: 0 0% 31%;  /* Secondary text */
+  --stone: 0 0% 54%;  /* Tertiary text */
+  --fog: 0 0% 72%;  /* Subtle text */
+  --pearl: 0 0% 91%;  /* Borders */
+  --alabaster: 0 0% 96%;  /* Subtle backgrounds */
+  --ivory: 0 0% 98%;  /* Main background */
+  --pure: 0 0% 100%;  /* White */
+
+  /* Editorial accent colors */
+  --forest: 156 44% 20%;  /* Success */
+  --sage: 171 22% 39%;  /* Calm */
+  --rust: 4 42% 46%;  /* Warning */
+  --sand: 35 48% 64%;  /* Warm */
+  --ocean: 208 50% 35%;  /* Primary */
+
+  --input: 0 0% 91%;  /* Pearl */
+  --ring: 208 50% 35%;  /* Ocean */
+  --chart-1: 208 50% 35%;  /* Ocean */
+  --chart-2: 156 44% 20%;  /* Forest */
+  --chart-3: 35 48% 64%;  /* Sand */
+  --chart-4: 4 42% 46%;  /* Rust */
+  --chart-5: 171 22% 39%;  /* Sage */
 
   --font-sans: Inter, system-ui, -apple-system, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: 'JetBrains Mono', Menlo, monospace;
-  --radius: .5rem; /* 8px */
-  --shadow-2xs: 0px 1px 2px 0px hsl(222 14% 8% / 0.05);
-  --shadow-xs: 0px 1px 2px 0px hsl(222 14% 8% / 0.06);
-  --shadow-sm: 0px 1px 3px 0px hsl(222 14% 8% / 0.08), 0px 1px 2px -1px hsl(222 14% 8% / 0.08);
-  --shadow: 0px 2px 4px -1px hsl(222 14% 8% / 0.10), 0px 4px 6px -1px hsl(222 14% 8% / 0.10);
-  --shadow-md: 0px 4px 6px -1px hsl(222 14% 8% / 0.12), 0px 2px 4px -2px hsl(222 14% 8% / 0.10);
-  --shadow-lg: 0px 10px 15px -3px hsl(222 14% 8% / 0.14), 0px 4px 6px -4px hsl(222 14% 8% / 0.10);
-  --shadow-xl: 0px 20px 25px -5px hsl(222 14% 8% / 0.16), 0px 8px 10px -6px hsl(222 14% 8% / 0.10);
-  --shadow-2xl: 0px 25px 50px -12px hsl(222 14% 8% / 0.25);
+  --font-serif: Fraunces, 'Libre Baskerville', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+  --radius: .25rem; /* Minimal rounding - 4px */
+  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 4% / 0.05);
+  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 4% / 0.06);
+  --shadow-sm: 0px 1px 3px 0px hsl(0 0% 4% / 0.08), 0px 1px 2px -1px hsl(0 0% 4% / 0.08);
+  --shadow: 0px 2px 4px -1px hsl(0 0% 4% / 0.10), 0px 4px 6px -1px hsl(0 0% 4% / 0.10);
+  --shadow-md: 0px 4px 6px -1px hsl(0 0% 4% / 0.12), 0px 2px 4px -2px hsl(0 0% 4% / 0.10);
+  --shadow-lg: 0px 10px 15px -3px hsl(0 0% 4% / 0.14), 0px 4px 6px -4px hsl(0 0% 4% / 0.10);
+  --shadow-xl: 0px 20px 25px -5px hsl(0 0% 4% / 0.16), 0px 8px 10px -6px hsl(0 0% 4% / 0.10);
+  --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 4% / 0.25);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
@@ -132,67 +153,68 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 222 14% 8%;
+  /* Dark mode - inverted editorial */
+  --background: 0 0% 11%;  /* Charcoal */
 
-  --foreground: 210 12% 92%;
+  --foreground: 0 0% 98%;  /* Ivory */
 
-  --border: 222 8% 24%;
+  --border: 0 0% 31%;  /* Graphite */
 
-  --card: 222 12% 12%;
+  --card: 0 0% 4%;  /* Ink */
 
-  --card-foreground: 210 12% 92%;
+  --card-foreground: 0 0% 98%;  /* Ivory */
 
-  --card-border: 222 10% 18%;
+  --card-border: 0 0% 31%;  /* Graphite */
 
-  --sidebar: 222 10% 16%;
+  --sidebar: 0 0% 11%;  /* Charcoal */
 
-  --sidebar-foreground: 210 12% 92%;
+  --sidebar-foreground: 0 0% 98%;  /* Ivory */
 
-  --sidebar-border: 222 8% 22%;
+  --sidebar-border: 0 0% 31%;  /* Graphite */
 
-  --sidebar-primary: 210 85% 58%;
+  --sidebar-primary: 208 50% 45%;  /* Lighter ocean */
 
-  --sidebar-primary-foreground: 210 12% 98%;
+  --sidebar-primary-foreground: 0 0% 98%;  /* Ivory */
 
-  --sidebar-accent: 222 8% 20%;
+  --sidebar-accent: 0 0% 16%;  /* Darker */
 
-  --sidebar-accent-foreground: 210 10% 88%;
+  --sidebar-accent-foreground: 0 0% 91%;  /* Pearl */
 
-  --sidebar-ring: 210 85% 58%;
+  --sidebar-ring: 208 50% 45%;  /* Lighter ocean */
 
-  --popover: 222 10% 18%;
+  --popover: 0 0% 16%;  /* Darker */
 
-  --popover-foreground: 210 12% 92%;
+  --popover-foreground: 0 0% 98%;  /* Ivory */
 
-  --popover-border: 222 8% 24%;
+  --popover-border: 0 0% 31%;  /* Graphite */
 
-  --primary: 210 85% 58%;
+  --primary: 208 50% 45%;  /* Lighter ocean */
 
-  --primary-foreground: 210 12% 98%;
+  --primary-foreground: 0 0% 98%;  /* Ivory */
 
-  --secondary: 222 8% 24%;
+  --secondary: 0 0% 31%;  /* Graphite */
 
-  --secondary-foreground: 210 10% 88%;
+  --secondary-foreground: 0 0% 91%;  /* Pearl */
 
-  --muted: 222 10% 22%;
+  --muted: 0 0% 31%;  /* Graphite */
 
-  --muted-foreground: 210 8% 65%;
+  --muted-foreground: 0 0% 72%;  /* Fog */
 
-  --accent: 222 12% 26%;
+  --accent: 0 0% 31%;  /* Graphite */
 
-  --accent-foreground: 210 10% 88%;
+  --accent-foreground: 0 0% 91%;  /* Pearl */
 
-  --destructive: 0 84% 48%;
+  --destructive: 4 42% 56%;  /* Lighter rust */
 
-  --destructive-foreground: 0 8% 98%;
+  --destructive-foreground: 0 0% 98%;  /* Ivory */
 
-  --input: 222 10% 35%;
-  --ring: 210 85% 58%;
-  --chart-1: 210 85% 58%;
-  --chart-2: 142 76% 45%;
-  --chart-3: 280 65% 60%;
-  --chart-4: 38 92% 50%;
-  --chart-5: 190 85% 55%;
+  --input: 0 0% 31%;  /* Graphite */
+  --ring: 208 50% 45%;  /* Lighter ocean */
+  --chart-1: 208 50% 45%;  /* Lighter ocean */
+  --chart-2: 156 44% 30%;  /* Lighter forest */
+  --chart-3: 35 48% 74%;  /* Lighter sand */
+  --chart-4: 4 42% 56%;  /* Lighter rust */
+  --chart-5: 171 22% 49%;  /* Lighter sage */
 
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.20);
   --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.24);
@@ -351,5 +373,138 @@
   .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
+  }
+
+  /* Editorial Typography Classes */
+  .font-editorial {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+  }
+
+  .heading-editorial-xl {
+    font-family: var(--font-serif);
+    @apply text-5xl md:text-6xl lg:text-7xl;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .heading-editorial-lg {
+    font-family: var(--font-serif);
+    @apply text-3xl md:text-4xl lg:text-5xl;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .heading-editorial-md {
+    font-family: var(--font-serif);
+    @apply text-2xl md:text-3xl;
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  /* Breathing Room Utilities */
+  .container-breathing {
+    @apply mx-auto px-8 md:px-16 lg:px-24 max-w-7xl;
+  }
+
+  .breathing-y {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .breathing-x {
+    @apply px-8 md:px-16 lg:px-24;
+  }
+
+  /* Editorial Divider */
+  .divider-editorial {
+    @apply border-t border-pearl my-8 md:my-12;
+  }
+
+  /* Text Balance for Better Typography */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Letter Spacing Utilities */
+  .tracking-extreme {
+    letter-spacing: 0.12em;
+  }
+
+  /* Smooth Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 500ms ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 300ms ease-out forwards;
+  }
+
+  /* Priority Numbering System */
+  .priority-rank {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 300;
+    @apply text-fog;
+  }
+
+  /* Section Headers - Editorial Style */
+  .section-header-editorial {
+    @apply border-b border-pearl pb-4 mb-6;
+  }
+
+  .section-title-editorial {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    @apply uppercase text-charcoal;
+  }
+
+  /* Priority Item Hover Effect */
+  .priority-item-hover {
+    @apply transition-all duration-300 cursor-pointer;
+  }
+
+  .priority-item-hover:hover {
+    transform: translateX(4px);
+    @apply border-opacity-20;
+  }
+
+  /* Minimal Stats - Large Number + Small Unit */
+  .stat-number {
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 300;
+    @apply text-charcoal;
+  }
+
+  .stat-unit {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    @apply text-stone uppercase;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    @apply text-graphite;
   }
 }

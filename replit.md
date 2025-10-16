@@ -2,7 +2,7 @@
 
 ## Overview
 
-Opus is a full-stack productivity application designed for young professionals to manage their personal and professional lives. It provides comprehensive tools for goal tracking, task management, connection management, and weekly reflection. The application features a modern, dark-mode-first interface inspired by Linear and Notion, emphasizing clarity, information density, and efficient workflows.
+Opus is a full-stack productivity application designed for young professionals to manage their personal and professional lives. It provides comprehensive tools for goal tracking, task management, connection management, and weekly reflection. The application features an editorial magazine-inspired design system with light mode as default, emphasizing clean typography, generous whitespace, and professional aesthetics.
 
 ## User Preferences
 
@@ -10,6 +10,26 @@ Opus is a full-stack productivity application designed for young professionals t
 - **GitHub commits**: When user says "run commit", execute `tsx scripts/commit-to-github.ts` to sync documentation to GitHub
 
 ## Recent Changes (October 2025)
+
+### Editorial Design System - Version 1.2 (Latest)
+- **Refined Editorial Design**: Incorporated sophisticated minimalist improvements
+  - **Priority Numbering System**: Tasks displayed with monospace numbers (01, 02, 03)
+  - **Cleaner Metrics**: Large Fraunces numbers (48px) with small uppercase units
+  - **Editorial Section Headers**: Uppercase titles with 0.08em letter-spacing
+  - **Hover Interactions**: Priority items translate 4px right on hover
+  - **Breathing Room**: Increased spacing (gap-8) for cleaner layout
+  - **Minimal Borders**: Pearl (#E8E8E8) borders throughout for subtle separation
+
+### Editorial Design System - Version 1.1
+- **Visual Redesign**: Complete transformation to editorial magazine-inspired aesthetic
+  - Light mode as default with ivory (#FAFAFA) backgrounds
+  - Fraunces serif typography for all display headings (h1 elements)
+  - Crimson Pro for editorial content, Inter for body text, JetBrains Mono for data
+  - Minimal pearl (#E8E8E8) borders with generous whitespace
+  - Sage green (#1B4332-#E8F0ED) brand colors with variants
+- **Typography System**: Four-tier font hierarchy (Display, Editorial, Body, Mono)
+- **Theme Provider**: Updated to default light mode, dark mode available as toggle
+- **Enhanced Components**: WeeklyPriorities and ReflectionPrompt dashboard widgets
 
 ### MVP Completion - Version 1.0
 - **Complete Authentication System**: Secure session-based authentication with password hashing, login/register flows, and protected routes
@@ -27,7 +47,6 @@ Opus is a full-stack productivity application designed for young professionals t
   - Proper navigation and routing with authenticated/unauthenticated flows
   - Post-login/register redirects to dashboard
   - Post-logout redirect to auth page
-  - Dark mode as primary theme with light mode support
 
 ## System Architecture
 
@@ -43,7 +62,7 @@ Opus is a full-stack productivity application designed for young professionals t
 
 **Form Handling**: React Hook Form manages form state with Zod schemas for runtime validation. This provides type-safe forms with minimal re-renders.
 
-**Design System**: Uses a custom TailwindCSS configuration with CSS variables for theming. The color palette is optimized for dark mode (primary) with light mode support (secondary). Typography uses Inter for UI elements and JetBrains Mono for code/dates/metrics.
+**Design System**: Editorial magazine-inspired aesthetic with custom TailwindCSS configuration using CSS variables. Light mode is primary (ivory backgrounds, charcoal text) with dark mode support. Typography hierarchy uses Fraunces serif for display headings, Inter for body text, and JetBrains Mono for data/metrics. Minimal borders and generous whitespace create a clean, professional reading experience.
 
 ### Backend Architecture
 

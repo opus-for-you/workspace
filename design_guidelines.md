@@ -1,191 +1,259 @@
-# Opus Design Guidelines
+# Opus Design Guidelines - Editorial System
 
-## Design Approach: Modern Productivity System
+## Design Approach: Magazine Editorial Aesthetic
 
-**Selected Approach**: Design System-Based (Linear + Notion inspired)  
-**Justification**: Opus is a utility-focused productivity tool requiring information density, clear hierarchy, and consistent patterns. Young professionals need efficient task management without visual distractions.
+**Selected Approach**: Editorial Typography-First Design  
+**Justification**: Opus serves young professionals who appreciate refined, magazine-quality interfaces. The editorial approach emphasizes thoughtful content hierarchy through typography, generous whitespace, and minimal visual elements. This creates a calm, focused environment for reflection and planning.
 
 **Core Principles**:
-- Clarity over decoration
-- Information density with breathing room
-- Scannable data hierarchies
-- Purposeful micro-interactions
-- Professional yet approachable aesthetics
+- Typography drives hierarchy and visual interest
+- Minimal borders (primarily bottom borders for section separation)
+- Generous whitespace and breathing room
+- Serif display fonts for editorial impact
+- Monospace numerals for metrics and data
+- Light, clean backgrounds (ivory/white)
+- Hover interactions through subtle border color changes
 
 ---
 
 ## Color Palette
 
-### Dark Mode (Primary)
-- **Background**: 222 14% 8% (deep charcoal)
-- **Surface**: 222 12% 12% (elevated panels)
-- **Surface Elevated**: 222 10% 16% (cards, modals)
-- **Border**: 222 8% 24% (subtle dividers)
-- **Text Primary**: 210 12% 92% (high contrast)
-- **Text Secondary**: 210 8% 65% (muted content)
-- **Primary Brand**: 210 85% 58% (vibrant blue - trust & productivity)
-- **Success**: 142 76% 45% (goal completion, positive actions)
-- **Warning**: 38 92% 50% (overdue tasks, attention needed)
-- **Accent**: 280 65% 60% (subtle purple for highlights)
+### Editorial Light Mode (Primary)
 
-### Light Mode (Secondary)
-- **Background**: 0 0% 98%
-- **Surface**: 0 0% 100%
-- **Text Primary**: 222 20% 12%
-- **Primary Brand**: 210 100% 48%
+**Neutrals** (HSL format for Tailwind):
+- **Ink**: 0 0% 4% (#0A0A0A - darkest text)
+- **Charcoal**: 0 0% 11% (#1C1C1C - primary text, dark elements)
+- **Graphite**: 0 0% 31% (#505050 - secondary text)
+- **Stone**: 0 0% 54% (#8A8A8A - tertiary text, labels)
+- **Fog**: 0 0% 72% (#B8B8B8 - subtle text)
+- **Pearl**: 0 0% 91% (#E8E8E8 - borders, dividers)
+- **Alabaster**: 0 0% 96% (#F4F4F4 - subtle backgrounds)
+- **Ivory**: 0 0% 98% (#FAFAFA - main background)
+- **Pure**: 0 0% 100% (#FFFFFF - cards, elevated surfaces)
+
+**Accent Colors**:
+- **Forest**: 156 44% 20% (#1B4332 - success, growth)
+- **Sage**: 171 22% 39% (#52796F - calm actions)
+- **Rust**: 4 42% 46% (#A84843 - warnings, attention)
+- **Sand**: 35 48% 64% (#D4A574 - warm highlights)
+- **Ocean**: 208 50% 35% (#2C5282 - primary actions, links)
+
+### Dark Mode (Optional)
+Uses inverted neutral scale with same accent colors for consistency.
 
 ---
 
 ## Typography
 
-**Font Families** (via Google Fonts CDN):
-- **Primary**: Inter (UI text, body, forms)
-- **Accent**: JetBrains Mono (code, dates, metrics)
+### Font Families
 
-**Hierarchy**:
-- **Hero/Dashboard Title**: text-3xl md:text-4xl font-bold tracking-tight
-- **Section Headers**: text-xl md:text-2xl font-semibold
-- **Card Titles**: text-lg font-medium
-- **Body Text**: text-sm md:text-base
-- **Captions/Meta**: text-xs md:text-sm text-secondary
-- **Monospace Data**: font-mono text-sm (dates, numbers, status)
+**Display/Editorial** (Google Fonts):
+- **Fraunces** - Serif display font for headlines, hero text, large numbers
+- Fallback: 'Libre Baskerville', Georgia, serif
+- Usage: Page titles, section headers, metric displays, quotes
+
+**Body/Interface** (System fonts):
+- **Inter** - Sans-serif for all UI text, forms, content
+- Fallback: -apple-system, BlinkMacSystemFont, sans-serif
+- Usage: Paragraphs, buttons, labels, navigation
+
+**Monospace/Data** (Developer fonts):
+- **JetBrains Mono** - For numbers, dates, code, metrics
+- Fallback: 'SF Mono', Monaco, monospace
+- Usage: Dates, priorities, percentages, data points
+
+### Typography Scale
+
+**Headlines** (Fraunces serif):
+- Hero/Onboarding: `clamp(2.5rem, 8vw, 4.5rem)` font-light tracking-tighter
+- Dashboard Title: `clamp(2rem, 5vw, 3.5rem)` font-light tracking-tight
+- Section Headers: text-2xl md:text-3xl font-light
+
+**Body Text** (Inter):
+- Primary: text-base md:text-lg leading-relaxed
+- Secondary: text-sm md:text-base text-graphite
+- Labels/Meta: text-xs tracking-widest uppercase text-stone
+
+**Data/Numbers** (JetBrains Mono):
+- Large Metrics: text-4xl md:text-5xl font-light
+- Priorities: text-xl md:text-2xl font-extralight text-fog
+- Dates/Times: text-sm text-stone
+
+### Letter Spacing
+- Uppercase labels: tracking-[0.08em]
+- Headlines: tracking-tight (-0.02em)
+- Navigation: tracking-[0.02em]
+- Body text: tracking-normal
 
 ---
 
 ## Layout System
 
-**Spacing Primitives**: Use Tailwind units of **2, 4, 6, 8, 12, 16** for consistent rhythm
-- Tight spacing: p-2, gap-2 (form elements, tags)
-- Standard spacing: p-4, gap-4 (cards, lists)
-- Section spacing: p-6 md:p-8, gap-6 (page sections)
-- Page margins: p-8 md:p-12 (main containers)
+### Spacing Philosophy
+**Editorial breathing room** - More generous than typical productivity apps:
+- Small: 1rem (p-4, gap-4) - between list items
+- Medium: 1.5rem (p-6, gap-6) - card padding
+- Large: 4rem (p-16, gap-16) - section spacing
+- Extra: 6rem (p-24) - hero/onboarding spacing
 
-**Container Strategy**:
-- Max width: max-w-7xl (dashboard, lists)
-- Narrow content: max-w-4xl (forms, weekly review)
-- Full width: w-full (data tables, kanban boards)
+### Container Strategy
+- **Editorial Content**: max-w-3xl (forms, onboarding, reflection)
+- **Dashboard Grid**: max-w-7xl with editorial 2:1 column ratio
+- **Full Width**: Main content areas with px-8 md:px-16 horizontal padding
 
-**Grid Patterns**:
-- Dashboard cards: grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4
-- Task lists: Single column with max-w-4xl
-- Connections grid: grid-cols-1 md:grid-cols-2 gap-3
+### Grid Patterns
+- **Dashboard**: grid-cols-1 lg:grid-cols-3 gap-16 (2/3 + 1/3 split)
+- **Lists**: Single column, full width with bottom borders
+- **Metrics Grid**: grid-cols-1 md:grid-cols-2 gap-12
+- **Cards**: Minimal, mostly replaced by bottom-bordered sections
 
 ---
 
 ## Component Library
 
-### Navigation
-- **Top Navigation Bar**: Sticky header with logo, main nav links, user avatar
-- **Mobile**: Hamburger menu with slide-out drawer
-- **Active States**: Border-bottom indicator (border-b-2 border-primary)
+### Navigation (Minimal Top Bar)
+- **Structure**: Horizontal flex with logo + nav links + menu
+- **Styling**: 
+  - Border bottom: 1px solid pearl
+  - Logo: Fraunces font-light text-2xl text-charcoal
+  - Links: Inter text-sm tracking-[0.02em]
+  - Active: text-charcoal (not stone)
+  - Hover: color transition to charcoal
+- **No background color** - transparent over ivory
 
-### Dashboard Cards
-- Rounded corners: rounded-lg
-- Elevation: bg-surface border border-border
-- Padding: p-6
-- Hover: hover:border-primary/50 transition-colors
-- Header: Flex row with icon, title, action button
-- Content: Metric displays, mini charts, quick actions
+### Section Headers
+- **Style**: Bottom border (1px solid pearl) with pb-4
+- **Typography**: text-sm tracking-widest uppercase text-charcoal
+- **Optional**: Flex justify-between with metadata (date/count) in stone
 
-### Task/Goal Lists
-- **List Items**: 
-  - Checkbox + title + metadata (due date, priority)
-  - Hover background: hover:bg-surface-elevated
-  - Status indicators: Color-coded badges (rounded-full px-2 py-1)
-- **Grouping**: Separate by status/date with subtle dividers
+### Content Lists
+- **Items**: 
+  - Bottom border divider (1px solid pearl) with pb-6
+  - Hover: border color transitions to charcoal
+  - No background changes
+  - Flex layout with mono priority numbers + content
+- **Numbers**: JetBrains Mono text-2xl text-fog font-extralight
+- **Spacing**: space-y-6 between items
 
-### Forms
-- **Input Fields**: 
-  - Dark background: bg-surface-elevated
-  - Border: border border-border focus:border-primary
-  - Padding: px-4 py-3
-  - Rounded: rounded-md
-- **Buttons**:
-  - Primary: bg-primary text-white px-6 py-2.5 rounded-md
-  - Secondary: border border-border hover:bg-surface-elevated
-  - Danger: bg-warning/10 text-warning border-warning
+### Forms & Inputs
+- **Text Inputs**: 
+  - Transparent background
+  - Bottom border only (1px solid fog)
+  - Focus: border-charcoal transition
+  - No rounded corners or heavy backgrounds
+  - text-lg leading-relaxed
+  - Placeholder: "..." (minimal)
 
-### Data Display
-- **Tables**: Minimal design with hover rows, sticky headers
-- **Cards**: Compact information cards with icon + title + metadata
-- **Progress Bars**: Thin (h-1.5), rounded-full, gradient fills for visual interest
-- **Badges/Tags**: Small rounded-full pills with category colors
+### Buttons
+- **Primary**: 
+  - bg-charcoal text-pure
+  - px-6 py-3
+  - text-xs tracking-widest uppercase
+  - Hover: inverts to bg-pure text-charcoal with 1px border
+- **Secondary**: 
+  - Transparent with text-stone
+  - Hover: text-charcoal transition
+  - Often just text links with arrow icons
 
-### Modals/Dialogs
-- **Overlay**: bg-black/60 backdrop-blur-sm
-- **Panel**: bg-surface-elevated rounded-xl shadow-2xl max-w-2xl
-- **Slide-in animations**: From right for forms, from center for confirmations
+### Cards/Elevated Surfaces
+- **Sidebar Cards**:
+  - bg-pure (white on ivory background)
+  - border: 1px solid pearl
+  - Padding: p-6
+  - No rounded corners or minimal rounding
+- **Replace heavy cards with bottom-bordered sections** in main content
 
-### Icons
-- **Library**: Heroicons (CDN)
-- **Sizes**: w-5 h-5 (inline), w-6 h-6 (headers), w-8 h-8 (empty states)
-- **Color**: text-secondary (default), text-primary (active/selected)
+### Progress Indicators
+- **Linear Progress**:
+  - 1px height background in pearl
+  - Fill in charcoal
+  - No rounded ends
+  - Used for onboarding steps, goal progress
+
+### Metrics Display
+- **Large Numbers**: Fraunces text-5xl font-light text-charcoal
+- **Unit Labels**: text-xs tracking-widest text-stone
+- **Context**: text-sm text-graphite below metric
 
 ---
 
 ## Page-Specific Designs
 
-### Dashboard
-- **Header**: Welcome message + quick stats (4 metric cards in grid)
-- **Sections**: Upcoming tasks (list), Goal progress (cards with progress bars), Connection reminders (compact cards)
-- **Layout**: Single column on mobile, 2-column on desktop with 2:1 ratio
+### Onboarding (Editorial Full Screen)
+- **Layout**: Centered content, max-w-3xl
+- **Progress**: 1px line indicator at top
+- **Question**: Fraunces hero size with category label above
+- **Input**: Transparent textarea with bottom border only
+- **Navigation**: Minimal BACK/CONTINUE buttons at bottom
+- **Step Counter**: Centered at page bottom
+
+### Dashboard (Editorial Grid)
+- **Hero Section**: 
+  - Label: "YOUR NORTH STAR" in stone
+  - Statement: Fraunces large text in charcoal (max-w-900px)
+- **Content**: 2/3 main + 1/3 sidebar split
+- **Main Column**: 
+  - "THIS WEEK" section with dated tasks
+  - "CURRENT CHAPTER" metrics grid
+- **Sidebar**: 
+  - Reflection prompt card
+  - Energy patterns
+  - Upcoming items list
 
 ### Connections Page
-- **View Toggle**: List vs Grid view
-- **Cards**: Photo placeholder + name + relationship + last contact date
-- **Actions**: Quick "Log interaction" button, edit/delete icons
-- **Search/Filter**: Top bar with search input + filter dropdowns
+- **View**: Editorial list with bottom borders
+- **Items**: Name (large) + relationship + last contact
+- **Metadata**: text-sm text-stone with bullet separators
 
 ### Tasks & Goals
-- **Kanban View Option**: Drag-and-drop columns (To Do, In Progress, Done)
-- **List View**: Checkbox + title + due date + goal tag + priority indicator
-- **Quick Add**: Floating action button (bottom right on mobile)
+- **List View**: Priority number + title + metadata
+- **Typography hierarchy**: Large serif titles, mono priorities
+- **Hover**: Border darkening, no background changes
 
 ### Weekly Review
-- **Form Layout**: Single column, max-w-3xl centered
-- **Sections**: Date picker, rich text areas for wins/lessons/next steps
-- **AI Prompt**: Button to "Generate reflection prompts" (placeholder)
-- **History**: Timeline view of past reviews (left border indicator)
+- **Layout**: Centered, max-w-3xl
+- **Sections**: Bottom-bordered with uppercase labels
+- **Inputs**: Minimal textarea with bottom borders
+- **Historical**: Timeline with subtle left border indicators
 
 ---
 
-## Animations
+## Interactions & Animations
 
-**Minimal & Purposeful**:
-- Page transitions: Fade-in (opacity) only
-- Hover states: transition-colors duration-200
-- Modal entry: Scale + fade (from 95% to 100%)
-- Task completion: Checkbox check animation (CSS only)
-- NO scroll-triggered animations
-- NO decorative particles/effects
+**Minimal & Intentional**:
+- Border color transitions: duration-200 (fog → charcoal on hover)
+- Text color transitions: duration-200 (stone → charcoal on hover)
+- Button inversion: background/color swap on hover
+- Arrow icons: translate-x-1 on hover
+- NO background color changes on cards
+- NO elevation/shadow changes
+- NO complex animations
 
----
-
-## Images
-
-**Dashboard Hero (Optional)**:
-- Abstract geometric pattern or gradient mesh background
-- Subtle, non-distracting, in brand colors
-- Height: 200px on desktop, 120px on mobile
-- Overlay: text-white with semi-transparent background
-
-**Empty States**:
-- Illustration style: Line art, monochrome (primary color)
-- Placement: Centered in empty task lists, connections grid
-- Message: Encouraging call-to-action text below
-
-**User Avatars**:
-- Circular with colored fallback (initials on colored background)
-- Sizes: w-8 h-8 (nav), w-12 h-12 (connections), w-16 h-16 (profile)
+### Hover States
+- **List Items**: Border bottom darkens (pearl → charcoal)
+- **Navigation Links**: Text color darkens (stone → charcoal)
+- **Buttons**: Invert colors with border
+- **Icons**: Slight translation (1-2px)
 
 ---
 
 ## Responsive Behavior
 
 - **Breakpoints**: Mobile-first (base → md:768px → lg:1024px)
-- **Navigation**: Full nav on desktop, hamburger on mobile
-- **Cards**: Stack to single column below md
-- **Tables**: Horizontal scroll on mobile with sticky first column
-- **Modals**: Full screen on mobile, centered panel on desktop
+- **Typography**: clamp() for fluid scaling
+- **Padding**: px-8 on mobile → px-16 on desktop
+- **Grid**: Single column on mobile, editorial splits on desktop
+- **Navigation**: Same minimal bar, menu button for mobile
 
-This design creates a professional, efficient productivity tool that young professionals will enjoy using daily while maintaining clarity and reducing cognitive load.
+---
+
+## Brand Voice Through Design
+
+The editorial design communicates:
+- **Thoughtfulness** - Through generous whitespace and typography
+- **Clarity** - Through minimal borders and clean hierarchy  
+- **Sophistication** - Through serif fonts and magazine layouts
+- **Focus** - Through light backgrounds and calm colors
+- **Professionalism** - Through editorial polish and restraint
+
+This creates a productivity tool that feels like reading a well-designed magazine - calm, focused, and intentionally crafted for deep work and reflection.

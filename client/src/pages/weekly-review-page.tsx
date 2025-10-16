@@ -75,7 +75,7 @@ export default function WeeklyReviewPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2" data-testid="text-reviews-title">
+          <h1 className="text-3xl md:text-4xl font-serif font-light tracking-tight mb-2" data-testid="text-reviews-title">
             Weekly Reviews
           </h1>
           <p className="text-muted-foreground">Reflect on your progress and plan ahead</p>

@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Target, CheckSquare, Users, TrendingUp, Calendar, Clock } from "lucide-react";
 import { format, parseISO, differenceInDays } from "date-fns";
 import type { Goal, Task, Connection } from "@shared/schema";
+import { WeeklyPriorities } from "@/components/dashboard/weekly-priorities";
+import { ReflectionPrompt } from "@/components/dashboard/reflection-prompt";
 
 export default function DashboardPage() {
   const { data: goals = [], isLoading: goalsLoading } = useQuery<Goal[]>({
@@ -37,83 +39,68 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2" data-testid="text-dashboard-title">
+      <div className="animate-fade-in">
+        <h1 className="heading-editorial-lg mb-2" data-testid="text-dashboard-title">
           Dashboard
         </h1>
         <p className="text-muted-foreground">Welcome back! Here's your overview.</p>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="hover-elevate">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Goals</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-active-goals">
+      {/* Reflection Prompt - New Editorial Component */}
+      <ReflectionPrompt />
+
+      {/* Current Chapter - Refined Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="space-y-2">
+          <div className="flex items-baseline gap-2">
+            <span className="stat-number" data-testid="text-active-goals">
               {goalsLoading ? "..." : goals.filter(g => g.progress < 100).length}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {avgGoalProgress}% average progress
-            </p>
-          </CardContent>
-        </Card>
+            </span>
+            <span className="stat-unit">Goals</span>
+          </div>
+          <p className="stat-label">{avgGoalProgress}% average progress</p>
+        </div>
 
-        <Card className="hover-elevate">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Open Tasks</CardTitle>
-            <CheckSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-open-tasks">
+        <div className="space-y-2">
+          <div className="flex items-baseline gap-2">
+            <span className="stat-number" data-testid="text-open-tasks">
               {tasksLoading ? "..." : incompleteTasks.length}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {completedTasks} completed
-            </p>
-          </CardContent>
-        </Card>
+            </span>
+            <span className="stat-unit">Tasks</span>
+          </div>
+          <p className="stat-label">{completedTasks} completed</p>
+        </div>
 
-        <Card className="hover-elevate">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Connections</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-connections-count">
+        <div className="space-y-2">
+          <div className="flex items-baseline gap-2">
+            <span className="stat-number" data-testid="text-connections-count">
               {connectionsLoading ? "..." : connections.length}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {needsAttention.length} need attention
-            </p>
-          </CardContent>
-        </Card>
+            </span>
+            <span className="stat-unit">People</span>
+          </div>
+          <p className="stat-label">{needsAttention.length} need attention</p>
+        </div>
 
-        <Card className="hover-elevate">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Productivity</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-productivity">
-              {tasksLoading ? "..." : `${completedTasks}/${tasks.length}`}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Tasks completed
-            </p>
-          </CardContent>
-        </Card>
+        <div className="space-y-2">
+          <div className="flex items-baseline gap-2">
+            <span className="stat-number" data-testid="text-productivity">
+              {tasksLoading ? "..." : completedTasks}
+            </span>
+            <span className="stat-unit">Done</span>
+          </div>
+          <p className="stat-label">Out of {tasks.length} total</p>
+        </div>
       </div>
 
+      {/* Weekly Priorities - New Editorial Component */}
+      <WeeklyPriorities />
+
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Upcoming Tasks */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
+          <CardHeader className="section-header-editorial">
+            <CardTitle className="section-title-editorial">
               Upcoming Tasks
             </CardTitle>
           </CardHeader>
@@ -158,9 +145,8 @@ export default function DashboardPage() {
 
         {/* Goal Progress */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
+          <CardHeader className="section-header-editorial">
+            <CardTitle className="section-title-editorial">
               Goal Progress
             </CardTitle>
           </CardHeader>
@@ -197,9 +183,8 @@ export default function DashboardPage() {
 
         {/* Connection Reminders */}
         <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
+          <CardHeader className="section-header-editorial">
+            <CardTitle className="section-title-editorial">
               Connection Reminders
             </CardTitle>
           </CardHeader>

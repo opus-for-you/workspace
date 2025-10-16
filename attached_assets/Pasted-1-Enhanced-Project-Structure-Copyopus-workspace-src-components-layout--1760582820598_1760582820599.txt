@@ -1,0 +1,1459 @@
+1. Enhanced Project Structure
+Copyopus-workspace/
+├── src/
+│   ├── components/
+│   │   ├── layout/
+│   │   ├── onboarding/
+│   │   ├── dashboard/
+│   │   ├── shared/
+│   │   └── ui/
+│   ├── lib/
+│   │   ├── constants/
+│   │   ├── hooks/
+│   │   ├── utils/
+│   │   └── types/
+│   ├── styles/
+│   │   ├── globals.css
+│   │   └── themes/
+│   └── pages/
+2. Core Dependencies Update
+jsonCopy{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "framer-motion": "^11.0.0",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "@radix-ui/react-progress": "^1.0.3",
+    "@radix-ui/react-separator": "^1.0.3",
+    "lucide-react": "^0.294.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "react-hook-form": "^7.48.0",
+    "zod": "^3.22.4",
+    "@hookform/resolvers": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "typescript": "^5.3.3",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0"
+  }
+}
+3. Design System Configuration
+Create src/lib/constants/design-system.ts:
+typescriptCopy// Design System Constants aligned with Opus Brand Foundation
+export const design = {
+  colors: {
+    // Primary Palette - Sophisticated Neutrals
+    ink: '#0A0A0A',
+    charcoal: '#1C1C1C',
+    graphite: '#505050',
+    stone: '#8A8A8A',
+    fog: '#B8B8B8',
+    pearl: '#E8E8E8',
+    alabaster: '#F4F4F4',
+    ivory: '#FAFAFA',
+    pure: '#FFFFFF',
+    
+    // Accent Colors - Muted & Professional
+    sage: {
+      deep: '#1B4332',    // Primary brand color
+      medium: '#2D5F4F',
+      light: '#52796F',
+      pale: '#8FA39B',
+      soft: '#E8F0ED'
+    },
+    warm: {
+      rust: '#A84843',
+      sand: '#D4A574',
+      cream: '#F5F2ED',
+      bone: '#FAF8F3'
+    },
+    cool: {
+      ocean: '#2C5282',
+      sky: '#E1EBF4'
+    }
+  },
+  
+  typography: {
+    fonts: {
+      display: '"Fraunces", "Libre Baskerville", Georgia, serif',
+      editorial: '"Crimson Pro", "Libre Baskerville", Georgia, serif',
+      body: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+      mono: '"JetBrains Mono", "SF Mono", Monaco, "Courier New", monospace'
+    },
+    sizes: {
+      xs: '0.75rem',      // 12px
+      sm: '0.875rem',     // 14px
+      base: '1rem',       // 16px
+      lg: '1.125rem',     // 18px
+      xl: '1.25rem',      // 20px
+      '2xl': '1.5rem',    // 24px
+      '3xl': '1.875rem',  // 30px
+      '4xl': '2.25rem',   // 36px
+      '5xl': '3rem',      // 48px
+      '6xl': '3.75rem',   // 60px
+      '7xl': '4.5rem',    // 72px
+    },
+    leading: {
+      tight: 1.1,
+      snug: 1.3,
+      normal: 1.5,
+      relaxed: 1.75,
+      loose: 2
+    },
+    tracking: {
+      tight: '-0.02em',
+      normal: '0',
+      wide: '0.02em',
+      wider: '0.05em',
+      widest: '0.08em',
+      extreme: '0.12em'
+    }
+  },
+  
+  spacing: {
+    px: '1px',
+    0: '0',
+    0.5: '0.125rem',  // 2px
+    1: '0.25rem',     // 4px
+    2: '0.5rem',      // 8px
+    3: '0.75rem',     // 12px
+    4: '1rem',        // 16px
+    5: '1.25rem',     // 20px
+    6: '1.5rem',      // 24px
+    8: '2rem',        // 32px
+    10: '2.5rem',     // 40px
+    12: '3rem',       // 48px
+    16: '4rem',       // 64px
+    20: '5rem',       // 80px
+    24: '6rem',       // 96px
+    32: '8rem',       // 128px
+    40: '10rem',      // 160px
+    48: '12rem',      // 192px
+    56: '14rem',      // 224px
+    64: '16rem',      // 256px
+  },
+  
+  borderRadius: {
+    none: '0',
+    sm: '0.125rem',
+    base: '0.25rem',
+    md: '0.375rem',
+    lg: '0.5rem',
+    xl: '0.75rem',
+    '2xl': '1rem',
+    '3xl': '1.5rem',
+    full: '9999px'
+  },
+  
+  shadows: {
+    none: 'none',
+    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.03)',
+    base: '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.02)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02)',
+    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
+    '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+    inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.03)'
+  },
+  
+  animation: {
+    duration: {
+      instant: '75ms',
+      fast: '150ms',
+      base: '300ms',
+      slow: '500ms',
+      slower: '700ms',
+      lazy: '1000ms'
+    },
+    easing: {
+      linear: 'linear',
+      in: 'cubic-bezier(0.4, 0, 1, 1)',
+      out: 'cubic-bezier(0, 0, 0.2, 1)',
+      inOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+    }
+  }
+} as const;
+4. Global Styles
+Create src/styles/globals.css:
+cssCopy@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Colors */
+    --color-ink: 10 10 10;
+    --color-charcoal: 28 28 28;
+    --color-graphite: 80 80 80;
+    --color-stone: 138 138 138;
+    --color-fog: 184 184 184;
+    --color-pearl: 232 232 232;
+    --color-alabaster: 244 244 244;
+    --color-ivory: 250 250 250;
+    --color-pure: 255 255 255;
+    
+    --color-sage-deep: 27 67 50;
+    --color-sage-medium: 45 95 79;
+    --color-sage-light: 82 121 111;
+    
+    /* Typography Scale */
+    --font-display: 'Fraunces', 'Libre Baskerville', Georgia, serif;
+    --font-editorial: 'Crimson Pro', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+    
+    /* Animation */
+    --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply antialiased;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  body {
+    @apply bg-ivory text-charcoal;
+    font-family: var(--font-body);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+  }
+  
+  /* Editorial Typography */
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  
+  .font-editorial {
+    font-family: var(--font-editorial);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+  }
+  
+  /* Smooth Scrolling */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  
+  /* Focus Styles */
+  :focus-visible {
+    @apply outline-none ring-2 ring-sage-deep/20 ring-offset-2 ring-offset-ivory;
+  }
+  
+  /* Selection */
+  ::selection {
+    @apply bg-sage-light/10 text-sage-deep;
+  }
+}
+
+@layer components {
+  /* Breathing Room Container */
+  .container-breathing {
+    @apply mx-auto px-8 md:px-16 lg:px-24 max-w-7xl;
+  }
+  
+  /* Editorial Heading Styles */
+  .heading-editorial-xl {
+    @apply font-display text-6xl md:text-7xl leading-[1.05] tracking-tight;
+  }
+  
+  .heading-editorial-lg {
+    @apply font-display text-4xl md:text-5xl leading-[1.1] tracking-tight;
+  }
+  
+  .heading-editorial-md {
+    @apply font-display text-2xl md:text-3xl leading-[1.2] tracking-tight;
+  }
+  
+  /* Quiet Confidence Buttons */
+  .btn-quiet {
+    @apply px-6 py-3 text-sm font-medium tracking-wider transition-all duration-300;
+    @apply border border-transparent hover:border-current;
+  }
+  
+  .btn-primary {
+    @apply bg-charcoal text-pure hover:bg-ink;
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .btn-secondary {
+    @apply bg-transparent text-charcoal border-charcoal;
+    @apply hover:bg-charcoal hover:text-pure;
+  }
+  
+  .btn-ghost {
+    @apply text-stone hover:text-charcoal;
+    @apply transition-colors duration-200;
+  }
+  
+  /* Editorial Card */
+  .card-editorial {
+    @apply bg-pure border border-pearl;
+    @apply hover:shadow-lg transition-all duration-500;
+  }
+  
+  /* Subtle Animations */
+  .animate-fade-in {
+    animation: fadeIn var(--transition-slow) ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp var(--transition-base) ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer utilities {
+  /* Text Balance */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Breathing Space */
+  .breathing-y {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+  
+  .breathing-x {
+    @apply px-8 md:px-16 lg:px-24;
+  }
+  
+  /* Editorial Divider */
+  .divider-editorial {
+    @apply border-t border-pearl my-8 md:my-12;
+  }
+}
+5. Main App Component
+Create src/App.tsx:
+typescriptCopyimport React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { OnboardingFlow } from './components/onboarding/OnboardingFlow';
+import { Dashboard } from './components/dashboard/Dashboard';
+import { Navigation } from './components/layout/Navigation';
+import { design } from './lib/constants/design-system';
+import './styles/globals.css';
+
+export type AppView = 'onboarding' | 'dashboard' | 'reflection' | 'goals';
+
+interface UserProfile {
+  name?: string;
+  vision?: string;
+  currentPhase?: string;
+  strengths?: string[];
+  goals?: Goal[];
+}
+
+interface Goal {
+  id: string;
+  title: string;
+  category: 'vision' | 'growth' | 'connection' | 'impact';
+  status: 'active' | 'completed' | 'paused';
+  progress: number;
+  deadline?: Date;
+  milestones?: Milestone[];
+}
+
+interface Milestone {
+  id: string;
+  title: string;
+  completed: boolean;
+  date?: Date;
+}
+
+function App() {
+  const [currentView, setCurrentView] = useState<AppView>('onboarding');
+  const [userProfile, setUserProfile] = useState<UserProfile>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for existing user data
+    const checkUserStatus = async () => {
+      const savedProfile = localStorage.getItem('opus-profile');
+      if (savedProfile) {
+        setUserProfile(JSON.parse(savedProfile));
+        setCurrentView('dashboard');
+      }
+      setIsLoading(false);
+    };
+    
+    checkUserStatus();
+  }, []);
+
+  const handleOnboardingComplete = (data: Partial<UserProfile>) => {
+    const updatedProfile = { ...userProfile, ...data };
+    setUserProfile(updatedProfile);
+    localStorage.setItem('opus-profile', JSON.stringify(updatedProfile));
+    setCurrentView('dashboard');
+  };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <div 
+      className="min-h-screen"
+      style={{ 
+        backgroundColor: design.colors.ivory,
+        fontFamily: design.typography.fonts.body 
+      }}
+    >
+      <AnimatePresence mode="wait">
+        {currentView === 'onboarding' ? (
+          <motion.div
+            key="onboarding"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <OnboardingFlow onComplete={handleOnboardingComplete} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="app"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Navigation 
+              currentView={currentView} 
+              onViewChange={setCurrentView}
+              userProfile={userProfile}
+            />
+            <main>
+              {currentView === 'dashboard' && (
+                <Dashboard userProfile={userProfile} />
+              )}
+              {/* Add other views as needed */}
+            </main>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+const LoadingScreen: React.FC = () => (
+  <div className="min-h-screen flex items-center justify-center bg-ivory">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="text-center"
+    >
+      <h1 className="font-display text-3xl text-charcoal mb-4">Opus</h1>
+      <div className="w-32 h-px bg-pearl mx-auto animate-pulse" />
+    </motion.div>
+  </div>
+);
+
+export default App;
+6. Onboarding Component
+Create src/components/onboarding/OnboardingFlow.tsx:
+typescriptCopyimport React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, ChevronLeft } from 'lucide-react';
+import { design } from '../../lib/constants/design-system';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+interface OnboardingFlowProps {
+  onComplete: (data: any) => void;
+}
+
+const questions = [
+  {
+    id: 'vision',
+    category: 'VISION',
+    question: 'What does meaningful work look like to you?',
+    prompt: 'Forget titles. Think impact.',
+    placeholder: 'I find meaning when I...',
+    fieldName: 'vision'
+  },
+  {
+    id: 'energy',
+    category: 'ENERGY',
+    question: 'When do you lose track of time at work?',
+    prompt: 'These moments reveal your true strengths.',
+    placeholder: 'Time flies when I...',
+    fieldName: 'strengths'
+  },
+  {
+    id: 'direction',
+    category: 'DIRECTION',
+    question: 'Who do you want to become professionally?',
+    prompt: 'Not what. Who.',
+    placeholder: 'In five years, I see myself as someone who...',
+    fieldName: 'direction'
+  },
+  {
+    id: 'obstacles',
+    category: 'CLARITY',
+    question: 'What's holding you back right now?',
+    prompt: 'Name it to tame it.',
+    placeholder: 'The biggest challenge I face is...',
+    fieldName: 'obstacles'
+  }
+];
+
+const onboardingSchema = z.object({
+  vision: z.string().min(10, 'Please share a bit more about your vision'),
+  strengths: z.string().min(10, 'Tell us more about when you\'re in flow'),
+  direction: z.string().min(10, 'Share more about who you want to become'),
+  obstacles: z.string().min(10, 'Help us understand your challenges'),
+  name: z.string().min(2, 'Please enter your name').optional()
+});
+
+type OnboardingFormData = z.infer<typeof onboardingSchema>;
+
+export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [responses, setResponses] = useState<Partial<OnboardingFormData>>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    trigger
+  } = useForm<OnboardingFormData>({
+    resolver: zodResolver(onboardingSchema),
+    mode: 'onChange'
+  });
+
+  const currentQuestion = questions[currentStep];
+  const progress = ((currentStep + 1) / questions.length) * 100;
+
+  const handleNext = async () => {
+    const fieldName = currentQuestion.fieldName as keyof OnboardingFormData;
+    const isValid = await trigger(fieldName);
+    
+    if (!isValid) return;
+
+    setIsTransitioning(true);
+    setTimeout(() => {
+      if (currentStep < questions.length - 1) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        // Final step - complete onboarding
+        handleSubmit((data) => {
+          onComplete(data);
+        })();
+      }
+      setIsTransitioning(false);
+    }, 300);
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep - 1);
+        setIsTransitioning(false);
+      }, 300);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-ivory">
+      {/* Progress Bar */}
+      <div className="w-full h-px bg-pearl relative">
+        <motion.div
+          className="absolute top-0 left-0 h-full bg-charcoal"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.7, ease: 'easeInOut' }}
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex items-center justify-center p-8 md:p-16">
+        <div className="w-full max-w-3xl">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              {/* Category Tag */}
+              <motion.p
+                className="text-xs tracking-extreme text-stone mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                {currentQuestion.category}
+              </motion.p>
+
+              {/* Question */}
+              <motion.h1
+                className="heading-editorial-lg text-charcoal mb-6"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                {currentQuestion.question}
+              </motion.h1>
+
+              {/* Prompt */}
+              <motion.p
+                className="text-lg text-graphite font-light mb-16"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                {currentQuestion.prompt}
+              </motion.p>
+
+              {/* Input Area */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <textarea
+                  {...register(currentQuestion.fieldName as keyof OnboardingFormData)}
+                  className="w-full min-h-[120px] p-0 bg-transparent border-0 border-b border-fog
+                           text-lg text-ink placeholder-stone/50 resize-none
+                           focus:outline-none focus:border-charcoal transition-colors duration-300
+                           leading-relaxed"
+                  placeholder={currentQuestion.placeholder}
+                  defaultValue={responses[currentQuestion.fieldName as keyof OnboardingFormData] || ''}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setResponses(prev => ({
+                      ...prev,
+                      [currentQuestion.fieldName]: value
+                    }));
+                  }}
+                />
+                {errors[currentQuestion.fieldName as keyof OnboardingFormData] && (
+                  <p className="mt-2 text-sm text-rust">
+                    {errors[currentQuestion.fieldName as keyof OnboardingFormData]?.message}
+                  </p>
+                )}
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Navigation */}
+          <motion.div
+            className="flex justify-between items-center mt-24"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <button
+              onClick={handleBack}
+              className={`flex items-center gap-2 text-sm tracking-wider text-stone
+                         transition-all duration-200 hover:text-charcoal
+                         ${currentStep === 0 ? 'invisible' : ''}`}
+              disabled={currentStep === 0}
+            >
+              <ChevronLeft size={16} />
+              BACK
+            </button>
+
+            <button
+              onClick={handleNext}
+              className="group flex items-center gap-3 text-sm tracking-wider text-charcoal
+                       transition-all duration-200 hover:gap-4"
+            >
+              {currentStep === questions.length - 1 ? 'BEGIN YOUR JOURNEY' : 'CONTINUE'}
+              <ArrowRight 
+                size={16}
+                className="transition-transform duration-200 group-hover:translate-x-1"
+              />
+            </button>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Step Indicator */}
+      <div className="text-center py-8">
+        <p className="text-xs text-stone tracking-wider">
+          {currentStep + 1} OF {questions.length}
+        </p>
+      </div>
+    </div>
+  );
+};
+7. Dashboard Component
+Create src/components/dashboard/Dashboard.tsx:
+typescriptCopyimport React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Target, 
+  TrendingUp, 
+  Calendar, 
+  Users, 
+  BookOpen,
+  ChevronRight,
+  Plus,
+  BarChart3,
+  Clock
+} from 'lucide-react';
+import { design } from '../../lib/constants/design-system';
+import { WeeklyPriorities } from './WeeklyPriorities';
+import { ReflectionPrompt } from './ReflectionPrompt';
+import { ProgressMetrics } from './ProgressMetrics';
+
+interface DashboardProps {
+  userProfile: {
+    name?: string;
+    vision?: string;
+    currentPhase?: string;
+  };
+}
+
+export const Dashboard: React.FC<DashboardProps> = ({ userProfile }) => {
+  const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
+
+  return (
+    <div className="min-h-screen bg-ivory">
+      {/* Hero Section - North Star */}
+      <section className="breathing-y container-breathing">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <p className="text-xs tracking-extreme text-stone mb-6">
+            YOUR NORTH STAR
+          </p>
+          
+          <h1 className="heading-editorial-xl text-charcoal max-w-5xl mb-8">
+            {userProfile.vision || "Build products that bridge human needs with technological possibility."}
+          </h1>
+          
+          <div className="flex items-center gap-8 text-sm text-stone">
+            <span className="flex items-center gap-2">
+              <Calendar size={16} />
+              Week 42 of 2024
+            </span>
+            <span className="flex items-center gap-2">
+              <TrendingUp size={16} />
+              82% Aligned
+            </span>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Main Content Grid */}
+      <section className="container-breathing">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+          {/* Main Column */}
+          <div className="lg:col-span-2 space-y-16">
+            {/* Weekly Priorities */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              <WeeklyPriorities />
+            </motion.div>
+
+            {/* Current Chapter Progress */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              <div className="border-b border-pearl pb-4 mb-8">
+                <h3 className="text-sm tracking-wider text-charcoal">
+                  CURRENT CHAPTER
+                </h3>
+              </div>
+              
+              <ProgressMetrics />
+            </motion.div>
+
+            {/* Active Goals */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            >
+              <div className="border-b border-pearl pb-4 mb-8 flex justify-between items-center">
+                <h3 className="text-sm tracking-wider text-charcoal">
+                  ACTIVE GOALS
+                </h3>
+                <button className="text-xs tracking-wider text-stone hover:text-charcoal transition-colors">
+                  VIEW ALL
+                </button>
+              </div>
+              
+              <div className="space-y-6">
+                {[
+                  {
+                    title: "Establish thought leadership in product strategy",
+                    category: "VISIBILITY",
+                    progress: 65,
+                    milestone: "Publish first article",
+                    daysLeft: 18
+                  },
+                  {
+                    title: "Build strategic network of senior professionals",
+                    category: "CONNECTION",
+                    progress: 40,
+                    milestone: "Connect with 3 directors",
+                    daysLeft: 30
+                  },
+                  {
+                    title: "Master advanced system architecture patterns",
+                    category: "EXPERTISE",
+                    progress: 75,
+                    milestone: "Complete certification",
+                    daysLeft: 12
+                  }
+                ].map((goal, idx) => (
+                  <motion.div
+                    key={idx}
+                    className="group cursor-pointer"
+                    whileHover={{ x: 4 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="border-b border-pearl pb-6 transition-colors duration-300
+                                  group-hover:border-charcoal/20">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <p className="text-xs text-stone mb-2">{goal.category}</p>
+                          <h4 className="text-lg text-charcoal mb-2">{goal.title}</h4>
+                          <p className="text-sm text-graphite">
+                            Next: {goal.milestone}
+                          </p>
+                        </div>
+                        <span className="text-xs text-stone">
+                          {goal.daysLeft}D
+                        </span>
+                      </div>
+                      
+                      <div className="w-full h-px bg-pearl relative overflow-hidden">
+                        <motion.div
+                          className="absolute left-0 top-0 h-full bg-charcoal"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${goal.progress}%` }}
+                          transition={{ duration: 1, delay: 0.5 + idx * 0.1 }}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <button className="mt-8 flex items-center gap-2 text-sm tracking-wider text-stone
+                               hover:text-charcoal transition-colors duration-200">
+                <Plus size={16} />
+                ADD GOAL
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-12">
+            {/* Weekly Reflection */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+            >
+              <ReflectionPrompt />
+            </motion.div>
+
+            {/* Energy Patterns */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+            >
+              <h4 className="text-sm tracking-wider text-charcoal mb-6">
+                ENERGY PATTERNS
+              </h4>
+              
+              <div className="space-y-5">
+                {[
+                  { label: 'Peak Focus', time: '9-11 AM', level: 85 },
+                  { label: 'Creative Flow', time: '2-4 PM', level: 70 },
+                  { label: 'Strategic Thinking', time: '5-6 PM', level: 60 },
+                  { label: 'Deep Work', time: '8-10 PM', level: 45 }
+                ].map((pattern, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-graphite">{pattern.label}</span>
+                      <span className="text-charcoal">{pattern.time}</span>
+                    </div>
+                    <div className="h-px bg-pearl relative">
+                      <motion.div
+                        className="absolute left-0 top-0 h-full bg-charcoal"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pattern.level}%` }}
+                        transition={{ duration: 0.8, delay: 0.7 + idx * 0.1 }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Upcoming */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.6 }}
+            >
+              <h4 className="text-sm tracking-wider text-charcoal mb-6">
+                NEXT WEEK
+              </h4>
+              
+              <ul className="space-y-4">
+                {[
+                  'Product strategy session',
+                  '1:1 with Sarah Chen',
+                  'Technical architecture review',
+                  'Team workshop facilitation'
+                ].map((item, idx) => (
+                  <motion.li
+                    key={idx}
+                    className="flex items-center justify-between group cursor-pointer"
+                    whileHover={{ x: 2 }}
+                  >
+                    <span className="text-sm text-graphite group-hover:text-charcoal
+                                   transition-colors duration-200">
+                      {item}
+                    </span>
+                    <ChevronRight 
+                      size={14} 
+                      className="text-fog group-hover:text-charcoal transition-colors duration-200"
+                    />
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+8. Supporting Components
+Create src/components/dashboard/WeeklyPriorities.tsx:
+typescriptCopyimport React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Circle, Clock, Target, Zap } from 'lucide-react';
+import { design } from '../../lib/constants/design-system';
+
+interface Priority {
+  id: string;
+  rank: string;
+  title: string;
+  context: string;
+  timing: string;
+  energy: 'high' | 'medium' | 'low';
+  completed: boolean;
+  impact: string;
+}
+
+export const WeeklyPriorities: React.FC = () => {
+  const [priorities, setPriorities] = useState<Priority[]>([
+    {
+      id: '1',
+      rank: '01',
+      title: 'Present product vision to leadership',
+      context: 'Strategic Visibility',
+      timing: 'Tuesday, High Energy',
+      energy: 'high',
+      completed: false,
+      impact: 'Career-defining opportunity'
+    },
+    {
+      id: '2',
+      rank: '02',
+      title: 'Deep work on system architecture',
+      context: 'Technical Leadership',
+      timing: 'Thursday Morning',
+      energy: 'high',
+      completed: false,
+      impact: 'Core expertise building'
+    },
+    {
+      id: '3',
+      rank: '03',
+      title: 'Mentor junior developers',
+      context: 'Team Development',
+      timing: 'Friday Afternoon',
+      energy: 'medium',
+      completed: false,
+      impact: 'Leadership visibility'
+    }
+  ]);
+
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const toggleComplete = (id: string) => {
+    setPriorities(prev => prev.map(p => 
+      p.id === id ? { ...p, completed: !p.completed } : p
+    ));
+  };
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between border-b border-pearl pb-4 mb-8">
+        <h3 className="text-sm tracking-wider text-charcoal">THIS WEEK</h3>
+        <span className="text-sm text-stone">OCT 14-20</span>
+      </div>
+
+      <div className="space-y-6">
+        {priorities.map((priority) => (
+          <motion.div
+            key={priority.id}
+            className="group relative"
+            onHoverStart={() => setHoveredId(priority.id)}
+            onHoverEnd={() => setHoveredId(null)}
+            animate={{
+              x: hoveredId === priority.id ? 4 : 0
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className={`border-b border-pearl pb-6 transition-all duration-300
+                          ${hoveredId === priority.id ? 'border-charcoal/20' : ''}
+                          ${priority.completed ? 'opacity-50' : ''}`}>
+              <div className="flex items-start gap-6">
+                {/* Rank */}
+                <span className="font-mono text-2xl font-light text-fog">
+                  {priority.rank}
+                </span>
+
+                {/* Content */}
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-3">
+                    <h4 className={`text-xl transition-colors duration-200
+                                  ${priority.completed ? 'line-through text-stone' : 'text-charcoal'}`}>
+                      {priority.title}
+                    </h4>
+                    
+                    {/* Completion Toggle */}
+                    <button
+                      onClick={() => toggleComplete(priority.id)}
+                      className="p-1 transition-all duration-200"
+                    >
+                      {priority.completed ? (
+                        <Check size={20} className="text-sage-light" />
+                      ) : (
+                        <Circle size={20} className="text-fog hover:text-charcoal" />
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-6 text-sm">
+                    <span className="text-stone">{priority.context}</span>
+                    <span className="text-fog">•</span>
+                    <span className="text-stone flex items-center gap-1">
+                      <Clock size={12} />
+                      {priority.timing}
+                    </span>
+                    {priority.energy === 'high' && (
+                      <>
+                        <span className="text-fog">•</span>
+                        <span className="text-sage-light flex items-center gap-1">
+                          <Zap size={12} />
+                          High Energy
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Impact on hover */}
+                  <AnimatePresence>
+                    {hoveredId === priority.id && !priority.completed && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="mt-3"
+                      >
+                        <p className="text-sm text-graphite italic">
+                          Impact: {priority.impact}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Add Priority */}
+      <motion.button
+        className="mt-8 text-sm tracking-wider text-stone hover:text-charcoal
+                 transition-colors duration-200 flex items-center gap-2"
+        whileHover={{ x: 2 }}
+      >
+        <Target size={16} />
+        SET NEXT PRIORITY
+      </motion.button>
+    </div>
+  );
+};
+Create src/components/dashboard/ReflectionPrompt.tsx:
+typescriptCopyimport React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { BookOpen, ArrowRight } from 'lucide-react';
+import { design } from '../../lib/constants/design-system';
+
+export const ReflectionPrompt: React.FC = () => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const prompts = [
+    "What patterns are emerging in your work?",
+    "Where did you feel most energized this week?",
+    "What would you do differently?",
+    "What invisible progress did you make?"
+  ];
+
+  const currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+
+  return (
+    <motion.div
+      className="card-editorial p-6 cursor-pointer"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="text-sm tracking-wider text-charcoal">
+          WEEKLY REFLECTION
+        </h4>
+        <BookOpen size={16} className="text-stone" />
+      </div>
+
+      <p className="text-sm text-graphite leading-relaxed mb-6">
+        {currentPrompt} Take 10 minutes to capture insights that matter.
+      </p>
+
+      <motion.button
+        className="w-full py-3 text-xs tracking-extreme font-medium
+                 bg-charcoal text-pure transition-all duration-300
+                 hover:bg-ink flex items-center justify-center gap-2"
+        whileHover={{ gap: '12px' }}
+      >
+        BEGIN
+        <ArrowRight size={14} />
+      </motion.button>
+    </motion.div>
+  );
+};
+9. Navigation Component
+Create src/components/layout/Navigation.tsx:
+typescriptCopyimport React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, Target, TrendingUp, BookOpen, Users } from 'lucide-react';
+import { design } from '../../lib/constants/design-system';
+
+interface NavigationProps {
+  currentView: string;
+  onViewChange: (view: any) => void;
+  userProfile: any;
+}
+
+export const Navigation: React.FC<NavigationProps> = ({ 
+  currentView, 
+  onViewChange,
+  userProfile 
+}) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const navItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: Target },
+    { id: 'goals', label: 'Goals', icon: TrendingUp },
+    { id: 'reflect', label: 'Reflect', icon: BookOpen },
+    { id: 'connect', label: 'Connect', icon: Users }
+  ];
+
+  return (
+    <>
+      <nav className="border-b border-pearl bg-ivory/95 backdrop-blur-sm sticky top-0 z-40">
+        <div className="container-breathing py-6">
+          <div className="flex justify-between items-center">
+            {/* Logo */}
+            <div className="flex items-center gap-12">
+              <h1 className="font-display text-2xl text-charcoal">
+                Opus
+              </h1>
+
+              {/* Desktop Nav */}
+              <div className="hidden md:flex gap-8">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => onViewChange(item.id)}
+                    className={`text-sm tracking-wide transition-colors duration-200
+                              ${currentView === item.id 
+                                ? 'text-charcoal' 
+                                : 'text-stone hover:text-charcoal'}`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Menu Toggle */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-sm tracking-wider text-stone hover:text-charcoal
+                       transition-colors duration-200"
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile/Overlay Menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-ivory"
+          >
+            <div className="container-breathing py-6">
+              <div className="flex justify-between items-center mb-16">
+                <h1 className="font-display text-2xl text-charcoal">Opus</h1>
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="text-charcoal"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <nav className="space-y-8">
+                {navItems.map((item, idx) => (
+                  <motion.button
+                    key={item.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    onClick={() => {
+                      onViewChange(item.id);
+                      setMenuOpen(false);
+                    }}
+                    className="block text-2xl font-display text-charcoal hover:text-sage-deep
+                             transition-colors duration-200"
+                  >
+                    {item.label}
+                  </motion.button>
+                ))}
+              </nav>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="mt-16 pt-8 border-t border-pearl"
+              >
+                <p className="text-sm text-stone mb-2">Signed in as</p>
+                <p className="text-lg text-charcoal">
+                  {userProfile.name || 'Professional'}
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+10. Tailwind Configuration
+Create tailwind.config.js:
+javascriptCopy/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Base neutrals
+        ink: '#0A0A0A',
+        charcoal: '#1C1C1C',
+        graphite: '#505050',
+        stone: '#8A8A8A',
+        fog: '#B8B8B8',
+        pearl: '#E8E8E8',
+        alabaster: '#F4F4F4',
+        ivory: '#FAFAFA',
+        pure: '#FFFFFF',
+        
+        // Sage (primary brand color)
+        sage: {
+          deep: '#1B4332',
+          DEFAULT: '#2D5F4F',
+          light: '#52796F',
+          pale: '#8FA39B',
+          soft: '#E8F0ED'
+        },
+        
+        // Warm accents
+        rust: '#A84843',
+        sand: '#D4A574',
+        cream: '#F5F2ED',
+        bone: '#FAF8F3',
+        
+        // Cool accents
+        ocean: '#2C5282',
+        sky: '#E1EBF4'
+      },
+      
+      fontFamily: {
+        display: ['Fraunces', 'serif'],
+        editorial: ['Crimson Pro', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace']
+      },
+      
+      fontSize: {
+        '2xs': '0.625rem',
+      },
+      
+      letterSpacing: {
+        extreme: '0.12em'
+      },
+      
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'pulse-soft': 'pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+      },
+      
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' }
+        },
+        pulseSoft: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' }
+        }
+      }
+    },
+  },
+  plugins: [],
+}
+11. Performance & Optimization Notes
+typescriptCopy// Create src/lib/hooks/usePerformance.ts
+import { useEffect, useCallback } from 'react';
+
+export const usePerformanceMonitor = () => {
+  useEffect(() => {
+    // Monitor Core Web Vitals
+    if ('web-vital' in window) {
+      const reportWebVital = (metric: any) => {
+        console.log(metric);
+        // Send to analytics
+      };
+      
+      // Track CLS, FID, LCP
+      (window as any).webVitals.getCLS(reportWebVital);
+      (window as any).webVitals.getFID(reportWebVital);
+      (window as any).webVitals.getLCP(reportWebVital);
+    }
+  }, []);
+};
+
+// Lazy load heavy components
+export const lazyLoadComponent = (
+  importFn: () => Promise<any>,
+  delay = 150
+) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(importFn());
+    }, delay);
+  });
+};
+12. Deployment Script for Replit
+Create .replit:
+tomlCopyrun = "npm run dev"
+entrypoint = "src/App.tsx"
+
+[deployment]
+build = ["npm", "run", "build"]
+run = ["npm", "run", "preview"]
+
+[env]
+VITE_APP_VERSION = "1.0.0"
+
+[nix]
+channel = "stable-22_11"
+
+[packager]
+language = "nodejs"
+
+[packager.features]
+packageSearch = true
+guessImports = true
+enabledForHosting = false
+Create replit.nix:
+nixCopy{ pkgs }: {
+  deps = [
+    pkgs.nodejs-18_x
+    pkgs.nodePackages.typescript-language-server
+    pkgs.nodePackages.npm
+  ];
+}
