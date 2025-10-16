@@ -11,25 +11,18 @@ Opus is a full-stack productivity application designed for young professionals t
 
 ## Recent Changes (October 2025)
 
-### Editorial Design System - Version 1.2 (Latest)
-- **Refined Editorial Design**: Incorporated sophisticated minimalist improvements
-  - **Priority Numbering System**: Tasks displayed with monospace numbers (01, 02, 03)
-  - **Cleaner Metrics**: Large Fraunces numbers (48px) with small uppercase units
-  - **Editorial Section Headers**: Uppercase titles with 0.08em letter-spacing
-  - **Hover Interactions**: Priority items translate 4px right on hover
-  - **Breathing Room**: Increased spacing (gap-8) for cleaner layout
-  - **Minimal Borders**: Pearl (#E8E8E8) borders throughout for subtle separation
-
-### Editorial Design System - Version 1.1
-- **Visual Redesign**: Complete transformation to editorial magazine-inspired aesthetic
-  - Light mode as default with ivory (#FAFAFA) backgrounds
-  - Fraunces serif typography for all display headings (h1 elements)
-  - Crimson Pro for editorial content, Inter for body text, JetBrains Mono for data
-  - Minimal pearl (#E8E8E8) borders with generous whitespace
-  - Sage green (#1B4332-#E8F0ED) brand colors with variants
-- **Typography System**: Four-tier font hierarchy (Display, Editorial, Body, Mono)
-- **Theme Provider**: Updated to default light mode, dark mode available as toggle
-- **Enhanced Components**: WeeklyPriorities and ReflectionPrompt dashboard widgets
+### Classical Organic Design System - Version 2.0 (Latest)
+- **Complete Design Pivot**: Transformation from editorial magazine to classical oil painting aesthetic
+  - **Borderless Design**: NO borders anywhere - depth achieved through layered shadow system only
+  - **Organic Shapes**: Asymmetric border-radius (24px 32px 24px 16px) creates flowing, natural forms
+  - **Dark Forest Green Accent**: #1B4332 as THE singular accent color for personality and focus
+  - **Simplified Typography**: Only 2 fonts - Fraunces (headings 36-48px) and Inter (body 16px)
+  - **Muted Palette**: Ivory (#FAFAFA), Alabaster (#F4F4F4), Pure White (#FFFFFF), Charcoal (#1C1C1C)
+  - **Painterly Depth**: Multi-layer shadow system mimics classical oil painting layering
+  - **Organic Components**: All cards, containers, and interactive elements use organic rounded shapes
+- **CSS Utilities**: New organic design classes (.rounded-organic, .shadow-organic, .organic-item-hover)
+- **Component Updates**: Dashboard, WeeklyPriorities, and ReflectionPrompt redesigned with organic aesthetic
+- **Font Cleanup**: Removed Crimson Pro and JetBrains Mono - simplified to Fraunces + Inter only
 
 ### MVP Completion - Version 1.0
 - **Complete Authentication System**: Secure session-based authentication with password hashing, login/register flows, and protected routes
@@ -62,7 +55,7 @@ Opus is a full-stack productivity application designed for young professionals t
 
 **Form Handling**: React Hook Form manages form state with Zod schemas for runtime validation. This provides type-safe forms with minimal re-renders.
 
-**Design System**: Editorial magazine-inspired aesthetic with custom TailwindCSS configuration using CSS variables. Light mode is primary (ivory backgrounds, charcoal text) with dark mode support. Typography hierarchy uses Fraunces serif for display headings, Inter for body text, and JetBrains Mono for data/metrics. Minimal borders and generous whitespace create a clean, professional reading experience.
+**Design System**: Classical organic aesthetic inspired by oil paintings. Borderless design uses layered shadows for depth. Organic asymmetric shapes (24px 32px 24px 16px radius) create flowing forms. Dark forest green (#1B4332) as the singular accent color. Simplified typography with only Fraunces (headings) and Inter (body). Light mode primary with ivory/alabaster/white backgrounds creating painterly depth hierarchy.
 
 ### Backend Architecture
 

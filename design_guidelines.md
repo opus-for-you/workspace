@@ -1,259 +1,240 @@
-# Opus Design Guidelines - Editorial System
+# Opus Design System - Classical Organic Aesthetic
 
-## Design Approach: Magazine Editorial Aesthetic
+## Design Philosophy
 
-**Selected Approach**: Editorial Typography-First Design  
-**Justification**: Opus serves young professionals who appreciate refined, magazine-quality interfaces. The editorial approach emphasizes thoughtful content hierarchy through typography, generous whitespace, and minimal visual elements. This creates a calm, focused environment for reflection and planning.
+**Classical Oil Painting Meets Modern Design**
+- Inspired by the layered depth and rich textures of classical oil paintings
+- Organic, flowing shapes instead of rigid geometric boxes
+- Borderless design with elevation through shadows
+- Muted color palette with a strong dark forest green accent for personality
 
-**Core Principles**:
-- Typography drives hierarchy and visual interest
-- Minimal borders (primarily bottom borders for section separation)
-- Generous whitespace and breathing room
-- Serif display fonts for editorial impact
-- Monospace numerals for metrics and data
-- Light, clean backgrounds (ivory/white)
-- Hover interactions through subtle border color changes
+## Core Principles
+
+### 1. Organic Shapes
+- **No hard borders or sharp rectangular boxes**
+- Irregular, natural border-radius values (16px/24px/32px combined)
+- Blob-like containers with soft, flowing edges
+- Asymmetric rounded corners for visual interest
+
+### 2. Layered Depth (Chiaroscuro-inspired)
+- **No borders** - depth comes from shadows and background elevation
+- Multiple shadow layers for painterly depth:
+  - Close shadows: subtle definition
+  - Mid shadows: elevation
+  - Far shadows: dramatic depth
+- Background color shifts for hierarchy (ivory → alabaster → pure white)
+
+### 3. Simplified Typography
+- **Only 2 fonts**:
+  - **Fraunces**: Display headings only (36-48px)
+  - **Inter**: Everything else (body 16px, labels 14px, small 12px)
+- **Dropped**: Crimson Pro, JetBrains Mono (too much variety)
+- Clear size hierarchy: Large/Medium/Small only
+
+### 4. Color Strategy
+
+**Muted Foundation:**
+- Ivory (#FAFAFA) - main background
+- Alabaster (#F4F4F4) - elevated surfaces
+- Pure White (#FFFFFF) - highest elevation
+- Charcoal (#1C1C1C) - primary text
+- Graphite (#505050) - secondary text
+- Stone (#8A8A8A) - tertiary text
+
+**Dark Forest Green Accent (#1B4332):**
+- The ONLY accent color for personality
+- Used sparingly on:
+  - Call-to-action buttons
+  - Active/selected states
+  - Progress indicators
+  - Important icons
+- Creates focal points in the muted palette
+
+### 5. Art & Texture
+- Subtle canvas/paper texture overlays
+- Organic blob shapes as decorative elements
+- Gradient overlays for depth
+- Classical painting-inspired visual rhythm
 
 ---
 
-## Color Palette
+## Visual Elements
 
-### Editorial Light Mode (Primary)
-
-**Neutrals** (HSL format for Tailwind):
-- **Ink**: 0 0% 4% (#0A0A0A - darkest text)
-- **Charcoal**: 0 0% 11% (#1C1C1C - primary text, dark elements)
-- **Graphite**: 0 0% 31% (#505050 - secondary text)
-- **Stone**: 0 0% 54% (#8A8A8A - tertiary text, labels)
-- **Fog**: 0 0% 72% (#B8B8B8 - subtle text)
-- **Pearl**: 0 0% 91% (#E8E8E8 - borders, dividers)
-- **Alabaster**: 0 0% 96% (#F4F4F4 - subtle backgrounds)
-- **Ivory**: 0 0% 98% (#FAFAFA - main background)
-- **Pure**: 0 0% 100% (#FFFFFF - cards, elevated surfaces)
-
-**Accent Colors**:
-- **Forest**: 156 44% 20% (#1B4332 - success, growth)
-- **Sage**: 171 22% 39% (#52796F - calm actions)
-- **Rust**: 4 42% 46% (#A84843 - warnings, attention)
-- **Sand**: 35 48% 64% (#D4A574 - warm highlights)
-- **Ocean**: 208 50% 35% (#2C5282 - primary actions, links)
-
-### Dark Mode (Optional)
-Uses inverted neutral scale with same accent colors for consistency.
-
----
-
-## Typography
-
-### Font Families
-
-**Display/Editorial** (Google Fonts):
-- **Fraunces** - Serif display font for headlines, hero text, large numbers
-- Fallback: 'Libre Baskerville', Georgia, serif
-- Usage: Page titles, section headers, metric displays, quotes
-
-**Body/Interface** (System fonts):
-- **Inter** - Sans-serif for all UI text, forms, content
-- Fallback: -apple-system, BlinkMacSystemFont, sans-serif
-- Usage: Paragraphs, buttons, labels, navigation
-
-**Monospace/Data** (Developer fonts):
-- **JetBrains Mono** - For numbers, dates, code, metrics
-- Fallback: 'SF Mono', Monaco, monospace
-- Usage: Dates, priorities, percentages, data points
+### Cards & Containers
+```
+Background: Pure white with organic shapes
+Elevation: Layered shadows only (no borders!)
+Border-radius: Asymmetric (24px 32px 24px 16px)
+Shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04)
+Texture: Subtle canvas overlay
+```
 
 ### Typography Scale
+```
+Display Heading: Fraunces 48px, weight 300
+Section Heading: Fraunces 36px, weight 300
+Body Text: Inter 16px, weight 400
+Label Text: Inter 14px, weight 500
+Small Text: Inter 12px, weight 400
+```
 
-**Headlines** (Fraunces serif):
-- Hero/Onboarding: `clamp(2.5rem, 8vw, 4.5rem)` font-light tracking-tighter
-- Dashboard Title: `clamp(2rem, 5vw, 3.5rem)` font-light tracking-tight
-- Section Headers: text-2xl md:text-3xl font-light
+### Spacing System (8px grid)
+```
+Tight: 8px
+Comfortable: 16px
+Generous: 24px
+Spacious: 32px
+Extra Spacious: 48px
+```
 
-**Body Text** (Inter):
-- Primary: text-base md:text-lg leading-relaxed
-- Secondary: text-sm md:text-base text-graphite
-- Labels/Meta: text-xs tracking-widest uppercase text-stone
+### Shadow System (Painterly Depth)
+```
+Close: 0 1px 3px rgba(0,0,0,0.04)
+Near: 0 2px 8px rgba(0,0,0,0.06)
+Mid: 0 4px 16px rgba(0,0,0,0.08)
+Far: 0 8px 24px rgba(0,0,0,0.10)
+Deep: 0 16px 48px rgba(0,0,0,0.12)
+```
 
-**Data/Numbers** (JetBrains Mono):
-- Large Metrics: text-4xl md:text-5xl font-light
-- Priorities: text-xl md:text-2xl font-extralight text-fog
-- Dates/Times: text-sm text-stone
-
-### Letter Spacing
-- Uppercase labels: tracking-[0.08em]
-- Headlines: tracking-tight (-0.02em)
-- Navigation: tracking-[0.02em]
-- Body text: tracking-normal
-
----
-
-## Layout System
-
-### Spacing Philosophy
-**Editorial breathing room** - More generous than typical productivity apps:
-- Small: 1rem (p-4, gap-4) - between list items
-- Medium: 1.5rem (p-6, gap-6) - card padding
-- Large: 4rem (p-16, gap-16) - section spacing
-- Extra: 6rem (p-24) - hero/onboarding spacing
-
-### Container Strategy
-- **Editorial Content**: max-w-3xl (forms, onboarding, reflection)
-- **Dashboard Grid**: max-w-7xl with editorial 2:1 column ratio
-- **Full Width**: Main content areas with px-8 md:px-16 horizontal padding
-
-### Grid Patterns
-- **Dashboard**: grid-cols-1 lg:grid-cols-3 gap-16 (2/3 + 1/3 split)
-- **Lists**: Single column, full width with bottom borders
-- **Metrics Grid**: grid-cols-1 md:grid-cols-2 gap-12
-- **Cards**: Minimal, mostly replaced by bottom-bordered sections
+### Interactive States
+```
+Default: Base color
+Hover: Dark green glow (0 0 0 8px rgba(27,67,50,0.1))
+Active: Darker green + deeper shadow
+Focus: Dark green ring (2px)
+```
 
 ---
 
-## Component Library
+## Component Patterns
 
-### Navigation (Minimal Top Bar)
-- **Structure**: Horizontal flex with logo + nav links + menu
-- **Styling**: 
-  - Border bottom: 1px solid pearl
-  - Logo: Fraunces font-light text-2xl text-charcoal
-  - Links: Inter text-sm tracking-[0.02em]
-  - Active: text-charcoal (not stone)
-  - Hover: color transition to charcoal
-- **No background color** - transparent over ivory
-
-### Section Headers
-- **Style**: Bottom border (1px solid pearl) with pb-4
-- **Typography**: text-sm tracking-widest uppercase text-charcoal
-- **Optional**: Flex justify-between with metadata (date/count) in stone
-
-### Content Lists
-- **Items**: 
-  - Bottom border divider (1px solid pearl) with pb-6
-  - Hover: border color transitions to charcoal
-  - No background changes
-  - Flex layout with mono priority numbers + content
-- **Numbers**: JetBrains Mono text-2xl text-fog font-extralight
-- **Spacing**: space-y-6 between items
-
-### Forms & Inputs
-- **Text Inputs**: 
-  - Transparent background
-  - Bottom border only (1px solid fog)
-  - Focus: border-charcoal transition
-  - No rounded corners or heavy backgrounds
-  - text-lg leading-relaxed
-  - Placeholder: "..." (minimal)
+### Dashboard Cards
+- Organic rounded shapes with asymmetric corners
+- Layered shadows for depth (NO borders)
+- Pure white backgrounds with subtle canvas texture
+- Dark green accent on interactive elements only
+- Generous padding (24px-32px)
 
 ### Buttons
-- **Primary**: 
-  - bg-charcoal text-pure
-  - px-6 py-3
-  - text-xs tracking-widest uppercase
-  - Hover: inverts to bg-pure text-charcoal with 1px border
-- **Secondary**: 
-  - Transparent with text-stone
-  - Hover: text-charcoal transition
-  - Often just text links with arrow icons
+```
+Primary: 
+  - bg-[#1B4332] (dark forest green)
+  - text-white
+  - Organic rounded (16px)
+  - Shadow: 0 4px 12px rgba(27,67,50,0.2)
+  - Hover: Deeper shadow + slight scale
 
-### Cards/Elevated Surfaces
-- **Sidebar Cards**:
-  - bg-pure (white on ivory background)
-  - border: 1px solid pearl
-  - Padding: p-6
-  - No rounded corners or minimal rounding
-- **Replace heavy cards with bottom-bordered sections** in main content
+Secondary:
+  - bg-alabaster
+  - text-[#1B4332]
+  - Same organic rounding
+  - Subtle shadow
 
-### Progress Indicators
-- **Linear Progress**:
-  - 1px height background in pearl
-  - Fill in charcoal
-  - No rounded ends
-  - Used for onboarding steps, goal progress
+Ghost:
+  - Transparent background
+  - text-[#1B4332]
+  - No shadow, only on hover
+```
 
-### Metrics Display
-- **Large Numbers**: Fraunces text-5xl font-light text-charcoal
-- **Unit Labels**: text-xs tracking-widest text-stone
-- **Context**: text-sm text-graphite below metric
+### Forms & Inputs
+- Clean inputs with subtle shadow only (no borders)
+- Labels in Inter 14px above inputs
+- Dark green focus glow
+- Organic rounded corners (12px)
+- Background: pure white or alabaster
+
+### Empty States
+- Large organic blob shapes as decorative backgrounds
+- Muted illustrations with green accents
+- Generous whitespace (64px+ padding)
+- Centered content with flowing composition
 
 ---
 
 ## Page-Specific Designs
 
-### Onboarding (Editorial Full Screen)
-- **Layout**: Centered content, max-w-3xl
-- **Progress**: 1px line indicator at top
-- **Question**: Fraunces hero size with category label above
-- **Input**: Transparent textarea with bottom border only
-- **Navigation**: Minimal BACK/CONTINUE buttons at bottom
-- **Step Counter**: Centered at page bottom
+### Dashboard
+- Hero section with organic card shapes
+- Asymmetric grid layout
+- Dark green accents on active elements
+- Layered shadows create depth hierarchy
+- Generous spacing between sections (48px)
 
-### Dashboard (Editorial Grid)
-- **Hero Section**: 
-  - Label: "YOUR NORTH STAR" in stone
-  - Statement: Fraunces large text in charcoal (max-w-900px)
-- **Content**: 2/3 main + 1/3 sidebar split
-- **Main Column**: 
-  - "THIS WEEK" section with dated tasks
-  - "CURRENT CHAPTER" metrics grid
-- **Sidebar**: 
-  - Reflection prompt card
-  - Energy patterns
-  - Upcoming items list
-
-### Connections Page
-- **View**: Editorial list with bottom borders
-- **Items**: Name (large) + relationship + last contact
-- **Metadata**: text-sm text-stone with bullet separators
-
-### Tasks & Goals
-- **List View**: Priority number + title + metadata
-- **Typography hierarchy**: Large serif titles, mono priorities
-- **Hover**: Border darkening, no background changes
+### Task Lists
+- Flowing organic item containers
+- Dark green for in-progress tasks
+- Layered shadows increase on hover
+- No borders, only elevation changes
 
 ### Weekly Review
-- **Layout**: Centered, max-w-3xl
-- **Sections**: Bottom-bordered with uppercase labels
-- **Inputs**: Minimal textarea with bottom borders
-- **Historical**: Timeline with subtle left border indicators
+- Large organic text areas
+- Canvas texture backgrounds
+- Dark green submit button
+- Soft, irregular shapes throughout
 
 ---
 
-## Interactions & Animations
+## Implementation Guidelines
 
-**Minimal & Intentional**:
-- Border color transitions: duration-200 (fog → charcoal on hover)
-- Text color transitions: duration-200 (stone → charcoal on hover)
-- Button inversion: background/color swap on hover
-- Arrow icons: translate-x-1 on hover
-- NO background color changes on cards
-- NO elevation/shadow changes
-- NO complex animations
+### CSS Architecture
+```css
+/* Remove ALL borders */
+border: none !important;
 
-### Hover States
-- **List Items**: Border bottom darkens (pearl → charcoal)
-- **Navigation Links**: Text color darkens (stone → charcoal)
-- **Buttons**: Invert colors with border
-- **Icons**: Slight translation (1-2px)
+/* Use organic shapes */
+border-radius: 24px 32px 24px 16px; /* Asymmetric */
 
----
+/* Layered shadows for depth */
+box-shadow: 
+  0 1px 3px rgba(0,0,0,0.04),
+  0 4px 16px rgba(0,0,0,0.06);
 
-## Responsive Behavior
+/* Dark green accent */
+--accent: #1B4332;
 
-- **Breakpoints**: Mobile-first (base → md:768px → lg:1024px)
-- **Typography**: clamp() for fluid scaling
-- **Padding**: px-8 on mobile → px-16 on desktop
-- **Grid**: Single column on mobile, editorial splits on desktop
-- **Navigation**: Same minimal bar, menu button for mobile
+/* Subtle texture */
+background-image: url('data:image/svg+xml,...'); /* Canvas pattern */
+```
+
+### Color Variables
+```css
+:root {
+  /* Primary accent - THE personality color */
+  --forest-green: #1B4332;
+  --forest-green-light: #2D5F4F;
+  --forest-green-dark: #0D3B2E;
+  
+  /* Remove all other accent colors */
+  /* Use only muted neutrals + forest green */
+}
+```
+
+### Component Classes
+```css
+.organic-card {
+  background: white;
+  border-radius: 24px 32px 24px 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  padding: 32px;
+}
+
+.organic-button-primary {
+  background: #1B4332;
+  color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(27,67,50,0.2);
+}
+```
 
 ---
 
 ## Brand Voice Through Design
 
-The editorial design communicates:
-- **Thoughtfulness** - Through generous whitespace and typography
-- **Clarity** - Through minimal borders and clean hierarchy  
-- **Sophistication** - Through serif fonts and magazine layouts
-- **Focus** - Through light backgrounds and calm colors
-- **Professionalism** - Through editorial polish and restraint
+The classical organic design communicates:
+- **Sophistication** - Through painterly depth and organic shapes
+- **Personality** - Through strategic dark green accents
+- **Clarity** - Through simplified typography (2 fonts only)
+- **Artfulness** - Through texture overlays and flowing forms
+- **Calm** - Through muted neutrals and borderless design
 
-This creates a productivity tool that feels like reading a well-designed magazine - calm, focused, and intentionally crafted for deep work and reflection.
+This creates a productivity tool that feels like a classical painting come to life - organic, sophisticated, and intentionally crafted with artistic sensibility.

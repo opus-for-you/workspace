@@ -33,28 +33,29 @@ export function ReflectionPrompt() {
   const prompt = PROMPTS[promptIndex];
 
   return (
-    <Card className="relative overflow-hidden animate-fade-in bg-gradient-to-br from-sage-soft to-background border-sage/10">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-sage/5 rounded-full blur-3xl" />
-      <CardContent className="pt-6 pb-6 relative">
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-sage-deep/10 rounded-lg">
-            <Sparkles className="h-5 w-5 text-sage-deep" />
+    <div className="relative overflow-hidden animate-fade-in bg-white rounded-organic shadow-organic p-8">
+      <div className="absolute inset-0 bg-gradient-to-br from-alabaster/50 to-transparent pointer-events-none" />
+      <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
+      <div className="relative">
+        <div className="flex items-start gap-6">
+          <div className="p-4 bg-primary/10 rounded-organic-sm">
+            <Sparkles className="h-6 w-6 text-primary" />
           </div>
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 space-y-4">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono tracking-wide uppercase text-sage">
+              <span className="text-xs tracking-widest uppercase text-primary font-medium">
                 Daily Reflection
               </span>
-              <span className="text-xs text-muted-foreground">• {prompt.category}</span>
+              <span className="text-xs text-stone">• {prompt.category}</span>
             </div>
-            <blockquote className="font-editorial text-lg leading-relaxed text-foreground/90">
+            <blockquote className="font-serif text-xl font-light leading-relaxed text-charcoal">
               "{prompt.text}"
             </blockquote>
             <Link href="/reviews" data-testid="link-weekly-review">
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="group -ml-3 text-sage-deep hover:text-sage-deep"
+                className="group -ml-3 text-primary hover:text-primary"
               >
                 Capture your thoughts
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -62,7 +63,7 @@ export function ReflectionPrompt() {
             </Link>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

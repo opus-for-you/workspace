@@ -49,46 +49,46 @@ export default function DashboardPage() {
       {/* Reflection Prompt - New Editorial Component */}
       <ReflectionPrompt />
 
-      {/* Current Chapter - Refined Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-        <div className="space-y-2">
+      {/* Current Chapter - Organic Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-organic shadow-organic p-6 organic-item-hover">
           <div className="flex items-baseline gap-2">
             <span className="stat-number" data-testid="text-active-goals">
               {goalsLoading ? "..." : goals.filter(g => g.progress < 100).length}
             </span>
-            <span className="stat-unit">Goals</span>
+            <span className="text-sm text-stone">Goals</span>
           </div>
-          <p className="stat-label">{avgGoalProgress}% average progress</p>
+          <p className="stat-label mt-2">{avgGoalProgress}% average progress</p>
         </div>
 
-        <div className="space-y-2">
+        <div className="bg-white rounded-organic shadow-organic p-6 organic-item-hover">
           <div className="flex items-baseline gap-2">
             <span className="stat-number" data-testid="text-open-tasks">
               {tasksLoading ? "..." : incompleteTasks.length}
             </span>
-            <span className="stat-unit">Tasks</span>
+            <span className="text-sm text-stone">Tasks</span>
           </div>
-          <p className="stat-label">{completedTasks} completed</p>
+          <p className="stat-label mt-2">{completedTasks} completed</p>
         </div>
 
-        <div className="space-y-2">
+        <div className="bg-white rounded-organic shadow-organic p-6 organic-item-hover">
           <div className="flex items-baseline gap-2">
             <span className="stat-number" data-testid="text-connections-count">
               {connectionsLoading ? "..." : connections.length}
             </span>
-            <span className="stat-unit">People</span>
+            <span className="text-sm text-stone">People</span>
           </div>
-          <p className="stat-label">{needsAttention.length} need attention</p>
+          <p className="stat-label mt-2">{needsAttention.length} need attention</p>
         </div>
 
-        <div className="space-y-2">
+        <div className="bg-white rounded-organic shadow-organic p-6 organic-item-hover">
           <div className="flex items-baseline gap-2">
             <span className="stat-number" data-testid="text-productivity">
               {tasksLoading ? "..." : completedTasks}
             </span>
-            <span className="stat-unit">Done</span>
+            <span className="text-sm text-stone">Done</span>
           </div>
-          <p className="stat-label">Out of {tasks.length} total</p>
+          <p className="stat-label mt-2">Out of {tasks.length} total</p>
         </div>
       </div>
 
@@ -96,138 +96,124 @@ export default function DashboardPage() {
       <WeeklyPriorities />
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Upcoming Tasks */}
-        <Card>
-          <CardHeader className="section-header-editorial">
-            <CardTitle className="section-title-editorial">
-              Upcoming Tasks
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="bg-white rounded-organic shadow-organic p-8">
+          <h3 className="section-title-organic">Upcoming Tasks</h3>
+          <div>
             {tasksLoading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading...</div>
+              <div className="text-center py-12 text-stone">Loading...</div>
             ) : upcomingTasks.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <CheckSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
+              <div className="text-center py-12 text-stone">
+                <CheckSquare className="h-12 w-12 mx-auto mb-3 opacity-30" />
                 <p>No upcoming tasks</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {upcomingTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-start justify-between gap-4 p-3 rounded-lg hover-elevate"
+                    className="flex items-start justify-between gap-4"
                     data-testid={`task-${task.id}`}
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{task.title}</p>
+                      <p className="text-base text-charcoal mb-1">{task.title}</p>
                       {task.description && (
-                        <p className="text-sm text-muted-foreground truncate">{task.description}</p>
+                        <p className="text-sm text-graphite truncate">{task.description}</p>
                       )}
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       {task.dueDate && (
-                        <span className="text-xs font-mono text-muted-foreground whitespace-nowrap">
+                        <span className="text-xs text-stone whitespace-nowrap">
                           {format(parseISO(task.dueDate), "MMM d")}
                         </span>
                       )}
-                      <Badge variant="secondary" className="text-xs">
-                        {task.status}
-                      </Badge>
+                      <span className="text-xs text-stone capitalize">{task.status}</span>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Goal Progress */}
-        <Card>
-          <CardHeader className="section-header-editorial">
-            <CardTitle className="section-title-editorial">
-              Goal Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="bg-white rounded-organic shadow-organic p-8">
+          <h3 className="section-title-organic">Goal Progress</h3>
+          <div>
             {goalsLoading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading...</div>
+              <div className="text-center py-12 text-stone">Loading...</div>
             ) : activeGoals.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Target className="h-12 w-12 mx-auto mb-3 opacity-50" />
+              <div className="text-center py-12 text-stone">
+                <Target className="h-12 w-12 mx-auto mb-3 opacity-30" />
                 <p>No active goals</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {activeGoals.map((goal) => (
-                  <div key={goal.id} className="space-y-2" data-testid={`goal-${goal.id}`}>
+                  <div key={goal.id} className="space-y-3" data-testid={`goal-${goal.id}`}>
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{goal.title}</p>
+                        <p className="text-base text-charcoal mb-1">{goal.title}</p>
                         {goal.targetDate && (
-                          <p className="text-xs font-mono text-muted-foreground">
+                          <p className="text-xs text-stone">
                             Due: {format(parseISO(goal.targetDate), "MMM d, yyyy")}
                           </p>
                         )}
                       </div>
-                      <span className="text-sm font-semibold">{goal.progress}%</span>
+                      <span className="text-2xl font-serif font-light text-primary">{goal.progress}%</span>
                     </div>
-                    <Progress value={goal.progress} className="h-2" />
+                    <Progress value={goal.progress} className="h-1" />
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+      </div>
 
-        {/* Connection Reminders */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="section-header-editorial">
-            <CardTitle className="section-title-editorial">
-              Connection Reminders
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {connectionsLoading ? (
-              <div className="text-center py-8 text-muted-foreground">Loading...</div>
-            ) : needsAttention.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>All connections are up to date!</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {needsAttention.map((connection) => {
-                  const daysSince = connection.lastTouch 
-                    ? differenceInDays(new Date(), parseISO(connection.lastTouch)) 
-                    : null;
-                  
-                  return (
-                    <div
-                      key={connection.id}
-                      className="p-4 border rounded-lg hover-elevate"
-                      data-testid={`connection-reminder-${connection.id}`}
-                    >
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{connection.name}</p>
-                          <p className="text-sm text-muted-foreground">{connection.relationship}</p>
-                        </div>
-                        <Badge variant="outline" className="text-xs">
-                          {daysSince ? `${daysSince}d ago` : "Never"}
-                        </Badge>
+      {/* Connection Reminders */}
+      <div className="bg-white rounded-organic shadow-organic p-8">
+        <h3 className="section-title-organic">Connection Reminders</h3>
+        <div>
+          {connectionsLoading ? (
+            <div className="text-center py-12 text-stone">Loading...</div>
+          ) : needsAttention.length === 0 ? (
+            <div className="text-center py-12 text-stone">
+              <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
+              <p>All connections are up to date!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {needsAttention.map((connection) => {
+                const daysSince = connection.lastTouch 
+                  ? differenceInDays(new Date(), parseISO(connection.lastTouch)) 
+                  : null;
+                
+                return (
+                  <div
+                    key={connection.id}
+                    className="bg-alabaster rounded-organic-sm p-6 organic-item-hover"
+                    data-testid={`connection-reminder-${connection.id}`}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-base text-charcoal mb-1">{connection.name}</p>
+                        <p className="text-sm text-stone">{connection.relationship}</p>
                       </div>
-                      {connection.notes && (
-                        <p className="text-xs text-muted-foreground line-clamp-2">{connection.notes}</p>
-                      )}
+                      <span className="text-xs text-stone">
+                        {daysSince ? `${daysSince}d ago` : "Never"}
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    {connection.notes && (
+                      <p className="text-sm text-graphite line-clamp-2">{connection.notes}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

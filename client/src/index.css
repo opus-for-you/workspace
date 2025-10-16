@@ -1,10 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* EDITORIAL LIGHT MODE */
+/* CLASSICAL ORGANIC AESTHETIC */
 :root {
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
@@ -21,21 +19,21 @@
 
   --foreground: 0 0% 11%;  /* Charcoal */
 
-  --border: 0 0% 91%;  /* Pearl */
+  --border: transparent;  /* No borders */
 
   --card: 0 0% 100%;  /* Pure white */
 
   --card-foreground: 0 0% 11%;  /* Charcoal */
 
-  --card-border: 0 0% 91%;  /* Pearl */
+  --card-border: transparent;  /* No borders */
 
   --sidebar: 0 0% 96%;  /* Alabaster */
 
   --sidebar-foreground: 0 0% 11%;  /* Charcoal */
 
-  --sidebar-border: 0 0% 91%;  /* Pearl */
+  --sidebar-border: transparent;  /* No borders */
 
-  --sidebar-primary: 208 50% 35%;  /* Ocean */
+  --sidebar-primary: 156 49% 18%;  /* Dark Forest Green */
 
   --sidebar-primary-foreground: 0 0% 100%;  /* Pure */
 
@@ -43,15 +41,15 @@
 
   --sidebar-accent-foreground: 0 0% 11%;  /* Charcoal */
 
-  --sidebar-ring: 208 50% 35%;  /* Ocean */
+  --sidebar-ring: 156 49% 18%;  /* Dark Forest Green */
 
   --popover: 0 0% 100%;  /* Pure */
 
   --popover-foreground: 0 0% 11%;  /* Charcoal */
 
-  --popover-border: 0 0% 91%;  /* Pearl */
+  --popover-border: transparent;  /* No borders */
 
-  --primary: 208 50% 35%;  /* Ocean - primary actions */
+  --primary: 156 49% 18%;  /* Dark Forest Green - THE accent color */
 
   --primary-foreground: 0 0% 100%;  /* Pure */
 
@@ -82,35 +80,37 @@
   --ivory: 0 0% 98%;  /* Main background */
   --pure: 0 0% 100%;  /* White */
 
-  /* Editorial accent colors */
-  --forest: 156 44% 20%;  /* Success */
-  --sage: 171 22% 39%;  /* Calm */
-  --rust: 4 42% 46%;  /* Warning */
-  --sand: 35 48% 64%;  /* Warm */
-  --ocean: 208 50% 35%;  /* Primary */
+  /* THE accent color - Dark Forest Green */
+  --forest: 156 49% 18%;  /* #1B4332 - THE personality color */
+  --forest-light: 156 35% 28%;  /* Lighter variant */
+  --forest-dark: 156 55% 14%;  /* Darker variant */
 
-  --input: 0 0% 91%;  /* Pearl */
-  --ring: 208 50% 35%;  /* Ocean */
-  --chart-1: 208 50% 35%;  /* Ocean */
-  --chart-2: 156 44% 20%;  /* Forest */
-  --chart-3: 35 48% 64%;  /* Sand */
-  --chart-4: 4 42% 46%;  /* Rust */
-  --chart-5: 171 22% 39%;  /* Sage */
+  --input: transparent;  /* No borders */
+  --ring: 156 49% 18%;  /* Dark Forest Green */
+  --chart-1: 156 49% 18%;  /* Forest */
+  --chart-2: 0 0% 31%;  /* Graphite */
+  --chart-3: 0 0% 54%;  /* Stone */
+  --chart-4: 4 42% 46%;  /* Rust for warnings only */
+  --chart-5: 0 0% 72%;  /* Fog */
 
   --font-sans: Inter, system-ui, -apple-system, sans-serif;
   --font-serif: Fraunces, 'Libre Baskerville', Georgia, serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
-  --radius: .25rem; /* Minimal rounding - 4px */
-  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 4% / 0.05);
-  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 4% / 0.06);
-  --shadow-sm: 0px 1px 3px 0px hsl(0 0% 4% / 0.08), 0px 1px 2px -1px hsl(0 0% 4% / 0.08);
-  --shadow: 0px 2px 4px -1px hsl(0 0% 4% / 0.10), 0px 4px 6px -1px hsl(0 0% 4% / 0.10);
-  --shadow-md: 0px 4px 6px -1px hsl(0 0% 4% / 0.12), 0px 2px 4px -2px hsl(0 0% 4% / 0.10);
-  --shadow-lg: 0px 10px 15px -3px hsl(0 0% 4% / 0.14), 0px 4px 6px -4px hsl(0 0% 4% / 0.10);
-  --shadow-xl: 0px 20px 25px -5px hsl(0 0% 4% / 0.16), 0px 8px 10px -6px hsl(0 0% 4% / 0.10);
-  --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 4% / 0.25);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
+  
+  /* Organic border-radius (asymmetric) */
+  --radius-organic: 24px 32px 24px 16px;
+  --radius-organic-sm: 16px 20px 16px 12px;
+  --radius-organic-lg: 32px 40px 32px 24px;
+  
+  /* Painterly shadow system (no borders, only depth) */
+  --shadow-close: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-near: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-mid: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-far: 0 8px 24px rgba(0,0,0,0.10);
+  --shadow-deep: 0 16px 48px rgba(0,0,0,0.12);
+  
+  /* Layered shadow (classical depth) */
+  --shadow-organic: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-organic-lg: 0 4px 12px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08);
 
   /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
 
@@ -375,12 +375,38 @@
     inset: -1px;
   }
 
-  /* Editorial Typography Classes */
-  .font-editorial {
-    font-family: 'Crimson Pro', Georgia, serif;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 1.4;
+  /* Organic Border Radius */
+  .rounded-organic {
+    border-radius: var(--radius-organic);
+  }
+
+  .rounded-organic-sm {
+    border-radius: var(--radius-organic-sm);
+  }
+
+  .rounded-organic-lg {
+    border-radius: var(--radius-organic-lg);
+  }
+
+  /* Organic Shadows (no borders) */
+  .shadow-organic {
+    box-shadow: var(--shadow-organic);
+  }
+
+  .shadow-organic-lg {
+    box-shadow: var(--shadow-organic-lg);
+  }
+
+  .shadow-near {
+    box-shadow: var(--shadow-near);
+  }
+
+  .shadow-mid {
+    box-shadow: var(--shadow-mid);
+  }
+
+  .shadow-far {
+    box-shadow: var(--shadow-far);
   }
 
   .heading-editorial-xl {
@@ -468,25 +494,28 @@
     @apply text-fog;
   }
 
-  /* Section Headers - Editorial Style */
-  .section-header-editorial {
-    @apply border-b border-pearl pb-4 mb-6;
+  /* Section Headers - Organic Style (no borders) */
+  .section-header-organic {
+    @apply pb-6 mb-6;
+    border-bottom: none;
   }
 
-  .section-title-editorial {
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    @apply uppercase text-charcoal;
+  .section-title-organic {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 300;
+    @apply text-charcoal mb-4;
   }
 
-  /* Priority Item Hover Effect */
-  .priority-item-hover {
+  /* Organic Item Hover Effect (shadow-based) */
+  .organic-item-hover {
     @apply transition-all duration-300 cursor-pointer;
+    box-shadow: var(--shadow-close);
   }
 
-  .priority-item-hover:hover {
-    transform: translateX(4px);
-    @apply border-opacity-20;
+  .organic-item-hover:hover {
+    box-shadow: var(--shadow-mid);
+    transform: translateY(-2px);
   }
 
   /* Minimal Stats - Large Number + Small Unit */

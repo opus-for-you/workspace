@@ -24,52 +24,44 @@ export function WeeklyPriorities() {
 
   if (isLoading) {
     return (
-      <Card className="animate-slide-up">
-        <CardHeader>
-          <CardTitle className="font-serif text-xl tracking-tight flex items-center gap-2">
-            <ListTodo className="h-5 w-5 text-sage" />
-            Weekly Priorities
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-muted-foreground">Loading...</div>
-        </CardContent>
-      </Card>
+      <div className="bg-white rounded-organic shadow-organic p-8 animate-slide-up">
+        <h3 className="section-title-organic flex items-center gap-3">
+          <ListTodo className="h-7 w-7 text-primary" />
+          Weekly Priorities
+        </h3>
+        <div className="text-center py-12 text-stone">Loading...</div>
+      </div>
     );
   }
 
   return (
-    <Card className="animate-slide-up">
-      <CardHeader className="section-header-editorial">
-        <CardTitle className="section-title-editorial flex items-center gap-2">
-          This Week
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-2">
+    <div className="bg-white rounded-organic shadow-organic p-8 animate-slide-up">
+      <h3 className="section-title-organic">This Week</h3>
+      <div>
         {priorityTasks.length === 0 ? (
           <div className="text-center py-12">
-            <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-sage/50" />
-            <p className="text-muted-foreground">No priority tasks this week</p>
+            <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-primary opacity-30" />
+            <p className="text-stone">No priority tasks this week</p>
           </div>
         ) : (
-          <div className="space-y-0">
+          <div className="space-y-6">
             {priorityTasks.map((task, index) => (
               <div
                 key={task.id}
-                className="flex gap-6 pb-6 mb-6 border-b border-pearl last:border-0 last:mb-0 last:pb-0 priority-item-hover"
+                className="flex gap-6 pb-6 last:pb-0"
                 data-testid={`priority-task-${task.id}`}
               >
-                <span className="priority-rank">{String(index + 1).padStart(2, '0')}</span>
+                <span className="text-3xl font-serif font-light text-primary">{String(index + 1).padStart(2, '0')}</span>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-lg font-normal text-charcoal mb-2 leading-snug">
+                  <h4 className="text-base text-charcoal mb-2 leading-snug">
                     {task.title}
                   </h4>
-                  <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-3 text-sm">
                     <span className="text-graphite capitalize">{task.status.replace('-', ' ')}</span>
                     {task.dueDate && (
                       <>
-                        <span className="text-fog">•</span>
-                        <span className="text-stone font-mono text-xs">
+                        <span className="text-stone">•</span>
+                        <span className="text-stone text-xs">
                           {new Date(task.dueDate).toLocaleDateString('en-US', { 
                             weekday: 'short',
                             month: 'short', 
@@ -84,7 +76,7 @@ export function WeeklyPriorities() {
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
