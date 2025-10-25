@@ -1,0 +1,128 @@
+Update client/src/index.css:
+cssCopy@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.25rem;
+    
+    /* Editorial Design System */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 11%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 11%;
+    
+    --primary: 0 0% 11%;
+    --primary-foreground: 0 0% 98%;
+    
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 11%;
+    
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 54%;
+    
+    --accent: 160 42% 17%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 3 40% 48%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 160 42% 17%;
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply antialiased scroll-smooth;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Editorial Typography Classes */
+  .font-display {
+    font-family: 'Fraunces', 'Georgia', serif;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+  
+  .font-editorial {
+    font-family: 'Crimson Pro', 'Georgia', serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  
+  /* Breathing Room */
+  .breathing-space {
+    @apply py-16 md:py-24 lg:py-32 px-8 md:px-16 lg:px-24;
+  }
+  
+  /* Editorial Components */
+  .editorial-label {
+    @apply text-xs font-medium tracking-extreme uppercase text-stone;
+  }
+  
+  .editorial-heading-xl {
+    @apply font-display text-display-xl text-charcoal leading-none;
+  }
+  
+  .editorial-heading-lg {
+    @apply font-display text-display-lg text-charcoal leading-tight;
+  }
+  
+  .editorial-heading-md {
+    @apply font-display text-display-md text-charcoal leading-snug;
+  }
+  
+  /* Subtle Focus States */
+  :focus-visible {
+    @apply outline-none ring-2 ring-sage-deep/20 ring-offset-2 ring-offset-background;
+  }
+  
+  /* Selection */
+  ::selection {
+    @apply bg-sage-light/10 text-sage-deep;
+  }
+}
+
+@layer components {
+  /* Editorial Card */
+  .editorial-card {
+    @apply bg-card border border-border hover:shadow-lg transition-all duration-500;
+  }
+  
+  /* Quiet Button */
+  .btn-quiet {
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-medium tracking-wider
+           transition-all duration-300 focus-visible:outline-none focus-visible:ring-2;
+  }
+  
+  /* Progress Bar */
+  .progress-bar {
+    @apply h-px bg-pearl relative overflow-hidden;
+  }
+  
+  .progress-bar-fill {
+    @apply absolute inset-y-0 left-0 bg-charcoal transition-all duration-700 ease-out;
+  }
+}

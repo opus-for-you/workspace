@@ -243,9 +243,9 @@ export default function GoalsPage() {
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">Loading goals...</div>
       ) : goals.length === 0 ? (
-        <div className="bg-white rounded-organic shadow-organic p-16 flex flex-col items-center justify-center">
+        <div className="editorial-card p-16 flex flex-col items-center justify-center">
           <Target className="h-16 w-16 text-stone mb-6 opacity-30" />
-          <h3 className="text-2xl font-serif font-light mb-3">No goals yet</h3>
+          <h3 className="text-2xl font-display font-light mb-3">No goals yet</h3>
           <p className="text-graphite mb-6">Set your first goal to get started</p>
           <Button onClick={() => setIsCreateOpen(true)} data-testid="button-create-first-goal">
             <Plus className="h-4 w-4 mr-2" />

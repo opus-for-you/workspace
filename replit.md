@@ -11,18 +11,40 @@ Opus is a full-stack productivity application designed for young professionals t
 
 ## Recent Changes (October 2025)
 
-### Classical Organic Design System - Version 2.0 (Latest)
-- **Complete Design Pivot**: Transformation from editorial magazine to classical oil painting aesthetic
-  - **Borderless Design**: NO borders anywhere - depth achieved through layered shadow system only
-  - **Organic Shapes**: Asymmetric border-radius (24px 32px 24px 16px) creates flowing, natural forms
-  - **Dark Forest Green Accent**: #1B4332 as THE singular accent color for personality and focus
-  - **Simplified Typography**: Only 2 fonts - Fraunces (headings 36-48px) and Inter (body 16px)
-  - **Muted Palette**: Ivory (#FAFAFA), Alabaster (#F4F4F4), Pure White (#FFFFFF), Charcoal (#1C1C1C)
-  - **Painterly Depth**: Multi-layer shadow system mimics classical oil painting layering
-  - **Organic Components**: All cards, containers, and interactive elements use organic rounded shapes
-- **CSS Utilities**: New organic design classes (.rounded-organic, .shadow-organic, .organic-item-hover)
-- **Component Updates**: Dashboard, WeeklyPriorities, and ReflectionPrompt redesigned with organic aesthetic
-- **Font Cleanup**: Removed Crimson Pro and JetBrains Mono - simplified to Fraunces + Inter only
+### Editorial Magazine Design System - Version 1.5 (Latest)
+- **Editorial Navigation**: Replaced sidebar with top horizontal navigation bar
+  - Sticky positioning with backdrop blur effect
+  - Desktop: horizontal nav links (Dashboard, Goals, Reflect, Profile)
+  - Mobile: hamburger menu with Sheet component
+  - Editorial typography and spacing
+  - Active link highlighting
+  - Seamless logout integration
+
+### Editorial Magazine Design System - Version 1.4
+- **Onboarding Integration**: Onboarding responses now saved to user profile
+  - Users table enhanced with `vision`, `energy`, `direction`, `obstacles` fields
+  - POST /api/onboarding endpoint stores reflective answers
+  - User vision displayed as "North Star" on dashboard
+- **Dashboard Redesign**: Complete editorial magazine-style overhaul
+  - **North Star Section**: Hero area featuring user's vision statement
+  - **This Week**: Task list with numbered items, context, timing, and energy indicators
+  - **Current Chapter**: Large display numbers showing metrics (days, connections, milestones, alignment)
+  - **Active Goals**: Card-based goal display with category labels and progress bars
+  - **Sidebar Components**: Weekly reflection prompt, energy patterns, upcoming items
+  - **Animation**: Staggered entry, hover micro-interactions, smooth page transitions
+- **Enhanced Data Model**:
+  - Tasks: Added `context`, `timing`, `energy`, `priority` fields for better workflow management
+  - Goals: Added `category` field for organization
+  - Users: Added onboarding response fields for personalization
+- **Editorial Components Library** (`@/components/editorial`):
+  - `EditorialHeading` - Animated display headings with size variants
+  - `EditorialLabel` - Uppercase tracked labels with fade-in
+  - `EditorialText` - Editorial body text component
+  - `ProgressLine` - Animated progress visualization
+  - `BreathingContainer` - Generous padding container
+- **Design System**: Pearl borders (#E8E8E8), 0.25rem radius, sage green accents (#158 25% 31%), four-font hierarchy
+- **CSS Utilities**: .editorial-card, .editorial-number, .editorial-label, .section-title, .metric-card, .breathing-space
+- **Animation Library**: fadeInUp, staggerContainer variants, custom transitions
 
 ### MVP Completion - Version 1.0
 - **Complete Authentication System**: Secure session-based authentication with password hashing, login/register flows, and protected routes
@@ -55,7 +77,7 @@ Opus is a full-stack productivity application designed for young professionals t
 
 **Form Handling**: React Hook Form manages form state with Zod schemas for runtime validation. This provides type-safe forms with minimal re-renders.
 
-**Design System**: Classical organic aesthetic inspired by oil paintings. Borderless design uses layered shadows for depth. Organic asymmetric shapes (24px 32px 24px 16px radius) create flowing forms. Dark forest green (#1B4332) as the singular accent color. Simplified typography with only Fraunces (headings) and Inter (body). Light mode primary with ivory/alabaster/white backgrounds creating painterly depth hierarchy.
+**Design System**: Editorial magazine aesthetic with refined typography and generous whitespace. Pearl borders (#E8E8E8) define cards with 8px radius. Sage green accent colors provide sophisticated personality. Four-font hierarchy: Fraunces (display), Crimson Pro (editorial), Inter (body), JetBrains Mono (data). Light mode primary with ivory/alabaster/white backgrounds creating magazine-quality reading experience.
 
 ### Backend Architecture
 

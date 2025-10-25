@@ -24,9 +24,9 @@ export function WeeklyPriorities() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-organic shadow-organic p-8 animate-slide-up">
-        <h3 className="section-title-organic flex items-center gap-3">
-          <ListTodo className="h-7 w-7 text-primary" />
+      <div className="editorial-card p-8 animate-slide-up">
+        <h3 className="section-title mb-6 flex items-center gap-3">
+          <ListTodo className="h-7 w-7 text-accent" />
           Weekly Priorities
         </h3>
         <div className="text-center py-12 text-stone">Loading...</div>
@@ -35,12 +35,12 @@ export function WeeklyPriorities() {
   }
 
   return (
-    <div className="bg-white rounded-organic shadow-organic p-8 animate-slide-up">
-      <h3 className="section-title-organic">This Week</h3>
+    <div className="editorial-card p-8 animate-slide-up">
+      <h3 className="section-title mb-6">This Week</h3>
       <div>
         {priorityTasks.length === 0 ? (
           <div className="text-center py-12">
-            <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-primary opacity-30" />
+            <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-accent opacity-30" />
             <p className="text-stone">No priority tasks this week</p>
           </div>
         ) : (
@@ -48,10 +48,10 @@ export function WeeklyPriorities() {
             {priorityTasks.map((task, index) => (
               <div
                 key={task.id}
-                className="flex gap-6 pb-6 last:pb-0"
+                className="flex gap-6 pb-6 last:pb-0 priority-item"
                 data-testid={`priority-task-${task.id}`}
               >
-                <span className="text-3xl font-serif font-light text-primary">{String(index + 1).padStart(2, '0')}</span>
+                <span className="priority-number text-2xl">{String(index + 1).padStart(2, '0')}</span>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-base text-charcoal mb-2 leading-snug">
                     {task.title}

@@ -9,12 +9,6 @@
 
 @layer base {
   :root {
-    --button-outline: rgba(0,0,0, .10);
-    --badge-outline: rgba(0,0,0, .05);
-    --opaque-button-border-intensity: -8;
-    --elevate-1: rgba(0,0,0, .03);
-    --elevate-2: rgba(0,0,0, .08);
-    
     --background: 0 0% 98%; /* ivory */
     --foreground: 0 0% 11%; /* charcoal */
     
@@ -47,12 +41,6 @@
   }
   
   .dark {
-    --button-outline: rgba(255,255,255, .10);
-    --badge-outline: rgba(255,255,255, .05);
-    --opaque-button-border-intensity: 9;
-    --elevate-1: rgba(255,255,255, .04);
-    --elevate-2: rgba(255,255,255, .09);
-    
     --background: 0 0% 11%;
     --foreground: 0 0% 98%;
     
@@ -137,74 +125,11 @@
   
   /* Editorial Card */
   .editorial-card {
-    @apply bg-card border border-border rounded-lg hover:shadow-lg transition-all duration-500;
-  }
-  
-  .metric-card {
-    @apply bg-white border border-border rounded-lg p-6;
-  }
-  
-  /* Section Title */
-  .section-title {
-    @apply uppercase text-xs tracking-widest text-muted-foreground font-semibold;
-  }
-  
-  /* Editorial Number */
-  .editorial-number {
-    @apply font-display text-5xl font-light text-foreground;
-  }
-  
-  /* Priority Item */
-  .priority-item {
-    @apply transition-transform duration-200;
-  }
-  
-  .priority-item:hover {
-    @apply translate-x-1;
-  }
-  
-  .priority-number {
-    @apply font-mono text-sm text-muted-foreground;
+    @apply bg-card border border-border hover:shadow-lg transition-all duration-500;
   }
   
   /* Subtle Animations */
   .animate-on-scroll {
     animation: fade-in 0.6s ease-out forwards;
-  }
-}
-
-@layer utilities {
-  /* Hover elevation */
-  .hover-elevate {
-    position: relative;
-    transition: background-color 0.2s ease;
-  }
-
-  .hover-elevate:hover {
-    background-color: var(--elevate-1);
-  }
-
-  .active-elevate-2 {
-    transition: background-color 0.1s ease;
-  }
-
-  .active-elevate-2:active {
-    background-color: var(--elevate-2);
-  }
-
-  .no-default-hover-elevate:hover {
-    background-color: transparent !important;
-  }
-
-  .no-default-active-elevate:active {
-    background-color: transparent !important;
-  }
-
-  .toggle-elevate {
-    transition: background-color 0.2s ease;
-  }
-
-  .toggle-elevated {
-    background-color: var(--elevate-2);
   }
 }

@@ -29,6 +29,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, data: Partial<Omit<User, 'id' | 'password'>>): Promise<User | undefined>;
   
   // Connection operations
   getConnections(userId: string): Promise<Connection[]>;
@@ -57,11 +58,11 @@ export interface IStorage {
   createWeeklyReview(userId: string, review: InsertWeeklyReview): Promise<WeeklyReview>;
   deleteWeeklyReview(id: string, userId: string): Promise<boolean>;
   
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: session.Store;
 
   constructor() {
     this.sessionStore = new PostgresSessionStore({ pool, createTableIfMissing: true });
@@ -84,6 +85,15 @@ export class DatabaseStorage implements IStorage {
       .values(insertUser)
       .returning();
     return user;
+  }
+
+  async updateUser(id: string, data: Partial<Omit<User, 'id' | 'password'>>): Promise<User | undefined> {
+    const [updated] = await db
+      .update(users)
+      .set(data)
+      .where(eq(users.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   // Connection operations

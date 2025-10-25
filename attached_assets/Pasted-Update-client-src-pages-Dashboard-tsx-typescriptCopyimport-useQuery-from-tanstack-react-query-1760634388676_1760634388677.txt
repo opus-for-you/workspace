@@ -1,0 +1,277 @@
+Update client/src/pages/Dashboard.tsx:
+typescriptCopyimport { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { Calendar, TrendingUp, Target, Clock, Zap, ChevronRight } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  EditorialHeading,
+  EditorialLabel,
+  EditorialSection,
+  BreathingSpace,
+  ProgressIndicator,
+  staggerContainer,
+  fadeInUp,
+} from "@/components/editorial";
+
+export default function Dashboard() {
+  // Fetch user data using existing TanStack Query setup
+  const { data: userData } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const response = await fetch("/api/user");
+      if (!response.ok) throw new Error("Failed to fetch user");
+      return response.json();
+    },
+  });
+
+  const { data: tasksData } = useQuery({
+    queryKey: ["tasks", "week"],
+    queryFn: async () => {
+      const response = await fetch("/api/tasks?period=week");
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+      return response.json();
+    },
+  });
+
+  const { data: goalsData } = useQuery({
+    queryKey: ["goals", "active"],
+    queryFn: async () => {
+      const response = await fetch("/api/goals?status=active");
+      if (!response.ok) throw new Error("Failed to fetch goals");
+      return response.json();
+    },
+  });
+
+  return (
+    <div className="min-h-screen bg-ivory">
+      <BreathingSpace>
+        {/* Hero Section - North Star */}
+        <motion.section 
+          className="mb-24"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
+          <EditorialLabel className="mb-6">YOUR NORTH STAR</EditorialLabel>
+          
+          <EditorialHeading level={1} className="max-w-5xl mb-8">
+            {userData?.vision || "Build products that bridge human needs with technological possibility."}
+          </EditorialHeading>
+          
+          <motion.div 
+            className="flex items-center gap-8 text-sm text-stone"
+            variants={fadeInUp}
+          >
+            <span className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Week 42 of 2024
+            </span>
+            <span className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              82% Aligned
+            </span>
+          </motion.div>
+        </motion.section>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+          {/* Main Column */}
+          <div className="lg:col-span-2 space-y-16">
+            {/* This Week's Priorities */}
+            <EditorialSection label="THIS WEEK" title="">
+              <div className="space-y-6">
+                {tasksData?.map((task: any, idx: number) => (
+                  <motion.div
+                    key={task.id}
+                    className="group cursor-pointer"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    whileHover={{ x: 4 }}
+                  >
+                    <div className="border-b border-pearl pb-6 hover:border-charcoal/20 transition-colors duration-300">
+                      <div className="flex items-start gap-6">
+                        <span className="font-mono text-2xl font-extralight text-fog">
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <div className="flex-1">
+                          <h4 className="text-xl text-charcoal mb-2">
+                            {task.title}
+                          </h4>
+                          <div className="flex items-center gap-6 text-sm text-stone">
+                            <span>{task.context}</span>
+                            <span className="text-fog">•</span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {task.timing}
+                            </span>
+                            {task.energy === "high" && (
+                              <>
+                                <span className="text-fog">•</span>
+                                <span className="flex items-center gap-1 text-sage">
+                                  <Zap className="w-3 h-3" />
+                                  High Energy
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <Button
+                variant="ghost"
+                className="mt-8 text-sm tracking-wider text-stone hover:text-charcoal"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                SET NEXT PRIORITY
+              </Button>
+            </EditorialSection>
+
+            {/* Current Chapter */}
+            <EditorialSection label="CURRENT CHAPTER">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                {[
+                  { metric: "82", unit: "DAYS", label: "Building thought leadership" },
+                  { metric: "14", unit: "CONNECTIONS", label: "Strategic relationships" },
+                  { metric: "3", unit: "MILESTONES", label: "Technical achievements" },
+                  { metric: "92", unit: "% ALIGNED", label: "With your vision" },
+                ].map((stat, idx) => (
+                  <motion.div
+                    key={idx}
+                    className="group cursor-pointer"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 + idx * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    <div className="flex items-baseline gap-2 mb-2">
+                      <span className="font-display text-5xl font-light text-charcoal 
+                                     group-hover:text-sage-deep transition-colors">
+                        {stat.metric}
+                      </span>
+                      <span className="text-xs tracking-wider text-stone">
+                        {stat.unit}
+                      </span>
+                    </div>
+                    <p className="text-sm text-graphite">{stat.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </EditorialSection>
+
+            {/* Active Goals */}
+            <EditorialSection label="ACTIVE GOALS">
+              <div className="space-y-6">
+                {goalsData?.map((goal: any, idx: number) => (
+                  <motion.div
+                    key={goal.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.7 + idx * 0.1 }}
+                  >
+                    <Card className="p-6 border-pearl hover:border-charcoal/20 
+                                   transition-all duration-300 hover:shadow-lg">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <p className="text-xs text-stone mb-2">{goal.category}</p>
+                          <h4 className="text-lg text-charcoal">{goal.title}</h4>
+                        </div>
+                        <span className="text-xs text-stone">{goal.daysLeft}D</span>
+                      </div>
+                      <ProgressIndicator value={goal.progress} showLabel />
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </EditorialSection>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-12">
+            {/* Weekly Reflection */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card className="p-6 editorial-card">
+                <h4 className="text-sm tracking-wider text-charcoal mb-4">
+                  WEEKLY REFLECTION
+                </h4>
+                <p className="text-sm text-graphite leading-relaxed mb-6">
+                  What patterns are emerging in your work? Take 10 minutes to capture insights.
+                </p>
+                <Button className="w-full bg-charcoal hover:bg-ink text-pure">
+                  BEGIN
+                </Button>
+              </Card>
+            </motion.div>
+
+            {/* Energy Patterns */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <h4 className="text-sm tracking-wider text-charcoal mb-6">
+                ENERGY PATTERNS
+              </h4>
+              <div className="space-y-5">
+                {[
+                  { label: "Peak Focus", time: "9-11 AM", level: 85 },
+                  { label: "Creative Flow", time: "2-4 PM", level: 70 },
+                  { label: "Strategic Thinking", time: "5-6 PM", level: 60 },
+                ].map((pattern, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-graphite">{pattern.label}</span>
+                      <span className="text-charcoal">{pattern.time}</span>
+                    </div>
+                    <ProgressIndicator value={pattern.level} />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Upcoming */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <h4 className="text-sm tracking-wider text-charcoal mb-6">
+                NEXT WEEK
+              </h4>
+              <ul className="space-y-4">
+                {[
+                  "Product strategy session",
+                  "1:1 with Sarah Chen",
+                  "Technical architecture review",
+                ].map((item, idx) => (
+                  <motion.li
+                    key={idx}
+                    className="flex items-center justify-between group cursor-pointer"
+                    whileHover={{ x: 2 }}
+                  >
+                    <span className="text-sm text-graphite group-hover:text-charcoal 
+                                   transition-colors">
+                      {item}
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-fog group-hover:text-charcoal 
+                                           transition-colors" />
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </div>
+        </div>
+      </BreathingSpace>
+    </div>
+  );
+}

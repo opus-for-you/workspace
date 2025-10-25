@@ -3,12 +3,21 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
+import { z } from "zod";
 import { 
   insertConnectionSchema, 
   insertGoalSchema, 
   insertTaskSchema, 
   insertWeeklyReviewSchema 
 } from "@shared/schema";
+
+// Onboarding schema for validation
+const onboardingSchema = z.object({
+  vision: z.string().min(1),
+  energy: z.string().min(1),
+  direction: z.string().min(1),
+  obstacles: z.string().min(1),
+});
 
 // Middleware to ensure user is authenticated
 function requireAuth(req: any, res: any, next: any) {
@@ -21,6 +30,17 @@ function requireAuth(req: any, res: any, next: any) {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Sets up /api/register, /api/login, /api/logout, /api/user
   setupAuth(app);
+
+  // Onboarding route
+  app.post("/api/onboarding", requireAuth, async (req, res) => {
+    try {
+      const data = onboardingSchema.parse(req.body);
+      await storage.updateUser(req.user!.id, data);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
 
   // Connection routes
   app.get("/api/connections", requireAuth, async (req, res) => {

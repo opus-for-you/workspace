@@ -1,240 +1,267 @@
-# Opus Design System - Classical Organic Aesthetic
+# Opus Design Guidelines - Editorial Magazine Aesthetic
 
 ## Design Philosophy
 
-**Classical Oil Painting Meets Modern Design**
-- Inspired by the layered depth and rich textures of classical oil paintings
-- Organic, flowing shapes instead of rigid geometric boxes
-- Borderless design with elevation through shadows
-- Muted color palette with a strong dark forest green accent for personality
+Opus embraces a **refined editorial magazine aesthetic** that prioritizes clean typography, generous whitespace, and sophisticated minimalism. The design draws inspiration from high-end print publications, creating a professional reading experience for young professionals managing their work and personal lives.
 
-## Core Principles
+## Color System
 
-### 1. Organic Shapes
-- **No hard borders or sharp rectangular boxes**
-- Irregular, natural border-radius values (16px/24px/32px combined)
-- Blob-like containers with soft, flowing edges
-- Asymmetric rounded corners for visual interest
+### Editorial Neutrals
+The foundation of our color palette consists of sophisticated grayscale tones:
 
-### 2. Layered Depth (Chiaroscuro-inspired)
-- **No borders** - depth comes from shadows and background elevation
-- Multiple shadow layers for painterly depth:
-  - Close shadows: subtle definition
-  - Mid shadows: elevation
-  - Far shadows: dramatic depth
-- Background color shifts for hierarchy (ivory → alabaster → pure white)
+- **Ink** `#0A0A0A` (hsl(0, 0%, 4%)) - Darkest text, reserved for emphasis
+- **Charcoal** `#1C1C1C` (hsl(0, 0%, 11%)) - Primary text color
+- **Graphite** `#4F4F4F` (hsl(0, 0%, 31%)) - Secondary text
+- **Stone** `#8A8A8A` (hsl(0, 0%, 54%)) - Tertiary text, labels
+- **Fog** `#B8B8B8` (hsl(0, 0%, 72%)) - Subtle text, hints
+- **Pearl** `#E8E8E8` (hsl(0, 0%, 91%)) - Borders, dividers
+- **Alabaster** `#F5F5F5` (hsl(0, 0%, 96%)) - Subtle backgrounds
+- **Ivory** `#FAFAFA` (hsl(0, 0%, 98%)) - Main background
+- **Pure** `#FFFFFF` (hsl(0, 0%, 100%)) - Cards, elevated surfaces
 
-### 3. Simplified Typography
-- **Only 2 fonts**:
-  - **Fraunces**: Display headings only (36-48px)
-  - **Inter**: Everything else (body 16px, labels 14px, small 12px)
-- **Dropped**: Crimson Pro, JetBrains Mono (too much variety)
-- Clear size hierarchy: Large/Medium/Small only
+### Sage Green - Brand Accent
+Sage green serves as our primary brand color, evoking growth, balance, and sophistication:
 
-### 4. Color Strategy
+- **Sage Deep** `#1B4332` (hsl(160, 42%, 17%)) - Primary actions, focus states
+- **Sage Medium** `#2D5F4F` (hsl(160, 35%, 30%)) - Hover states
+- **Sage Default** `#52796F` (hsl(160, 20%, 40%)) - Secondary elements
+- **Sage Light** `#8FA39B` (hsl(160, 15%, 50%)) - Disabled states
+- **Sage Pale** `#A7BBB5` (hsl(160, 10%, 60%)) - Subtle accents
+- **Sage Soft** `#E8F0ED` (hsl(160, 20%, 93%)) - Background tints
 
-**Muted Foundation:**
-- Ivory (#FAFAFA) - main background
-- Alabaster (#F4F4F4) - elevated surfaces
-- Pure White (#FFFFFF) - highest elevation
-- Charcoal (#1C1C1C) - primary text
-- Graphite (#505050) - secondary text
-- Stone (#8A8A8A) - tertiary text
+### Warm Accents
+Used sparingly for emphasis and visual interest:
 
-**Dark Forest Green Accent (#1B4332):**
-- The ONLY accent color for personality
-- Used sparingly on:
-  - Call-to-action buttons
-  - Active/selected states
-  - Progress indicators
-  - Important icons
-- Creates focal points in the muted palette
+- **Rust** `#A8594E` (hsl(3, 40%, 48%)) - Destructive actions, alerts
+- **Sand** `#C4A86D` (hsl(33, 44%, 60%)) - Highlights, callouts
+- **Cream** `#F5F3F0` (hsl(30, 29%, 95%)) - Warm backgrounds
+- **Bone** `#F9F8F6` (hsl(30, 29%, 97%)) - Subtle warm tint
 
-### 5. Art & Texture
-- Subtle canvas/paper texture overlays
-- Organic blob shapes as decorative elements
-- Gradient overlays for depth
-- Classical painting-inspired visual rhythm
+## Typography System
 
----
+### Four-Tier Font Hierarchy
 
-## Visual Elements
+1. **Display Font: Fraunces** (Serif)
+   - Used for: Page titles, large headings (h1, h2)
+   - Sizes: 36px - 80px
+   - Weight: 200-300 (Light to Book)
+   - Characteristics: Elegant, contemporary serif with optical sizing
 
-### Cards & Containers
-```
-Background: Pure white with organic shapes
-Elevation: Layered shadows only (no borders!)
-Border-radius: Asymmetric (24px 32px 24px 16px)
-Shadow: 0 4px 20px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04)
-Texture: Subtle canvas overlay
-```
+2. **Editorial Font: Crimson Pro** (Serif)
+   - Used for: Article-style content, pull quotes, feature headings
+   - Sizes: 18px - 32px
+   - Weight: 300-500
+   - Characteristics: Readable serif for longer text passages
+
+3. **Body Font: Inter** (Sans-serif)
+   - Used for: Body text, UI elements, navigation, forms
+   - Sizes: 14px - 18px
+   - Weight: 400-600
+   - Characteristics: Clean, highly legible at all sizes
+
+4. **Mono Font: JetBrains Mono** (Monospace)
+   - Used for: Data display, metrics, numbers, dates
+   - Sizes: 12px - 16px
+   - Weight: 400-500
+   - Characteristics: Balanced monospace with programming ligatures
 
 ### Typography Scale
-```
-Display Heading: Fraunces 48px, weight 300
-Section Heading: Fraunces 36px, weight 300
-Body Text: Inter 16px, weight 400
-Label Text: Inter 14px, weight 500
-Small Text: Inter 12px, weight 400
-```
 
-### Spacing System (8px grid)
 ```
-Tight: 8px
-Comfortable: 16px
-Generous: 24px
-Spacious: 32px
-Extra Spacious: 48px
+Display XL: clamp(3rem, 8vw, 5rem) / 1.05 / -0.02em / 300
+Display LG: clamp(2.5rem, 6vw, 4rem) / 1.1 / -0.02em / 300
+Display MD: clamp(2rem, 5vw, 3rem) / 1.2 / -0.01em / 300
+Heading 1: 2.25rem (36px) / 1.25 / -0.01em / 300
+Heading 2: 1.875rem (30px) / 1.3 / normal / 300
+Heading 3: 1.5rem (24px) / 1.35 / normal / 400
+Body Large: 1.125rem (18px) / 1.6 / normal / 400
+Body: 1rem (16px) / 1.6 / normal / 400
+Body Small: 0.875rem (14px) / 1.5 / normal / 400
+Label: 0.75rem (12px) / 1.4 / 0.08em / 600 (uppercase)
 ```
 
-### Shadow System (Painterly Depth)
+### Letter Spacing
+
+- **Tighter**: -0.02em (Display headings)
+- **Tight**: -0.01em (Large headings)
+- **Normal**: 0em (Body text)
+- **Wide**: 0.02em (Buttons)
+- **Wider**: 0.05em (Small text)
+- **Widest**: 0.08em (Section labels)
+- **Extreme**: 0.12em (Special emphasis)
+
+## Layout & Spacing
+
+### Whitespace Scale
+Generous breathing room is essential to the editorial aesthetic:
+
 ```
-Close: 0 1px 3px rgba(0,0,0,0.04)
-Near: 0 2px 8px rgba(0,0,0,0.06)
-Mid: 0 4px 16px rgba(0,0,0,0.08)
-Far: 0 8px 24px rgba(0,0,0,0.10)
-Deep: 0 16px 48px rgba(0,0,0,0.12)
-```
-
-### Interactive States
-```
-Default: Base color
-Hover: Dark green glow (0 0 0 8px rgba(27,67,50,0.1))
-Active: Darker green + deeper shadow
-Focus: Dark green ring (2px)
-```
-
----
-
-## Component Patterns
-
-### Dashboard Cards
-- Organic rounded shapes with asymmetric corners
-- Layered shadows for depth (NO borders)
-- Pure white backgrounds with subtle canvas texture
-- Dark green accent on interactive elements only
-- Generous padding (24px-32px)
-
-### Buttons
-```
-Primary: 
-  - bg-[#1B4332] (dark forest green)
-  - text-white
-  - Organic rounded (16px)
-  - Shadow: 0 4px 12px rgba(27,67,50,0.2)
-  - Hover: Deeper shadow + slight scale
-
-Secondary:
-  - bg-alabaster
-  - text-[#1B4332]
-  - Same organic rounding
-  - Subtle shadow
-
-Ghost:
-  - Transparent background
-  - text-[#1B4332]
-  - No shadow, only on hover
+2xs: 0.125rem (2px)
+xs: 0.25rem (4px)
+sm: 0.5rem (8px)
+md: 1rem (16px)
+lg: 1.5rem (24px)
+xl: 2rem (32px)
+2xl: 3rem (48px)
+3xl: 4rem (64px)
+4xl: 6rem (96px)
 ```
 
-### Forms & Inputs
-- Clean inputs with subtle shadow only (no borders)
-- Labels in Inter 14px above inputs
-- Dark green focus glow
-- Organic rounded corners (12px)
-- Background: pure white or alabaster
+### Container Patterns
 
-### Empty States
-- Large organic blob shapes as decorative backgrounds
-- Muted illustrations with green accents
-- Generous whitespace (64px+ padding)
-- Centered content with flowing composition
+**Section Spacing**: Use `gap-8` or larger between major sections
+**Card Padding**: `p-6` or `p-8` for breathing room
+**List Items**: `gap-4` minimum between items
+**Form Fields**: `gap-6` between field groups
 
----
+## Components
 
-## Page-Specific Designs
-
-### Dashboard
-- Hero section with organic card shapes
-- Asymmetric grid layout
-- Dark green accents on active elements
-- Layered shadows create depth hierarchy
-- Generous spacing between sections (48px)
-
-### Task Lists
-- Flowing organic item containers
-- Dark green for in-progress tasks
-- Layered shadows increase on hover
-- No borders, only elevation changes
-
-### Weekly Review
-- Large organic text areas
-- Canvas texture backgrounds
-- Dark green submit button
-- Soft, irregular shapes throughout
-
----
-
-## Implementation Guidelines
-
-### CSS Architecture
+### Cards
 ```css
-/* Remove ALL borders */
-border: none !important;
-
-/* Use organic shapes */
-border-radius: 24px 32px 24px 16px; /* Asymmetric */
-
-/* Layered shadows for depth */
-box-shadow: 
-  0 1px 3px rgba(0,0,0,0.04),
-  0 4px 16px rgba(0,0,0,0.06);
-
-/* Dark green accent */
---accent: #1B4332;
-
-/* Subtle texture */
-background-image: url('data:image/svg+xml,...'); /* Canvas pattern */
-```
-
-### Color Variables
-```css
-:root {
-  /* Primary accent - THE personality color */
-  --forest-green: #1B4332;
-  --forest-green-light: #2D5F4F;
-  --forest-green-dark: #0D3B2E;
-  
-  /* Remove all other accent colors */
-  /* Use only muted neutrals + forest green */
-}
-```
-
-### Component Classes
-```css
-.organic-card {
+.editorial-card {
   background: white;
-  border-radius: 24px 32px 24px 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  padding: 32px;
-}
-
-.organic-button-primary {
-  background: #1B4332;
-  color: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(27,67,50,0.2);
+  border: 1px solid pearl (#E8E8E8);
+  border-radius: 0.5rem (8px);
+  padding: 1.5rem - 2rem;
 }
 ```
 
+### Metrics Display
+- Large number: Fraunces 48px, light weight, charcoal
+- Unit label: Uppercase, 10px, wide tracking (0.08em), stone color
+- Layout: Number stacked above label, left-aligned
+
+### Section Headers
+- Style: Uppercase
+- Size: 12px
+- Tracking: 0.08em (widest)
+- Color: Stone (#8A8A8A)
+- Weight: 600 (Semibold)
+
+### Priority Numbers
+- Font: JetBrains Mono
+- Size: 14px
+- Format: 01, 02, 03... (padded)
+- Color: Stone
+
+### Hover Interactions
+- Subtle translate effect: `translate-x-1` (4px right)
+- Smooth transition: `transition-transform duration-200`
+- Elevation effect: Apply `.hover-elevate` utility
+
+## Borders & Dividers
+
+### Border Philosophy
+Minimal, intentional borders create subtle separation without visual noise:
+
+- **Default border**: 1px solid Pearl (#E8E8E8)
+- **Focus ring**: 2px solid Sage Deep
+- **Dividers**: Pearl (#E8E8E8)
+
+### When to Use Borders
+- Cards and elevated surfaces
+- Form inputs (default state)
+- Table cells (subtle)
+- Between distinct sections
+
+### When to Skip Borders
+- Adjacent cards with equal backgrounds
+- Within grouped elements
+- When whitespace provides sufficient separation
+
+## Interactive States
+
+### Button Hierarchy
+1. **Primary**: Charcoal background, ivory text
+2. **Secondary**: Alabaster background, charcoal text
+3. **Accent**: Sage Deep background, pure text
+4. **Destructive**: Rust background, pure text
+5. **Ghost**: Transparent, hover elevates
+
+### State Colors
+- **Hover**: Apply `.hover-elevate` (subtle background lift)
+- **Active**: Apply `.active-elevate-2` (stronger lift)
+- **Focus**: Sage Deep ring, 2px offset
+- **Disabled**: Opacity 50%, no interactions
+
+## Animations
+
+### Timing Functions
+- **Ease-out**: `cubic-bezier(0.4, 0, 0.2, 1)` - Entry animations
+- **Ease-in**: `cubic-bezier(0.4, 0, 1, 1)` - Exit animations
+- **Spring**: For interactive feedback
+
+### Animation Library
+```css
+.animate-fade-in: fadeIn 0.5s ease-out
+.animate-slide-up: slideUp 0.3s ease-out
+.animate-scale-in: scaleIn 0.2s ease-out
+.animate-progress: progress 1s ease-out
+```
+
+### Animation Guidelines
+- Keep durations brief (200-500ms)
+- Use sparingly for meaningful transitions
+- Respect user motion preferences
+
+## Accessibility
+
+### Color Contrast
+All text meets WCAG AA standards:
+- Charcoal on Ivory: 15.8:1 (AAA)
+- Graphite on Ivory: 7.8:1 (AAA)
+- Stone on Ivory: 3.8:1 (AA)
+- Sage Deep on Pure: 9.5:1 (AAA)
+
+### Focus Indicators
+- Visible 2px ring in Sage Deep
+- 2px offset for clarity
+- Never remove focus indicators
+
+### Font Sizes
+- Minimum body text: 14px
+- Minimum interactive targets: 44x44px
+- Line height: 1.5+ for body text
+
+## Dark Mode
+
+When dark mode is implemented:
+- Invert the grayscale (Ivory → Charcoal background)
+- Adjust Sage colors for sufficient contrast
+- Maintain WCAG AA compliance
+- Use slightly reduced opacity for borders
+
+## Design Tokens Reference
+
+### Tailwind Classes
+```
+Section Title: .section-title
+Editorial Number: .editorial-number (48px Fraunces)
+Editorial Label: .editorial-label (uppercase, tracked)
+Priority Number: .priority-number (mono font)
+Metric Card: .metric-card
+Editorial Card: .editorial-card
+Priority Item: .priority-item (with hover translate)
+```
+
+### CSS Variables
+```
+--font-sans: Inter
+--font-serif: Fraunces (display)
+--font-editorial: Crimson Pro
+--font-mono: JetBrains Mono
+--radius: 0.5rem (8px)
+```
+
+## Implementation Notes
+
+1. **Headings**: All h1 elements automatically use Fraunces display font
+2. **Numbers**: Use mono font for data consistency
+3. **Spacing**: Prefer gap utilities over margin for consistent rhythm
+4. **Borders**: Use Pearl color consistently across all bordered elements
+5. **Cards**: Always include subtle border on white cards for definition
+6. **Animation**: Apply sparingly, favor subtlety over drama
+
 ---
 
-## Brand Voice Through Design
-
-The classical organic design communicates:
-- **Sophistication** - Through painterly depth and organic shapes
-- **Personality** - Through strategic dark green accents
-- **Clarity** - Through simplified typography (2 fonts only)
-- **Artfulness** - Through texture overlays and flowing forms
-- **Calm** - Through muted neutrals and borderless design
-
-This creates a productivity tool that feels like a classical painting come to life - organic, sophisticated, and intentionally crafted with artistic sensibility.
+*Last updated: October 2025 - Editorial Magazine System v1.2*

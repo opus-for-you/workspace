@@ -4,8 +4,7 @@ import { Calendar, TrendingUp, Clock, Target, Zap, BookOpen } from "lucide-react
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EditorialHeading, EditorialLabel, EditorialText, ProgressLine, BreathingContainer } from "@/components/editorial";
-import { format, startOfWeek, addDays } from "date-fns";
-import type { SafeUser, Goal, Task } from "@shared/schema";
+import { format } from "date-fns";
 
 const container = {
   hidden: { opacity: 0 },
@@ -22,35 +21,33 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-export default function DashboardPage() {
-  const { data: user } = useQuery<SafeUser>({
-    queryKey: ["/api/user"],
+export default function Dashboard() {
+  const { data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const response = await fetch("/api/user", { credentials: "include" });
+      if (!response.ok) throw new Error("Failed to fetch user");
+      return response.json();
+    },
   });
   
-  const { data: goals = [] } = useQuery<Goal[]>({
-    queryKey: ["/api/goals"],
+  const { data: goals } = useQuery({
+    queryKey: ["goals"],
+    queryFn: async () => {
+      const response = await fetch("/api/goals", { credentials: "include" });
+      if (!response.ok) throw new Error("Failed to fetch goals");
+      return response.json();
+    },
   });
   
-  const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ["/api/tasks"],
+  const { data: tasks } = useQuery({
+    queryKey: ["tasks", "week"],
+    queryFn: async () => {
+      const response = await fetch("/api/tasks/week", { credentials: "include" });
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+      return response.json();
+    },
   });
-  
-  const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const weekEnd = addDays(weekStart, 6);
-  const weekNumber = format(new Date(), "w");
-  
-  const thisWeekTasks = tasks
-    .filter(t => t.status !== "done")
-    .slice(0, 5);
-  
-  const activeGoals = goals
-    .filter(g => g.progress < 100)
-    .slice(0, 3);
-  
-  const completedTasks = tasks.filter(t => t.status === "done").length;
-  const totalConnections = 14;
-  const currentStreak = 82;
-  const alignmentScore = 92;
   
   return (
     <BreathingContainer>
@@ -69,11 +66,11 @@ export default function DashboardPage() {
         <div className="flex flex-wrap gap-8 text-sm text-muted-foreground">
           <span className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            Week {weekNumber} of {format(new Date(), "yyyy")}
+            Week {format(new Date(), "w")} of {format(new Date(), "yyyy")}
           </span>
           <span className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
-            {alignmentScore}% Aligned
+            82% Aligned
           </span>
         </div>
       </motion.section>
@@ -92,55 +89,47 @@ export default function DashboardPage() {
             <div className="flex justify-between items-baseline border-b border-pearl pb-4 mb-8">
               <h3 className="text-editorial-sm tracking-wider text-charcoal">THIS WEEK</h3>
               <span className="text-editorial-sm text-muted-foreground">
-                {format(weekStart, "MMM d")}-{format(weekEnd, "d")}
+                {format(new Date(), "MMM d")}-{format(new Date(Date.now() + 6 * 24 * 60 * 60 * 1000), "d")}
               </span>
             </div>
             
             <div className="space-y-6">
-              {thisWeekTasks.length === 0 ? (
-                <div className="text-center py-12 text-stone">
-                  <Target className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p>No tasks for this week. Start by setting your priorities.</p>
-                </div>
-              ) : (
-                thisWeekTasks.map((task, idx) => (
-                  <motion.div
-                    key={task.id}
-                    className="group cursor-pointer border-b border-pearl pb-6 hover:border-charcoal/20 transition-all duration-300"
-                    whileHover={{ x: 4 }}
-                    data-testid={`task-${task.id}`}
-                  >
-                    <div className="flex items-start gap-6">
-                      <span className="font-mono text-2xl font-light text-fog">
-                        {String(idx + 1).padStart(2, "0")}
-                      </span>
-                      <div className="flex-1">
-                        <h4 className="text-xl text-charcoal mb-2">{task.title}</h4>
-                        <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
-                          <span>{task.context || "Strategic Work"}</span>
-                          <span className="text-fog">•</span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {task.timing || "Flexible"}
-                          </span>
-                          {task.energy === "high" && (
-                            <>
-                              <span className="text-fog">•</span>
-                              <span className="flex items-center gap-1 text-sage">
-                                <Zap className="h-3 w-3" />
-                                High Energy
-                              </span>
-                            </>
-                          )}
-                        </div>
+              {tasks?.map((task: any, idx: number) => (
+                <motion.div
+                  key={task.id}
+                  className="group cursor-pointer border-b border-pearl pb-6 hover:border-charcoal/20 transition-all duration-300"
+                  whileHover={{ x: 4 }}
+                >
+                  <div className="flex items-start gap-6">
+                    <span className="font-mono text-2xl font-light text-fog">
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
+                    <div className="flex-1">
+                      <h4 className="text-xl text-charcoal mb-2">{task.title}</h4>
+                      <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
+                        <span>{task.context || "Strategic Work"}</span>
+                        <span className="text-fog">•</span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {task.timing || "Flexible"}
+                        </span>
+                        {task.energy === "high" && (
+                          <>
+                            <span className="text-fog">•</span>
+                            <span className="flex items-center gap-1 text-sage">
+                              <Zap className="h-3 w-3" />
+                              High Energy
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
-                  </motion.div>
-                ))
-              )}
+                  </div>
+                </motion.div>
+              ))}
             </div>
             
-            <Button variant="ghost" className="mt-8 text-editorial-sm tracking-wider" data-testid="button-set-priority">
+            <Button variant="ghost" className="mt-8 text-editorial-sm tracking-wider">
               <Target className="mr-2 h-4 w-4" />
               SET NEXT PRIORITY
             </Button>
@@ -154,16 +143,15 @@ export default function DashboardPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               {[
-                { metric: currentStreak.toString(), unit: "DAYS", label: "Building thought leadership" },
-                { metric: totalConnections.toString(), unit: "CONNECTIONS", label: "Strategic relationships" },
-                { metric: completedTasks.toString(), unit: "MILESTONES", label: "Technical achievements" },
-                { metric: alignmentScore.toString(), unit: "% ALIGNED", label: "With your vision" },
+                { metric: "82", unit: "DAYS", label: "Building thought leadership" },
+                { metric: "14", unit: "CONNECTIONS", label: "Strategic relationships" },
+                { metric: "3", unit: "MILESTONES", label: "Technical achievements" },
+                { metric: "92", unit: "% ALIGNED", label: "With your vision" },
               ].map((stat, idx) => (
                 <motion.div 
                   key={idx}
                   className="group cursor-pointer"
                   whileHover={{ scale: 1.02 }}
-                  data-testid={`stat-${stat.unit.toLowerCase().replace(' ', '-')}`}
                 >
                   <div className="flex items-baseline gap-2 mb-2">
                     <span className="font-display text-5xl font-light text-charcoal group-hover:text-sage-deep transition-colors">
@@ -183,33 +171,26 @@ export default function DashboardPage() {
           <motion.section variants={item}>
             <div className="flex justify-between items-baseline border-b border-pearl pb-4 mb-8">
               <h3 className="text-editorial-sm tracking-wider text-charcoal">ACTIVE GOALS</h3>
-              <Button variant="ghost" size="sm" className="text-editorial-xs tracking-wider" data-testid="button-view-all-goals">
+              <Button variant="ghost" size="sm" className="text-editorial-xs tracking-wider">
                 VIEW ALL
               </Button>
             </div>
             
             <div className="space-y-8">
-              {activeGoals.length === 0 ? (
-                <div className="text-center py-12 text-stone">
-                  <Target className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p>No active goals. Set your first goal to get started.</p>
-                </div>
-              ) : (
-                activeGoals.map((goal) => (
-                  <Card key={goal.id} className="editorial-card p-6" data-testid={`goal-${goal.id}`}>
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <p className="editorial-label mb-2">{goal.category?.toUpperCase() || "GENERAL"}</p>
-                        <h4 className="text-lg text-charcoal">{goal.title}</h4>
-                      </div>
-                      <span className="text-editorial-xs text-muted-foreground">
-                        {goal.targetDate ? format(new Date(goal.targetDate), "MMM d") : "Ongoing"}
-                      </span>
+              {goals?.slice(0, 3).map((goal: any) => (
+                <Card key={goal.id} className="editorial-card p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <p className="editorial-label mb-2">{goal.category?.toUpperCase()}</p>
+                      <h4 className="text-lg text-charcoal">{goal.title}</h4>
                     </div>
-                    <ProgressLine progress={goal.progress || 0} />
-                  </Card>
-                ))
-              )}
+                    <span className="text-editorial-xs text-muted-foreground">
+                      {goal.deadline ? format(new Date(goal.deadline), "MMM d") : "Ongoing"}
+                    </span>
+                  </div>
+                  <ProgressLine progress={goal.progress || 0} />
+                </Card>
+              ))}
             </div>
           </motion.section>
         </div>
@@ -226,7 +207,7 @@ export default function DashboardPage() {
                 <EditorialText className="mb-6">
                   What patterns are emerging in your work? Take 10 minutes to capture insights.
                 </EditorialText>
-                <Button className="w-full text-editorial-sm tracking-wider" data-testid="button-begin-reflection">
+                <Button className="w-full text-editorial-sm tracking-wider">
                   <BookOpen className="mr-2 h-4 w-4" />
                   BEGIN
                 </Button>

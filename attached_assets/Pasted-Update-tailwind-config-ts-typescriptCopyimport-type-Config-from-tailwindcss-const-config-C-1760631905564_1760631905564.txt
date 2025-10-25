@@ -1,0 +1,154 @@
+Update tailwind.config.ts:
+typescriptCopyimport type { Config } from "tailwindcss";
+
+const config: Config = {
+  darkMode: ["class"],
+  content: [
+    "./client/src/**/*.{ts,tsx}",
+    "./client/index.html",
+  ],
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        // Editorial Color System - Opus Brand
+        ink: "hsl(0, 0%, 4%)",
+        charcoal: "hsl(0, 0%, 11%)",
+        graphite: "hsl(0, 0%, 31%)",
+        stone: "hsl(0, 0%, 54%)",
+        fog: "hsl(0, 0%, 72%)",
+        pearl: "hsl(0, 0%, 91%)",
+        alabaster: "hsl(0, 0%, 96%)",
+        ivory: "hsl(0, 0%, 98%)",
+        pure: "hsl(0, 0%, 100%)",
+        
+        // Sage - Primary Brand Color
+        sage: {
+          DEFAULT: "hsl(160, 20%, 40%)",
+          deep: "hsl(160, 42%, 17%)",
+          medium: "hsl(160, 35%, 30%)",
+          light: "hsl(160, 15%, 50%)",
+          pale: "hsl(160, 10%, 60%)",
+          soft: "hsl(160, 20%, 93%)",
+        },
+        
+        // Warm Accents
+        rust: "hsl(3, 40%, 48%)",
+        sand: "hsl(33, 44%, 60%)",
+        cream: "hsl(30, 29%, 95%)",
+        bone: "hsl(30, 29%, 97%)",
+        
+        // Update shadcn/ui variables for editorial theme
+        border: "hsl(0, 0%, 91%)",
+        input: "hsl(0, 0%, 91%)",
+        ring: "hsl(160, 42%, 17%)",
+        background: "hsl(0, 0%, 98%)",
+        foreground: "hsl(0, 0%, 11%)",
+        
+        primary: {
+          DEFAULT: "hsl(0, 0%, 11%)",
+          foreground: "hsl(0, 0%, 98%)",
+        },
+        secondary: {
+          DEFAULT: "hsl(0, 0%, 96%)",
+          foreground: "hsl(0, 0%, 11%)",
+        },
+        destructive: {
+          DEFAULT: "hsl(3, 40%, 48%)",
+          foreground: "hsl(0, 0%, 98%)",
+        },
+        muted: {
+          DEFAULT: "hsl(0, 0%, 96%)",
+          foreground: "hsl(0, 0%, 54%)",
+        },
+        accent: {
+          DEFAULT: "hsl(160, 42%, 17%)",
+          foreground: "hsl(0, 0%, 98%)",
+        },
+        popover: {
+          DEFAULT: "hsl(0, 0%, 100%)",
+          foreground: "hsl(0, 0%, 11%)",
+        },
+        card: {
+          DEFAULT: "hsl(0, 0%, 100%)",
+          foreground: "hsl(0, 0%, 11%)",
+        },
+      },
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Fraunces", "Libre Baskerville", "Georgia", "serif"],
+        editorial: ["Crimson Pro", "Georgia", "serif"],
+        mono: ["JetBrains Mono", "monospace"],
+      },
+      fontSize: {
+        "2xs": ["0.625rem", { lineHeight: "0.875rem" }],
+        "display-xl": ["clamp(3rem, 8vw, 5rem)", { 
+          lineHeight: "1.05",
+          letterSpacing: "-0.02em",
+          fontWeight: "300"
+        }],
+        "display-lg": ["clamp(2.5rem, 6vw, 4rem)", {
+          lineHeight: "1.1",
+          letterSpacing: "-0.02em",
+          fontWeight: "300"
+        }],
+        "display-md": ["clamp(2rem, 5vw, 3rem)", {
+          lineHeight: "1.2",
+          letterSpacing: "-0.01em",
+          fontWeight: "300"
+        }],
+      },
+      letterSpacing: {
+        tighter: "-0.02em",
+        tight: "-0.01em",
+        wide: "0.02em",
+        wider: "0.05em",
+        widest: "0.08em",
+        extreme: "0.12em",
+      },
+      animation: {
+        "fade-in": "fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+        "slide-up": "slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "slide-down": "slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "scale-in": "scaleIn 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "progress": "progress 1s cubic-bezier(0.4, 0, 0.2, 1)",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        slideUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slideDown: {
+          "0%": { opacity: "0", transform: "translateY(-20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        scaleIn: {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        progress: {
+          "0%": { width: "0%" },
+          "100%": { width: "var(--progress-width)" },
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+};
+
+export default config;

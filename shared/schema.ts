@@ -8,6 +8,10 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  vision: text("vision"),
+  energy: text("energy"),
+  direction: text("direction"),
+  obstacles: text("obstacles"),
 });
 
 // Connections table - track relationships and last contact
@@ -27,6 +31,7 @@ export const goals = pgTable("goals", {
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   description: text("description"),
+  category: text("category"),
   targetDate: date("target_date"),
   progress: integer("progress").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -38,6 +43,10 @@ export const tasks = pgTable("tasks", {
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   description: text("description"),
+  context: text("context"),
+  timing: text("timing"),
+  energy: text("energy"),
+  priority: integer("priority"),
   dueDate: date("due_date"),
   goalId: varchar("goal_id").references(() => goals.id, { onDelete: "set null" }),
   status: text("status").notNull().default("todo"),
