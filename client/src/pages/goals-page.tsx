@@ -13,6 +13,7 @@ import { format, parseISO } from "date-fns";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Goal, InsertGoal } from "@shared/schema";
+import { GoalSuggestions } from "@/components/goal-suggestions";
 
 export default function GoalsPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -136,7 +137,7 @@ export default function GoalsPage() {
                 <Textarea
                   id="description"
                   data-testid="input-goal-description"
-                  value={formData.description}
+                  value={formData.description || ""}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Describe your goal..."
                   rows={3}
@@ -153,11 +154,11 @@ export default function GoalsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="progress">Progress: {formData.progress}%</Label>
+                <Label htmlFor="progress">Progress: {formData.progress ?? 0}%</Label>
                 <Slider
                   id="progress"
                   data-testid="slider-goal-progress"
-                  value={[formData.progress]}
+                  value={[formData.progress ?? 0]}
                   onValueChange={([value]) => setFormData({ ...formData, progress: value })}
                   max={100}
                   step={5}
@@ -200,7 +201,7 @@ export default function GoalsPage() {
               <Textarea
                 id="edit-description"
                 data-testid="input-edit-goal-description"
-                value={formData.description}
+                value={formData.description || ""}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
               />
@@ -216,11 +217,11 @@ export default function GoalsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-progress">Progress: {formData.progress}%</Label>
+              <Label htmlFor="edit-progress">Progress: {formData.progress ?? 0}%</Label>
               <Slider
                 id="edit-progress"
                 data-testid="slider-edit-goal-progress"
-                value={[formData.progress]}
+                value={[formData.progress ?? 0]}
                 onValueChange={([value]) => setFormData({ ...formData, progress: value })}
                 max={100}
                 step={5}
@@ -254,6 +255,9 @@ export default function GoalsPage() {
         </div>
       ) : (
         <div className="space-y-6">
+          {/* AI-Powered Goal Suggestions */}
+          <GoalSuggestions />
+
           {activeGoals.length > 0 && (
             <div>
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">

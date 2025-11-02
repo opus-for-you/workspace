@@ -1,4 +1,4 @@
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -7,14 +7,15 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: Target },
-  { href: "/goals", label: "Goals", icon: TrendingUp },
-  { href: "/reviews", label: "Reflect", icon: BookOpen },
-  { href: "/profile", label: "Profile", icon: User },
+  { to: "/", label: "Dashboard", icon: Target },
+  { to: "/goals", label: "Goals", icon: TrendingUp },
+  { to: "/reviews", label: "Reflect", icon: BookOpen },
+  { to: "/profile", label: "Profile", icon: User },
 ];
 
 export function Navigation() {
-  const [location, setLocation] = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
   
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -26,7 +27,7 @@ export function Navigation() {
     },
     onSuccess: () => {
       queryClient.clear();
-      setLocation("/auth");
+      navigate("/auth");
     },
   });
   
@@ -36,7 +37,7 @@ export function Navigation() {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-12">
             <Link 
-              href="/"
+              to="/"
               className="font-display text-2xl font-light text-charcoal hover:text-sage-deep transition-colors"
             >
               Opus
@@ -45,11 +46,11 @@ export function Navigation() {
             <div className="hidden md:flex gap-8">
               {navItems.map((item) => (
                 <Link 
-                  key={item.href} 
-                  href={item.href}
+                  key={item.to} 
+                  to={item.to}
                   className={cn(
                     "text-editorial-sm tracking-wide transition-colors duration-200",
-                    location === item.href
+                    location.pathname === item.to
                       ? "text-charcoal"
                       : "text-stone hover:text-charcoal"
                   )}
@@ -84,11 +85,11 @@ export function Navigation() {
                 <nav className="flex flex-col gap-6 mt-8">
                   {navItems.map((item) => (
                     <Link 
-                      key={item.href} 
-                      href={item.href}
+                      key={item.to} 
+                      to={item.to}
                       className={cn(
                         "flex items-center gap-3 text-lg transition-colors",
-                        location === item.href
+                        location.pathname === item.to
                           ? "text-charcoal"
                           : "text-stone hover:text-charcoal"
                       )}

@@ -11,7 +11,7 @@ export const users = pgTable("users", {
   vision: text("vision"),
   energy: text("energy"),
   direction: text("direction"),
-  obstacles: text("obstacles"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Connections table - track relationships and last contact

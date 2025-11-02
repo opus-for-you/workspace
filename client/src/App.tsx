@@ -1,5 +1,6 @@
 // Reference: javascript_auth_all_persistance blueprint for routing setup
-import { Switch, Route, useLocation } from "wouter";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -17,30 +18,32 @@ import ConnectionsPage from "@/pages/connections-page";
 import WeeklyReviewPage from "@/pages/weekly-review-page";
 
 function AppContent() {
-  const [location, setLocation] = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Check if user needs to complete onboarding (3 questions: vision, energy, direction)
+  const needsOnboarding = user && (!user.vision || !user.energy || !user.direction);
+
+  // Redirect to onboarding if needed (unless already there)
+  useEffect(() => {
+    if (needsOnboarding && location.pathname !== "/onboarding") {
+      navigate("/onboarding", { replace: true });
+    }
+  }, [needsOnboarding, location.pathname, navigate]);
 
   if (!user) {
     return (
-      <Switch>
-        <Route path="/auth" component={AuthPage} />
-        <Route path="/" component={AuthPage} />
-        <Route component={NotFound} />
-      </Switch>
+      <Routes>
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/" element={<AuthPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     );
   }
 
-  // Check if user needs to complete onboarding
-  const needsOnboarding = !user.vision || !user.energy || !user.direction || !user.obstacles;
-  
-  // Redirect to onboarding if needed (unless already there)
-  if (needsOnboarding && location !== "/onboarding") {
-    setLocation("/onboarding");
-    return null;
-  }
-
   // Show onboarding without navigation
-  if (location === "/onboarding") {
+  if (location.pathname === "/onboarding") {
     return <OnboardingPage />;
   }
 
@@ -48,14 +51,15 @@ function AppContent() {
     <div className="min-h-screen bg-ivory">
       <Navigation />
       <main>
-        <Switch>
-          <Route path="/" component={DashboardPage} />
-          <Route path="/goals" component={GoalsPage} />
-          <Route path="/tasks" component={TasksPage} />
-          <Route path="/connections" component={ConnectionsPage} />
-          <Route path="/reviews" component={WeeklyReviewPage} />
-          <Route component={NotFound} />
-        </Switch>
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/goals" element={<GoalsPage />} />
+          <Route path="/tasks" element={<TasksPage />} />
+          <Route path="/connections" element={<ConnectionsPage />} />
+          <Route path="/reviews" element={<WeeklyReviewPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </main>
     </div>
   );
@@ -71,8 +75,10 @@ export default function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <AuthProvider>
-            <Toaster />
-            <Router />
+            <BrowserRouter>
+              <Toaster />
+              <Router />
+            </BrowserRouter>
           </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>

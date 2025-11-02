@@ -1,78 +1,39 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronLeft } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { EditorialHeading, EditorialLabel, EditorialText, ProgressLine } from "@/components/editorial";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-
-const onboardingSchema = z.object({
-  vision: z.string().min(20, "Please share more about your vision"),
-  energy: z.string().min(20, "Tell us more about when you're in flow"),
-  direction: z.string().min(20, "Share more about who you want to become"),
-  obstacles: z.string().min(20, "Help us understand your challenges"),
-});
-
-type OnboardingData = z.infer<typeof onboardingSchema>;
+import { Button } from "@/components/ui/button";
 
 const questions = [
   {
     id: "vision",
-    category: "VISION",
-    question: "What does meaningful work look like to you?",
-    prompt: "Forget titles. Think impact.",
-    placeholder: "I find meaning when I...",
-    field: "vision" as keyof OnboardingData,
+    text: "What does meaningful work look like to you?",
+    placeholder: "Forget titles. Think impact.",
   },
   {
     id: "energy",
-    category: "ENERGY",
-    question: "When do you lose track of time at work?",
-    prompt: "These moments reveal your true strengths.",
-    placeholder: "Time flies when I...",
-    field: "energy" as keyof OnboardingData,
+    text: "When do you lose track of time at work?",
+    placeholder: "These moments reveal your true strengths.",
   },
   {
     id: "direction",
-    category: "DIRECTION",
-    question: "Who do you want to become professionally?",
-    prompt: "Not what. Who.",
-    placeholder: "In five years, I see myself as someone who...",
-    field: "direction" as keyof OnboardingData,
-  },
-  {
-    id: "obstacles",
-    category: "CLARITY",
-    question: "What's holding you back right now?",
-    prompt: "Name it to tame it.",
-    placeholder: "The biggest challenge I face is...",
-    field: "obstacles" as keyof OnboardingData,
+    text: "Who do you want to become professionally?",
+    placeholder: "Not what. Who.",
   },
 ];
 
 export default function OnboardingPage() {
-  const [, navigate] = useLocation();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<Partial<OnboardingData>>({});
+  const navigate = useNavigate();
   const { toast } = useToast();
-  
-  const currentQuestion = questions[currentStep];
-  const progress = ((currentStep + 1) / questions.length) * 100;
-  
-  const { register, handleSubmit, formState: { errors }, trigger, setValue } = useForm<OnboardingData>({
-    resolver: zodResolver(onboardingSchema),
-    mode: "onChange",
-  });
-  
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
   const completeMutation = useMutation({
-    mutationFn: async (data: OnboardingData) => {
+    mutationFn: async (data: Record<string, string>) => {
       const response = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,13 +46,13 @@ export default function OnboardingPage() {
       }
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
         title: "Welcome to Opus!",
         description: "Your journey begins now.",
       });
-      navigate("/");
+      navigate("/dashboard", { replace: true });
     },
     onError: (error: Error) => {
       toast({
@@ -101,141 +62,100 @@ export default function OnboardingPage() {
       });
     },
   });
-  
-  const handleNext = async () => {
-    const isValid = await trigger(currentQuestion.field);
-    if (!isValid) return;
-    
-    if (currentStep < questions.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      handleSubmit((data) => completeMutation.mutate(data))();
+
+  const handleNext = () => {
+    if (inputValue.trim()) {
+      const updatedAnswers = { ...answers, [questions[currentQuestion].id]: inputValue };
+      setAnswers(updatedAnswers);
+
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+        setInputValue("");
+        setIsTyping(false);
+      } else {
+        completeMutation.mutate(updatedAnswers);
+      }
     }
   };
-  
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+
+  const handleInputFocus = () => {
+    setIsTyping(true);
+  };
+
+  const handleInputBlur = () => {
+    if (!inputValue.trim()) {
+      setIsTyping(false);
     }
   };
-  
+
   return (
-    <div className="min-h-screen bg-ivory flex flex-col">
-      {/* Progress Bar */}
-      <div className="w-full border-b border-pearl">
-        <ProgressLine progress={progress} />
-      </div>
-      
-      {/* Content */}
-      <div className="flex-1 flex items-center justify-center p-8 md:p-16">
-        <div className="w-full max-w-3xl">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              {/* Category */}
-              <EditorialLabel
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="mb-8"
-              >
-                {currentQuestion.category}
-              </EditorialLabel>
-              
-              {/* Question */}
-              <EditorialHeading
-                level={1}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="mb-6 text-charcoal"
-              >
-                {currentQuestion.question}
-              </EditorialHeading>
-              
-              {/* Prompt */}
-              <EditorialText
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-lg mb-16"
-              >
-                {currentQuestion.prompt}
-              </EditorialText>
-              
-              {/* Input */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                <Textarea
-                  {...register(currentQuestion.field)}
-                  className="min-h-[120px] bg-transparent border-0 border-b border-fog 
-                           focus:border-charcoal text-editorial-lg resize-none rounded-none
-                           placeholder:text-stone/50 transition-colors duration-300"
-                  placeholder={currentQuestion.placeholder}
-                  value={formData[currentQuestion.field] || ""}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setFormData(prev => ({ ...prev, [currentQuestion.field]: value }));
-                    setValue(currentQuestion.field, value);
-                  }}
-                  data-testid={`input-${currentQuestion.field}`}
-                />
-                {errors[currentQuestion.field] && (
-                  <p className="mt-2 text-sm text-destructive">
-                    {errors[currentQuestion.field]?.message}
-                  </p>
-                )}
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-          
-          {/* Navigation */}
+    <div className="min-h-screen bg-cream flex items-center justify-center p-8">
+      <div className="w-full max-w-2xl">
+        <AnimatePresence mode="wait">
           <motion.div
-            className="flex justify-between items-center mt-24"
+            key={currentQuestion}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
           >
-            <Button
-              variant="ghost"
-              onClick={handleBack}
-              disabled={currentStep === 0}
-              className={cn(
-                "text-editorial-sm tracking-wider",
-                currentStep === 0 && "invisible"
-              )}
-              data-testid="button-back"
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ 
+                opacity: isTyping ? 0.3 : 1, 
+                y: isTyping ? -50 : 0 
+              }}
+              transition={{ duration: 0.6 }}
+              className="text-3xl md:text-4xl text-charcoal font-display font-light mb-12"
+              data-testid={`heading-question-${currentQuestion}`}
             >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              BACK
-            </Button>
-            
-            <Button
-              onClick={handleNext}
-              disabled={completeMutation.isPending}
-              className="group text-editorial-sm tracking-wider"
-              data-testid="button-next"
+              {questions[currentQuestion].text}
+            </motion.h1>
+
+            <motion.div
+              animate={{ scale: isTyping ? 1.05 : 1 }}
+              transition={{ duration: 0.3 }}
             >
-              {currentStep === questions.length - 1 ? "BEGIN YOUR JOURNEY" : "CONTINUE"}
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
+              <textarea
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+                placeholder={questions[currentQuestion].placeholder}
+                className="w-full p-4 bg-transparent border-b-2 border-stone focus:border-sage-deep 
+                         outline-none resize-none text-lg transition-all duration-300 font-light"
+                rows={3}
+                data-testid={`input-${questions[currentQuestion].id}`}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: inputValue.trim() ? 1 : 0.3 }}
+            >
+              <Button
+                onClick={handleNext}
+                disabled={!inputValue.trim() || completeMutation.isPending}
+                className="mt-8 px-8 py-3 bg-sage-deep text-cream hover:bg-sage transition-colors"
+                data-testid="button-next"
+              >
+                {currentQuestion === questions.length - 1 ? "Complete" : "Next"}
+              </Button>
+            </motion.div>
           </motion.div>
+        </AnimatePresence>
+
+        <div className="flex justify-center mt-12 gap-2">
+          {questions.map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                idx === currentQuestion ? "bg-sage-deep w-8" : "bg-stone"
+              }`}
+            />
+          ))}
         </div>
-      </div>
-      
-      {/* Step Indicator */}
-      <div className="text-center py-8">
-        <p className="editorial-label" data-testid="text-step-indicator">
-          {currentStep + 1} OF {questions.length}
-        </p>
       </div>
     </div>
   );

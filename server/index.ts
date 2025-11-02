@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeScheduler, shutdownScheduler } from "./lib/scheduler";
 
 const app = express();
 app.use(express.json());
@@ -67,5 +68,27 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Initialize scheduled tasks after server is ready
+    initializeScheduler();
+  });
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    log('SIGTERM received, shutting down gracefully');
+    shutdownScheduler();
+    server.close(() => {
+      log('Server closed');
+      process.exit(0);
+    });
+  });
+
+  process.on('SIGINT', () => {
+    log('SIGINT received, shutting down gracefully');
+    shutdownScheduler();
+    server.close(() => {
+      log('Server closed');
+      process.exit(0);
+    });
   });
 })();

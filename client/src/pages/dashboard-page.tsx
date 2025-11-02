@@ -4,6 +4,7 @@ import { Calendar, TrendingUp, Clock, Target, Zap, BookOpen } from "lucide-react
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EditorialHeading, EditorialLabel, EditorialText, ProgressLine, BreathingContainer } from "@/components/editorial";
+import { WeekProgress } from "@/components/week-progress";
 import { format, startOfWeek, addDays } from "date-fns";
 import type { SafeUser, Goal, Task } from "@shared/schema";
 
@@ -216,6 +217,13 @@ export default function DashboardPage() {
         
         {/* Sidebar */}
         <div className="space-y-12">
+          {/* Week Progress Tracker */}
+          {user?.createdAt && (
+            <motion.div variants={item}>
+              <WeekProgress userCreatedAt={new Date(user.createdAt).toISOString()} />
+            </motion.div>
+          )}
+          
           {/* Weekly Reflection */}
           <motion.div variants={item}>
             <Card className="editorial-card p-6">

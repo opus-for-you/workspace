@@ -11,7 +11,38 @@ Opus is a full-stack productivity application designed for young professionals t
 
 ## Recent Changes (October 2025)
 
-### Editorial Magazine Design System - Version 1.5 (Latest)
+### Architecture Migration - Version 2.0 (Latest - October 25, 2025)
+- **React Router Migration**: Migrated from Wouter to React Router DOM
+  - Updated all navigation components to use React Router's Link and Navigate
+  - Preserved protected route logic with enhanced routing patterns
+  - All pages now use React Router hooks (useNavigate, useLocation)
+- **3-Question Onboarding**: Streamlined onboarding flow
+  - Removed `obstacles` field from database schema (3 questions: vision, energy, direction)
+  - Updated frontend and backend to match new schema
+  - Maintained animated typing interactions and smooth transitions
+- **Modular Server Architecture**: Restructured backend routes
+  - Created `server/routes/` directory with separate files:
+    - `onboarding.ts` - Onboarding flow endpoints
+    - `goals.ts` - Goal CRUD operations
+    - `tasks.ts` - Task management
+    - `connections.ts` - Relationship tracking
+    - `reflections.ts` - Weekly reviews
+    - `ai.ts` - AI-powered features
+  - Main `server/routes.ts` now orchestrates modular route registration
+- **AI/LLM Integration**: Added AI-powered goal suggestions
+  - Created `server/lib/ai.ts` with Anthropic (Claude) and OpenAI support
+  - Endpoint: `GET /api/ai/goal-suggestions` - Personalized goal recommendations
+  - Endpoint: `GET /api/ai/reflection-prompt` - AI-generated reflection questions
+  - Frontend: `GoalSuggestions` component with one-click goal creation
+  - Graceful fallback suggestions when API keys not configured
+  - Smart categorization (personal/professional/health/learning)
+  - Reasoning explanations for each suggestion
+- **Environment Variables**: Added support for AI API keys
+  - `ANTHROPIC_API_KEY` - For Claude-powered suggestions (preferred)
+  - `OPENAI_API_KEY` - Fallback to GPT-4o-mini
+  - Note: API keys are optional; app provides fallback suggestions
+
+### Editorial Magazine Design System - Version 1.5
 - **Editorial Navigation**: Replaced sidebar with top horizontal navigation bar
   - Sticky positioning with backdrop blur effect
   - Desktop: horizontal nav links (Dashboard, Goals, Reflect, Profile)
@@ -22,7 +53,7 @@ Opus is a full-stack productivity application designed for young professionals t
 
 ### Editorial Magazine Design System - Version 1.4
 - **Onboarding Integration**: Onboarding responses now saved to user profile
-  - Users table enhanced with `vision`, `energy`, `direction`, `obstacles` fields
+  - Users table enhanced with `vision`, `energy`, `direction` fields
   - POST /api/onboarding endpoint stores reflective answers
   - User vision displayed as "North Star" on dashboard
 - **Dashboard Redesign**: Complete editorial magazine-style overhaul
@@ -69,7 +100,7 @@ Opus is a full-stack productivity application designed for young professionals t
 
 **Core Framework**: React 18 with TypeScript in a single-page application (SPA) architecture using Vite as the build tool.
 
-**Routing Strategy**: Wouter is used as a lightweight alternative to React Router, providing client-side routing with minimal overhead. The application implements protected routes that redirect unauthenticated users to the authentication page.
+**Routing Strategy**: React Router DOM provides declarative client-side routing with comprehensive navigation features. The application implements protected routes via ProtectedRoute component that redirects unauthenticated users to the authentication page.
 
 **State Management**: TanStack Query (React Query v5) handles all server state, providing automatic caching, background refetching, and optimistic updates. No global client state management library is used - component state is managed locally with React hooks.
 

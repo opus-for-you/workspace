@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight } from "lucide-react";
-import { Link } from "wouter";
+import { Link } from "react-router-dom";
 
 const PROMPTS = [
   {
@@ -50,7 +50,7 @@ export function ReflectionPrompt() {
             <blockquote className="font-editorial text-xl font-light leading-relaxed text-charcoal">
               "{prompt.text}"
             </blockquote>
-            <Link href="/reviews" data-testid="link-weekly-review">
+            <Link to="/reviews" data-testid="link-weekly-review">
               <Button 
                 variant="ghost" 
                 size="sm"
