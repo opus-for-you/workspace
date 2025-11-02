@@ -8,6 +8,7 @@ import { registerTaskRoutes } from "./routes/tasks";
 import { registerConnectionRoutes } from "./routes/connections";
 import { registerReflectionRoutes } from "./routes/reflections";
 import { registerAIRoutes } from "./routes/ai";
+import { registerProgramRoutes } from "./routes/program";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Sets up /api/register, /api/login, /api/logout, /api/user
@@ -20,6 +21,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerConnectionRoutes(app);
   registerReflectionRoutes(app);
   registerAIRoutes(app);
+  registerProgramRoutes(app); // Mobile MVP: 5-week program management
 
   const httpServer = createServer(app);
 
