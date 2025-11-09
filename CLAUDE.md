@@ -27,37 +27,53 @@ Each week includes:
 
 ## Commands
 
+### Quick Start (Recommended for New Developers)
+```bash
+npm run quick-start      # Interactive setup wizard (installs deps, creates .env, guides through startup)
+npm run setup            # Install dependencies and create .env template
+npm run health-check     # Verify environment is properly configured
+```
+
 ### Development
 ```bash
-npm run dev              # Start development server (web app on port 5000)
+npm run start:backend    # Start backend server (validates .env first)
+npm run start:mobile     # Start mobile app with Expo (checks MOCK_MODE status)
+npm run dev              # Start backend server (direct, no validation)
 npm run build            # Build for production
-npm run start            # Start production server
+npm start                # Start Expo development server (mobile app)
+npm run server           # Start production backend server
+npm run ios              # Start iOS simulator
+npm run android          # Start Android emulator
+npm run web              # Start web version of mobile app
 npm run check            # Run TypeScript type checking
 ```
 
 ### Database
 ```bash
 npm run db:push          # Push schema changes to PostgreSQL database
+npm run reset:db         # ⚠️ DANGER: Reset database (deletes all data)
 ```
 
 ### Mobile Development
+All mobile commands now run from the root directory (no need to cd into mobile):
 ```bash
-cd mobile
 npm start                # Start Expo development server
 npm run ios              # Start iOS simulator
 npm run android          # Start Android emulator
 npm run web              # Start web version
 ```
 
+**💡 Tip:** See `/scripts/README.md` for detailed documentation on all helper scripts.
+
 ## Architecture
 
-### Monorepo Structure
-The project is a monorepo with both web and mobile applications sharing backend infrastructure:
+### Project Structure
+This is a **mobile-first application** with the mobile app at the root level:
 
-- **Web App**: Full-stack React/Express application
-- **Mobile App**: Expo/React Native in `mobile/` directory
-- **Shared Backend**: Single Express API serves both web and mobile clients
-- **Shared Types**: Database schema and types in `shared/schema.ts`
+- **Mobile App**: Expo/React Native at root level (`/app`, `/lib`, `/assets`)
+- **Backend API**: Express server in `/server` directory
+- **Shared Types**: Database schema and types in `/shared/schema.ts`
+- Single `package.json` with all dependencies merged
 
 ### Data Layer (`shared/schema.ts`)
 All database tables are defined using Drizzle ORM with TypeScript types and Zod validation schemas:
@@ -81,14 +97,14 @@ RESTful endpoints with modular route files:
 
 ### Authentication (`server/auth.ts`)
 - Passport.js with local strategy
-- Password hashing using bcrypt (not scrypt)
+- Password hashing using **scrypt** (not bcrypt) with salt
 - Session-based auth with PostgreSQL session store (connect-pg-simple)
 - Sessions persist across server restarts
 
 ### AI Integration
 
-**Mobile MVP AI Service** (`server/lib/ai-mobile.ts`):
-The app uses a **hybrid AI approach** with intelligent fallbacks:
+**Mobile MVP AI Service** (`server/lib/ai-mobile/`):
+The app uses a **hybrid AI approach** with intelligent fallbacks and week-specific implementations:
 
 **Claude (Anthropic)** - Primary for coaching/empathy:
 - Goal generation from north star vision (`generateGoalsFromNorthStar()`)
@@ -105,34 +121,36 @@ The app uses a **hybrid AI approach** with intelligent fallbacks:
 2. If fails, try secondary provider
 3. If both fail, return sensible default suggestions
 
+**Week-Specific AI Modules** (`server/lib/ai-mobile/`):
+Each week has dedicated AI implementations:
+- `purpose.ts` - Week 1: Goal/task generation for clarity and vision
+- `rhythm.ts` - Week 2: Goal/task generation for habits and consistency
+- `network.ts` - Week 3: Goal/task generation for relationships
+- `structure.ts` - Week 4: Goal/task generation for systems
+- `methods.ts` - Week 5: Goal/task generation for optimization
+- `shared.ts` - Shared utilities and AI wrapper functions
+- `index.ts` - Router that delegates to week-specific modules
+
 **Web AI Service** (`server/lib/ai.ts`):
-- Legacy implementation for web app
+- Legacy implementation (deprecated)
 - Two main functions: `generateGoalSuggestions()` and `generateReflectionPrompt()`
 
 ### Frontend Architecture
 
-#### Web App (`client/`)
-- React 18 + TypeScript with Vite
-- TanStack Query (React Query v5) for data fetching
-- Wouter for routing (not React Router)
-- shadcn/ui components (Radix UI primitives)
-- TailwindCSS for styling
-- React Hook Form + Zod validation
-- Theme provider with dark/light mode
+#### Mobile App (Primary Interface)
+The app is **mobile-first** with the following stack:
 
-#### Mobile App (`mobile/`)
 - Expo SDK ~54 with React Native 0.81
 - File-based routing with expo-router
 - NativeWind for TailwindCSS styling
-- Zustand for state management (`/mobile/lib/auth-store.ts`)
+- Zustand for state management (`/lib/auth-store.ts`)
 - React Query for API data fetching
 - expo-secure-store for token storage (not MMKV)
-- Shares same backend API as web app
 - **MOCK_MODE** flag allows full functionality without backend connection
 
-**Mobile Directory Structure:**
+**App Directory Structure:**
 ```
-/mobile/app/
+/app/
 ├── _layout.tsx           # Root layout (React Query provider)
 ├── index.tsx             # Entry point (routing logic) ⚠️ USES REDIRECT PATTERN
 ├── (auth)/               # Auth group (stack)
@@ -150,12 +168,24 @@ The app uses a **hybrid AI approach** with intelligent fallbacks:
     └── profile.tsx       # Profile screen
 ```
 
+**Additional Directories:**
+```
+/lib/                     # Mobile utilities
+├── auth-store.ts         # Zustand auth state management
+└── api.ts                # API client and endpoints
+
+/assets/                  # Mobile app assets
+├── icon.png
+├── splash-icon.png
+└── adaptive-icon.png
+```
+
 **Mock Mode:**
 The mobile app has a **MOCK_MODE** flag that allows full functionality without a backend connection:
 
 **Files with MOCK_MODE:**
-- `/mobile/lib/auth-store.ts` - Mock login/register (line 24)
-- `/mobile/lib/api.ts` - Mock API responses (line 5)
+- `/lib/auth-store.ts` - Mock login/register (line 24)
+- `/lib/api.ts` - Mock API responses (line 5)
 
 **To Toggle:**
 ```typescript
@@ -200,11 +230,12 @@ When adding new features, follow this order:
    - Use `requireAuth` middleware for protected endpoints
    - Validate requests with Zod schemas
 
-5. **Build Frontend**
-   - Add React Query hooks for data fetching
-   - Create components in `client/src/components/`
-   - Add pages in `client/src/pages/`
-   - Update navigation if needed
+5. **Build Mobile UI**
+   - Add React Query hooks in mobile app
+   - Create screens in `/app/` directory
+   - Add utilities in `/lib/` directory
+   - Update navigation in tab/stack layouts if needed
+   - Use NativeWind for styling
 
 ## Important Patterns
 
@@ -243,6 +274,16 @@ The schema includes mobile-specific fields for a 5-week onboarding program:
 - API routes return JSON with `{ message: string }` on errors
 - Use appropriate HTTP status codes (400, 401, 404, 500)
 - Frontend displays errors via toast notifications
+
+## Design System
+
+The Opus design system (documented in `/docs/design/`) emphasizes:
+- **Editorial elegance** - Large, thoughtful typography using Fraunces and Crimson Pro
+- **Breathing space** - Generous padding and margins
+- **Minimal color** - Primarily grayscale with sage green accents
+- **Smooth animations** - Subtle, refined transitions
+
+See `/docs/design/design-system-reference.md` for complete guidelines.
 
 ## Environment Variables
 
@@ -294,7 +335,7 @@ The Express backend serves both web and mobile clients. Mobile app makes HTTP re
 ## Common Errors & Solutions
 
 ### Error 1: "Attempted to navigate before mounting the Root Layout"
-**File:** `/mobile/app/index.tsx`
+**File:** `/app/index.tsx`
 **Cause:** Using `useRouter().replace()` too early in component lifecycle
 **Fix:** Use `<Redirect>` component with delay instead of imperative navigation
 
@@ -316,7 +357,7 @@ return <Redirect href="/(tabs)" />;
 ```
 
 ### Error 2: Tab icons not rendering
-**File:** `/mobile/app/(tabs)/_layout.tsx`
+**File:** `/app/(tabs)/_layout.tsx`
 **Cause:** Using HTML elements like `<span>` instead of React Native components
 **Fix:** Use `<Text>` from 'react-native'
 
@@ -355,7 +396,7 @@ const TabBarIcon = ({ name, color }: { name: string; color: string }) => {
 
 **Update API_BASE_URL:**
 ```typescript
-// In /mobile/lib/api.ts
+// In /lib/api.ts
 const API_BASE_URL = __DEV__
   ? 'http://YOUR_COMPUTER_IP:5000'  // Use your local IP for physical devices
   : 'https://your-production-api.com';
@@ -414,23 +455,28 @@ const API_BASE_URL = __DEV__
 ## Key Files Reference
 
 ### Mobile App Core Files
-- `/mobile/app/_layout.tsx` - Root layout with providers
-- `/mobile/app/index.tsx` - Entry point with routing logic (⚠️ USES REDIRECT PATTERN)
-- `/mobile/app/(tabs)/_layout.tsx` - Tab navigation (⚠️ USES TEXT FOR ICONS)
-- `/mobile/lib/auth-store.ts` - Authentication state (HAS MOCK MODE)
-- `/mobile/lib/api.ts` - API client and endpoints (HAS MOCK MODE)
+- `/app/_layout.tsx` - Root layout with providers
+- `/app/index.tsx` - Entry point with routing logic (⚠️ USES REDIRECT PATTERN)
+- `/app/(tabs)/_layout.tsx` - Tab navigation (⚠️ USES TEXT FOR ICONS)
+- `/lib/auth-store.ts` - Authentication state (HAS MOCK MODE)
+- `/lib/api.ts` - API client and endpoints (HAS MOCK MODE)
+- `/assets/` - Mobile app assets (icons, splash screens)
 
 ### Backend Core Files
 - `/server/index.ts` - Express server entry point
-- `/server/routes.ts` - Route registration
+- `/server/routes.ts` - Route registration hub
 - `/server/lib/opus-framework.ts` - 5-week program structure
-- `/server/lib/ai-mobile.ts` - AI service with Claude + OpenAI
-- `/server/lib/ai.ts` - Legacy AI service for web
-- `/server/lib/auth.ts` - Passport.js authentication
+- `/server/lib/ai-mobile/` - Week-specific AI implementations (directory)
+  - `index.ts` - AI router
+  - `purpose.ts`, `rhythm.ts`, `network.ts`, `structure.ts`, `methods.ts` - Week modules
+  - `shared.ts` - Shared AI utilities
+- `/server/lib/ai.ts` - Legacy AI service (deprecated)
+- `/server/lib/auth.ts` - Passport.js authentication (scrypt)
 - `/server/lib/storage.ts` - Database queries (Drizzle ORM)
-- `/server/routes/program.ts` - Program management endpoints (Mobile MVP)
-- `/server/routes/onboarding.ts` - Onboarding endpoints (Mobile MVP)
-- `/server/routes/ai.ts` - AI generation endpoints (Mobile MVP)
+- `/server/lib/scheduler.ts` - Background cron jobs
+- `/server/routes/program.ts` - Program management endpoints
+- `/server/routes/onboarding.ts` - Onboarding endpoints
+- `/server/routes/ai.ts` - AI generation endpoints
 - `/server/routes/reflections.ts` - Reflection endpoints with AI analysis
 
 ### Shared Files
@@ -438,9 +484,15 @@ const API_BASE_URL = __DEV__
 - `/drizzle.config.ts` - Database migration configuration
 
 ### Documentation
-- `/BACKEND_COMPLETE.md` - Comprehensive backend documentation
-- `/docs/mobile-mvp-plan.md` - Mobile MVP implementation plan
-- `/mobile/README.md` - Mobile app running instructions
+- `/CLAUDE.md` - This file (main developer guide)
+- `/docs/README.md` - Documentation index
+- `/docs/opus-framework-5-pillars.md` - Core philosophy
+- `/docs/roadmap.md` - Project vision and future plans
+- `/docs/technical/architecture.md` - System architecture
+- `/docs/technical/api_endpoints.md` - API reference
+- `/docs/technical/mobile-mvp-plan.md` - Mobile implementation
+- `/docs/technical/setup_guide.md` - Development setup
+- `/docs/design/design-system-reference.md` - UI/UX guidelines
 
 ---
 
@@ -456,7 +508,7 @@ The app has two modes:
 - ✅ Onboarding flow works
 - ✅ All tabs display data
 
-**To Test:** Just run `cd mobile && npm start` then press `i` for iOS.
+**To Test:** Just run `npm start` then press `i` for iOS (no need to cd into mobile directory).
 
 ### PRODUCTION MODE (Pending) ⚠️
 To make the app work with real backend:
@@ -481,8 +533,8 @@ To make the app work with real backend:
    ```
 
 4. **Update mobile app configuration**
-   - In `/mobile/lib/api.ts`: Set `MOCK_MODE = false` and update `API_BASE_URL` to your computer's IP
-   - In `/mobile/lib/auth-store.ts`: Set `MOCK_MODE = false`
+   - In `/lib/api.ts`: Set `MOCK_MODE = false` and update `API_BASE_URL` to your computer's IP
+   - In `/lib/auth-store.ts`: Set `MOCK_MODE = false`
 
 5. **Test the full flow**
    - Register → North Star → Program Start → AI Goals → Tasks
@@ -502,10 +554,17 @@ To make the app work with real backend:
 - ✅ Implemented mock mode for testing without backend
 - ✅ Created comprehensive documentation
 
+**November 2025 - Mobile-First Restructure:**
+- ✅ Moved mobile app to root level (app/, lib/, assets/)
+- ✅ Removed deprecated web app (client/)
+- ✅ Merged package.json files for simplified dependency management
+- ✅ Updated tsconfig.json to include both mobile and backend
+- ✅ Single `npm start` command now runs mobile app
+
 **Files Modified/Created:**
-- Created: `server/lib/opus-framework.ts`, `server/lib/ai-mobile.ts`, `server/routes/program.ts`
+- Created: `server/lib/opus-framework.ts`, `server/lib/ai-mobile/` (directory with week modules), `server/routes/program.ts`
 - Modified: `server/routes/onboarding.ts`, `server/routes/ai.ts`, `server/routes/reflections.ts`, `server/routes.ts`, `shared/schema.ts`
-- Mobile: Entire `/mobile` directory created with all screens and functionality
+- Mobile: Entire mobile app now at root level (/app, /lib, /assets)
 
 **Total Lines of Code Added:** ~1,200+ lines
 
@@ -513,21 +572,23 @@ To make the app work with real backend:
 
 ## Summary for New Claude Instances
 
-This is a **full-stack monorepo** for a 5-week professional transformation program called Opus. It has:
+This is a **mobile-first application** for a 5-week professional transformation program called Opus. It has:
 
 1. **Mobile app** (React Native + Expo) - Primary user interface (✅ WORKING IN MOCK MODE)
-2. **Web app** (React + Vite) - Secondary interface (🟡 PARTIALLY BUILT)
-3. **Backend API** (Express + PostgreSQL) - Shared backend (✅ FULLY BUILT)
-4. **AI Service** - Claude + OpenAI hybrid (✅ FULLY BUILT)
+2. **Backend API** (Express + PostgreSQL) - RESTful API (✅ FULLY BUILT)
+3. **AI Service** - Claude + OpenAI hybrid with week-specific modules (✅ FULLY BUILT)
+4. **Web app** - Deprecated/removed (focus is mobile-first)
 
 **The mobile app is currently FULLY FUNCTIONAL in MOCK_MODE** - all screens work, all flows tested, ready for real backend integration.
 
 **To make it work with real backend:** See "What's Pending for the App to Function" section above.
 
 **Key principles:**
-- ⚠️ Use `<Redirect>` not `useRouter().replace()` for initial navigation in `/mobile/app/index.tsx`
+- ⚠️ Mobile app is at root level (/app, /lib, /assets) - not in /mobile directory
+- ⚠️ Use `<Redirect>` not `useRouter().replace()` for initial navigation in `/app/index.tsx`
 - ⚠️ Use `<Text>` not `<span>` for React Native components
 - Opus Framework defines week-specific AI coaching
 - All AI functions have graceful fallbacks
 - Schema changes require `npm run db:push`
 - MOCK_MODE allows testing without backend
+- Single package.json at root with all dependencies merged

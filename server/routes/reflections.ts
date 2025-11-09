@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { z } from "zod";
 import { storage } from "../storage";
 import { insertWeeklyReviewSchema } from "@shared/schema";
-import { analyzeReflection } from "../lib/ai-mobile";
+import { analyzeReflection } from "../lib/ai-mobile/index";
 
 // Middleware to ensure user is authenticated
 function requireAuth(req: any, res: any, next: any) {
