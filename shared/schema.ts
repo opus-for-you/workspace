@@ -11,6 +11,9 @@ export const users = pgTable("users", {
   vision: text("vision"),
   energy: text("energy"),
   direction: text("direction"),
+  northStar: text("north_star"), // Mobile MVP: User's ultimate professional vision
+  programWeek: integer("program_week").default(0), // Mobile MVP: Current week in 5-week program (0-5)
+  programStartDate: timestamp("program_start_date"), // Mobile MVP: When user started the program
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -34,6 +37,8 @@ export const goals = pgTable("goals", {
   category: text("category"),
   targetDate: date("target_date"),
   progress: integer("progress").default(0).notNull(),
+  aiGenerated: integer("ai_generated").default(0).notNull(), // Mobile MVP: 1 if AI-generated, 0 if user-created (using integer for boolean compatibility)
+  weekNumber: integer("week_number"), // Mobile MVP: Which program week this goal belongs to (1-5)
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -50,6 +55,8 @@ export const tasks = pgTable("tasks", {
   dueDate: date("due_date"),
   goalId: varchar("goal_id").references(() => goals.id, { onDelete: "set null" }),
   status: text("status").notNull().default("todo"),
+  aiGenerated: integer("ai_generated").default(0).notNull(), // Mobile MVP: 1 if AI-generated, 0 if user-created
+  recommendedSchedule: text("recommended_schedule"), // Mobile MVP: AI-suggested time/day (e.g., "morning", "Tuesday afternoon")
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

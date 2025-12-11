@@ -1,0 +1,109 @@
+{
+  "description": "AI prompt templates from the original Opus Replit implementation. These prompts are designed to align with the Opus Framework philosophy of personal agency, reflection, and gentle guidance.",
+
+  "goal_generation": {
+    "description": "Generates personalized career goals based on onboarding answers (vision, energy, direction)",
+    "prompt_template": "Based on the Opus Brand Foundation principles and the user's responses, generate 3 long-term, 3 medium-term, and 3 short-term career goals.\n\nUser's vision: {vision}\nUser's energy sources: {energy}\nUser's direction: {direction}\n\nOpus Context:\n{opus_context}\n\nGenerate goals that:\n1. Align with personal agency and ownership\n2. Focus on self-discovery and strategic action\n3. Avoid comparison culture\n4. Emphasize reflection before action\n5. Maintain professional warmth\n\nFormat each goal as:\nGOAL: [title]\nDESCRIPTION: [brief description]\nTIMEFRAME: [long/medium/short]",
+    "variables": {
+      "vision": "User's response to 'What does meaningful work look like to you?'",
+      "energy": "User's response to 'When do you lose track of time at work?'",
+      "direction": "User's response to 'Who do you want to become professionally?'",
+      "opus_context": "Relevant excerpts from Opus Framework (retrieved via RAG/embeddings)"
+    },
+    "expected_output": {
+      "format": "Structured list of 9 goals (3 long, 3 medium, 3 short)",
+      "timeframes": {
+        "long": "1-3 years",
+        "medium": "3-6 months",
+        "short": "1-4 weeks"
+      }
+    },
+    "notes": [
+      "Original implementation used pgvector for RAG over Opus Brand Foundation PDF",
+      "Goals should feel personal, not generic career advice",
+      "Avoid productivity/hustle culture language"
+    ]
+  },
+
+  "goal_refinement": {
+    "description": "Refines existing goals based on weekly reflection, emphasizing gentle iteration rather than dramatic pivots",
+    "prompt_template": "Based on the user's Week {week_number} reflection and the Opus principle of gentle refinement, suggest minimal adjustments to their goals.\n\nReflection: {reflection}\n\nCurrent Goals:\n{current_goals}\n\nOpus Context:\n{opus_context}\n\nSuggest refinements that:\n1. Maintain continuity (avoid major pivots)\n2. Increase clarity and specificity\n3. Align with emerging patterns\n4. Respect the user's pace\n5. Build on strengths revealed in reflection\n\nFormat refinements as updated goals.",
+    "variables": {
+      "week_number": "Current week in the 5-week program (1-5)",
+      "reflection": "User's weekly reflection text (wins, lessons, next steps)",
+      "current_goals": "JSON array of user's existing goals",
+      "opus_context": "Relevant Opus Framework guidance for current week"
+    },
+    "expected_output": {
+      "format": "Updated goal list with refined wording/scope",
+      "tone": "Encouraging, builds on progress, avoids harsh criticism"
+    },
+    "notes": [
+      "Refinement, not replacement - keep user's original intent",
+      "Should feel like a coach's gentle nudge, not a dramatic course correction",
+      "Week-specific context matters (Purpose → Rhythm → Network → Structure → Methods)"
+    ]
+  },
+
+  "reflection_prompt_generation": {
+    "description": "Generates personalized weekly reflection prompts based on user's north star and current week theme",
+    "prompt_template": "Generate a thoughtful reflection prompt for Week {week_number} of the Opus program.\n\nUser's North Star: {north_star}\nWeek Theme: {week_theme}\nRecent Activities: {recent_tasks}\n\nCreate a prompt that:\n1. Connects to the week's theme ({week_theme})\n2. References their north star vision\n3. Encourages specific, concrete reflection\n4. Balances wins and lessons learned\n5. Looks forward without pressure\n\nFormat:\nPrompt: [single thoughtful question]\nGuidance: [2-3 sub-questions to guide thinking]",
+    "variables": {
+      "week_number": "1-5",
+      "north_star": "User's ultimate professional vision",
+      "week_theme": "Purpose/Rhythm/Network/Structure/Methods",
+      "recent_tasks": "Summary of tasks completed this week"
+    },
+    "week_themes": {
+      "1": "Purpose - Clarifying vision and meaningful work",
+      "2": "Rhythm - Building daily habits and consistency",
+      "3": "Network - Strengthening relationships and connections",
+      "4": "Structure - Designing systems and frameworks",
+      "5": "Methods - Refining techniques and optimization"
+    }
+  },
+
+  "task_generation": {
+    "description": "Breaks down a goal into specific, actionable tasks with scheduling recommendations",
+    "prompt_template": "Break down this goal into 3-5 specific, actionable tasks:\n\nGoal: {goal_title}\nDescription: {goal_description}\nTimeframe: {goal_timeframe}\nUser's Energy Patterns: {energy_patterns}\n\nCreate tasks that:\n1. Are specific and measurable\n2. Build on each other logically\n3. Match the goal's timeframe\n4. Consider the user's energy patterns\n5. Include recommended timing (morning/afternoon/evening)\n\nFormat each task as:\nTASK: [specific action]\nSCHEDULE: [recommended time of day/week]\nESTIMATED TIME: [duration]",
+    "variables": {
+      "goal_title": "The goal to decompose",
+      "goal_description": "Additional context about the goal",
+      "goal_timeframe": "long/medium/short",
+      "energy_patterns": "User's reported peak productivity times"
+    },
+    "notes": [
+      "Original used GPT-4 for structured task generation (better at lists than Claude)",
+      "Scheduling should respect user's natural rhythms",
+      "Max 3 tasks per week to avoid overwhelm"
+    ]
+  },
+
+  "implementation_notes": {
+    "provider_strategy": {
+      "primary": "Anthropic Claude for empathy/coaching tasks (goal generation, reflection analysis)",
+      "secondary": "OpenAI GPT-4 for structured tasks (task decomposition, scheduling)",
+      "fallback": "Always include graceful fallbacks with sensible defaults"
+    },
+    "tone_guidelines": {
+      "voice": "Professional warmth - supportive but not saccharine",
+      "avoid": [
+        "Hustle culture language",
+        "Comparison with others",
+        "Pressure/urgency",
+        "Generic motivational quotes"
+      ],
+      "embrace": [
+        "Personal agency",
+        "Reflection over action",
+        "Gentle iteration",
+        "Self-discovery"
+      ]
+    },
+    "rag_context": {
+      "description": "Original implementation used pgvector embeddings of Opus Brand Foundation PDF",
+      "purpose": "Ensure AI responses align with Opus philosophy",
+      "current_alternative": "Could use in-prompt context or few-shot examples instead"
+    }
+  }
+}
