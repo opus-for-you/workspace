@@ -104,3 +104,11 @@ export function setupAuth(app: Express) {
     res.json(safeUser);
   });
 }
+
+// Middleware to require authentication
+export function requireAuth(req: any, res: any, next: any) {
+  if (!req.isAuthenticated()) {
+    return res.sendStatus(401);
+  }
+  next();
+}

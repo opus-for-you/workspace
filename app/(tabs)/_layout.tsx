@@ -7,7 +7,7 @@ const TabBarIcon = ({ name, color }: { name: string; color: string }) => {
     index: '🏠',
     goals: '🎯',
     tasks: '✓',
-    reflections: '📝',
+    reflections: '💭',
     profile: '👤',
   };
   return <Text style={{ fontSize: 24 }}>{icons[name] || '•'}</Text>;
@@ -51,14 +51,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="tasks"
         options={{
-          title: 'Tasks',
+          title: 'Milestones',
           tabBarIcon: ({ color }) => <TabBarIcon name="tasks" color={color} />,
         }}
       />
       <Tabs.Screen
         name="reflections"
         options={{
-          title: 'Reflections',
+          title: 'Check-In',
           tabBarIcon: ({ color }) => <TabBarIcon name="reflections" color={color} />,
         }}
       />

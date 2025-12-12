@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { tasksAPI } from '@/lib/api';
+import { tasksAPI, goalsAPI } from '@/lib/api';
 
-const SCHEDULE_FILTERS = ['All', 'Morning', 'Afternoon', 'Evening'];
-
-export default function TasksScreen() {
+export default function MilestonesScreen() {
   const queryClient = useQueryClient();
-  const [selectedSchedule, setSelectedSchedule] = useState('All');
+  const [filter, setFilter] = useState<'all' | 'goal'>('all');
 
-  const { data: tasks = [], isLoading } = useQuery({
+  const { data: tasks = [], isLoading: tasksLoading } = useQuery({
     queryKey: ['tasks'],
     queryFn: tasksAPI.getTasks,
+  });
+
+  const { data: goals = [], isLoading: goalsLoading } = useQuery({
+    queryKey: ['goals'],
+    queryFn: goalsAPI.getGoals,
   });
 
   const updateTaskMutation = useMutation({
@@ -30,13 +33,15 @@ export default function TasksScreen() {
     });
   };
 
-  const filteredTasks = tasks.filter((task: any) => {
-    if (selectedSchedule === 'All') return true;
-    return task.recommendedSchedule?.toLowerCase().includes(selectedSchedule.toLowerCase());
-  });
+  const getGoalName = (goalId: string) => {
+    const goal = goals.find((g: any) => g.id === goalId);
+    return goal?.title || 'No goal';
+  };
 
-  const todoTasks = filteredTasks.filter((t: any) => t.status === 'todo');
-  const doneTasks = filteredTasks.filter((t: any) => t.status === 'done');
+  const todoMilestones = tasks.filter((t: any) => t.status === 'todo');
+  const doneMilestones = tasks.filter((t: any) => t.status === 'done');
+
+  const isLoading = tasksLoading || goalsLoading;
 
   if (isLoading) {
     return (
@@ -50,67 +55,61 @@ export default function TasksScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Tasks</Text>
+        <Text style={styles.title}>Milestones</Text>
         <Text style={styles.subtitle}>
-          {todoTasks.length} to do, {doneTasks.length} completed
+          {todoMilestones.length} to do, {doneMilestones.length} completed
         </Text>
       </View>
 
-      {/* Schedule Filter */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterScroll}
-        contentContainerStyle={styles.filterContainer}
-      >
-        {SCHEDULE_FILTERS.map((filter) => (
-          <TouchableOpacity
-            key={filter}
-            style={[
-              styles.filterButton,
-              selectedSchedule === filter && styles.filterButtonActive,
-            ]}
-            onPress={() => setSelectedSchedule(filter)}
-          >
-            <Text
-              style={[
-                styles.filterText,
-                selectedSchedule === filter && styles.filterTextActive,
-              ]}
-            >
-              {filter}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {/* Filter Options */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === 'all' && styles.filterButtonActive]}
+          onPress={() => setFilter('all')}
+        >
+          <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
+            All
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === 'goal' && styles.filterButtonActive]}
+          onPress={() => setFilter('goal')}
+        >
+          <Text style={[styles.filterText, filter === 'goal' && styles.filterTextActive]}>
+            By Goal
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
-        {/* To Do Tasks */}
-        {todoTasks.length > 0 && (
+        {/* To Do Section */}
+        {todoMilestones.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>To Do</Text>
-            <View style={styles.tasksList}>
-              {todoTasks.map((task: any) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onToggle={() => handleToggleTask(task)}
+            <View style={styles.milestonesList}>
+              {todoMilestones.map((milestone: any) => (
+                <MilestoneCard
+                  key={milestone.id}
+                  milestone={milestone}
+                  goalName={milestone.goalId ? getGoalName(milestone.goalId) : undefined}
+                  onToggle={() => handleToggleTask(milestone)}
                 />
               ))}
             </View>
           </View>
         )}
 
-        {/* Completed Tasks */}
-        {doneTasks.length > 0 && (
+        {/* Completed Section */}
+        {doneMilestones.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Completed</Text>
-            <View style={styles.tasksList}>
-              {doneTasks.map((task: any) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onToggle={() => handleToggleTask(task)}
+            <View style={styles.milestonesList}>
+              {doneMilestones.map((milestone: any) => (
+                <MilestoneCard
+                  key={milestone.id}
+                  milestone={milestone}
+                  goalName={milestone.goalId ? getGoalName(milestone.goalId) : undefined}
+                  onToggle={() => handleToggleTask(milestone)}
                 />
               ))}
             </View>
@@ -118,14 +117,12 @@ export default function TasksScreen() {
         )}
 
         {/* Empty State */}
-        {filteredTasks.length === 0 && (
+        {tasks.length === 0 && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyEmoji}>✓</Text>
-            <Text style={styles.emptyTitle}>No tasks</Text>
+            <Text style={styles.emptyTitle}>No milestones yet</Text>
             <Text style={styles.emptyText}>
-              {selectedSchedule === 'All'
-                ? 'Add some tasks to get started'
-                : `No tasks scheduled for ${selectedSchedule.toLowerCase()}`}
+              Create goals and generate milestones to get started
             </Text>
           </View>
         )}
@@ -139,34 +136,49 @@ export default function TasksScreen() {
   );
 }
 
-function TaskCard({ task, onToggle }: { task: any; onToggle: () => void }) {
-  const isDone = task.status === 'done';
+function MilestoneCard({
+  milestone,
+  goalName,
+  onToggle
+}: {
+  milestone: any;
+  goalName?: string;
+  onToggle: () => void;
+}) {
+  const isDone = milestone.status === 'done';
 
   return (
     <TouchableOpacity
-      style={[styles.taskCard, isDone && styles.taskCardDone]}
+      style={[styles.milestoneCard, isDone && styles.milestoneCardDone]}
       onPress={onToggle}
     >
       <View style={[styles.checkbox, isDone && styles.checkboxChecked]}>
         {isDone && <Text style={styles.checkmark}>✓</Text>}
       </View>
 
-      <View style={styles.taskContent}>
-        <Text style={[styles.taskTitle, isDone && styles.taskTitleDone]}>
-          {task.title}
+      <View style={styles.milestoneContent}>
+        <Text style={[styles.milestoneTitle, isDone && styles.milestoneTitleDone]}>
+          {milestone.title}
         </Text>
 
-        {task.description && !isDone && (
-          <Text style={styles.taskDescription}>{task.description}</Text>
+        {milestone.description && !isDone && (
+          <Text style={styles.milestoneDescription}>{milestone.description}</Text>
         )}
 
-        <View style={styles.taskMeta}>
-          {task.recommendedSchedule && (
+        {goalName && (
+          <View style={styles.goalTag}>
+            <Text style={styles.goalEmoji}>🎯</Text>
+            <Text style={styles.goalText}>{goalName}</Text>
+          </View>
+        )}
+
+        <View style={styles.milestoneMeta}>
+          {milestone.recommendedSchedule && (
             <View style={styles.scheduleTag}>
-              <Text style={styles.scheduleText}>{task.recommendedSchedule}</Text>
+              <Text style={styles.scheduleText}>{milestone.recommendedSchedule}</Text>
             </View>
           )}
-          {task.aiGenerated === 1 && (
+          {milestone.aiGenerated === 1 && (
             <View style={styles.aiTag}>
               <Text style={styles.aiTagText}>AI</Text>
             </View>
@@ -203,10 +215,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#999',
   },
-  filterScroll: {
-    maxHeight: 50,
-  },
   filterContainer: {
+    flexDirection: 'row',
     paddingHorizontal: 20,
     gap: 8,
     paddingBottom: 16,
@@ -247,10 +257,10 @@ const styles = StyleSheet.create({
     color: '#2C2C2C',
     marginBottom: 12,
   },
-  tasksList: {
+  milestonesList: {
     gap: 12,
   },
-  taskCard: {
+  milestoneCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
@@ -258,7 +268,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
-  taskCardDone: {
+  milestoneCardDone: {
     opacity: 0.6,
   },
   checkbox: {
@@ -270,6 +280,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 2,
   },
   checkboxChecked: {
     backgroundColor: '#5A7F6A',
@@ -279,26 +290,40 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
-  taskContent: {
+  milestoneContent: {
     flex: 1,
   },
-  taskTitle: {
+  milestoneTitle: {
     fontSize: 16,
     fontWeight: '500',
     color: '#2C2C2C',
     marginBottom: 4,
   },
-  taskTitleDone: {
+  milestoneTitleDone: {
     textDecorationLine: 'line-through',
     color: '#999',
   },
-  taskDescription: {
+  milestoneDescription: {
     fontSize: 14,
     color: '#666',
     marginBottom: 8,
     lineHeight: 20,
   },
-  taskMeta: {
+  goalTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  goalEmoji: {
+    fontSize: 14,
+    marginRight: 4,
+  },
+  goalText: {
+    fontSize: 13,
+    color: '#5A7F6A',
+    fontWeight: '500',
+  },
+  milestoneMeta: {
     flexDirection: 'row',
     gap: 8,
   },
@@ -309,7 +334,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   scheduleText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#5A7F6A',
     fontWeight: '500',
   },
@@ -320,7 +345,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   aiTagText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#5A7F6A',
     fontWeight: '600',
   },

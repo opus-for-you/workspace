@@ -2,14 +2,6 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'rea
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/lib/auth-store';
 
-const WEEK_THEMES = [
-  { week: 1, title: 'Purpose', emoji: '🎯' },
-  { week: 2, title: 'Rhythm', emoji: '⚡' },
-  { week: 3, title: 'Network', emoji: '🤝' },
-  { week: 4, title: 'Structure', emoji: '🏗️' },
-  { week: 5, title: 'Methods', emoji: '🔧' },
-];
-
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
@@ -32,9 +24,6 @@ export default function ProfileScreen() {
     );
   };
 
-  const currentWeek = user?.programWeek || 0;
-  const progress = (currentWeek / 5) * 100;
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Header */}
@@ -45,74 +34,67 @@ export default function ProfileScreen() {
           </Text>
         </View>
         <Text style={styles.username}>{user?.username || 'User'}</Text>
-        <Text style={styles.email}>Opus Member</Text>
+        <Text style={styles.subtitle}>Opus Member</Text>
       </View>
 
-      {/* Program Progress */}
+      {/* Purpose Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>5-Week Program Progress</Text>
-        <View style={styles.progressCard}>
-          <View style={styles.progressHeader}>
-            <Text style={styles.progressText}>Week {currentWeek} of 5</Text>
-            <Text style={styles.progressPercent}>{Math.round(progress)}%</Text>
-          </View>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progress}%` }]} />
-          </View>
+        <Text style={styles.sectionTitle}>Your Purpose</Text>
+        <View style={styles.purposeCard}>
+          <Text style={styles.purposeText}>
+            {user?.purposeSummary || 'Complete onboarding to set your purpose'}
+          </Text>
 
-          {user?.programStartDate && (
-            <Text style={styles.startDate}>
-              Started {new Date(user.programStartDate).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </Text>
+          {user?.purposePrompt1 && (
+            <View style={styles.promptsSection}>
+              <Text style={styles.promptsLabel}>Original Prompts</Text>
+              <Text style={styles.promptText}>1. {user.purposePrompt1}</Text>
+              <Text style={styles.promptText}>2. {user.purposePrompt2}</Text>
+              <Text style={styles.promptText}>3. {user.purposePrompt3}</Text>
+            </View>
           )}
         </View>
-
-        <View style={styles.weeksGrid}>
-          {WEEK_THEMES.map((week) => (
-            <View
-              key={week.week}
-              style={[
-                styles.weekBadge,
-                currentWeek >= week.week && styles.weekBadgeComplete,
-                currentWeek === week.week && styles.weekBadgeCurrent,
-              ]}
-            >
-              <Text style={styles.weekEmoji}>{week.emoji}</Text>
-              <Text
-                style={[
-                  styles.weekTitle,
-                  currentWeek >= week.week && styles.weekTitleComplete,
-                ]}
-              >
-                {week.title}
-              </Text>
-              <Text
-                style={[
-                  styles.weekNumber,
-                  currentWeek >= week.week && styles.weekNumberComplete,
-                ]}
-              >
-                Week {week.week}
-              </Text>
-            </View>
-          ))}
-        </View>
       </View>
 
-      {/* North Star */}
-      {user?.northStar && (
+      {/* Work Style Section */}
+      {user?.workstyleBest && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Your North Star</Text>
-          <View style={styles.northStarCard}>
-            <Text style={styles.northStarEmoji}>⭐</Text>
-            <Text style={styles.northStarText}>{user.northStar}</Text>
+          <Text style={styles.sectionTitle}>Your Work Style</Text>
+          <View style={styles.workstyleCard}>
+            <View style={styles.workstyleItem}>
+              <Text style={styles.workstyleLabel}>How you work best:</Text>
+              <Text style={styles.workstyleText}>{user.workstyleBest}</Text>
+            </View>
+
+            {user.workstyleStuck && (
+              <View style={styles.workstyleItem}>
+                <Text style={styles.workstyleLabel}>What gets you stuck:</Text>
+                <Text style={styles.workstyleText}>{user.workstyleStuck}</Text>
+              </View>
+            )}
           </View>
         </View>
       )}
+
+      {/* Key People Link */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Your Network</Text>
+        <TouchableOpacity
+          style={styles.networkCard}
+          onPress={() => router.push('/key-people')}
+        >
+          <View style={styles.networkContent}>
+            <Text style={styles.networkEmoji}>🤝</Text>
+            <View style={styles.networkInfo}>
+              <Text style={styles.networkTitle}>Manage Your Key People</Text>
+              <Text style={styles.networkSubtitle}>
+                View and update your network
+              </Text>
+            </View>
+          </View>
+          <Text style={styles.networkArrow}>›</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Settings */}
       <View style={styles.section}>
@@ -125,11 +107,6 @@ export default function ProfileScreen() {
           <View style={styles.settingDivider} />
           <TouchableOpacity style={styles.settingItem}>
             <Text style={styles.settingText}>Account</Text>
-            <Text style={styles.settingArrow}>›</Text>
-          </TouchableOpacity>
-          <View style={styles.settingDivider} />
-          <TouchableOpacity style={styles.settingItem}>
-            <Text style={styles.settingText}>Privacy</Text>
             <Text style={styles.settingArrow}>›</Text>
           </TouchableOpacity>
         </View>
@@ -145,11 +122,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
           <View style={styles.settingDivider} />
           <TouchableOpacity style={styles.settingItem}>
-            <Text style={styles.settingText}>Terms of Service</Text>
-            <Text style={styles.settingArrow}>›</Text>
-          </TouchableOpacity>
-          <View style={styles.settingDivider} />
-          <TouchableOpacity style={styles.settingItem}>
             <Text style={styles.settingText}>Privacy Policy</Text>
             <Text style={styles.settingArrow}>›</Text>
           </TouchableOpacity>
@@ -161,7 +133,7 @@ export default function ProfileScreen() {
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>Version 1.0.0</Text>
+      <Text style={styles.version}>Version 1.0.0 MVP</Text>
     </ScrollView>
   );
 }
@@ -200,7 +172,7 @@ const styles = StyleSheet.create({
     color: '#2C2C2C',
     marginBottom: 4,
   },
-  email: {
+  subtitle: {
     fontSize: 14,
     color: '#999',
   },
@@ -213,105 +185,95 @@ const styles = StyleSheet.create({
     color: '#2C2C2C',
     marginBottom: 12,
   },
-  progressCard: {
+  purposeCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
-    marginBottom: 16,
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  progressText: {
+  purposeText: {
     fontSize: 16,
-    fontWeight: '500',
     color: '#2C2C2C',
+    lineHeight: 24,
+    fontStyle: 'italic',
+    marginBottom: 16,
   },
-  progressPercent: {
-    fontSize: 16,
+  promptsSection: {
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  promptsLabel: {
+    fontSize: 11,
     fontWeight: '600',
-    color: '#5A7F6A',
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 4,
-    overflow: 'hidden',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
     marginBottom: 8,
   },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#5A7F6A',
+  promptText: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+    marginBottom: 6,
   },
-  startDate: {
-    fontSize: 12,
-    color: '#999',
-  },
-  weeksGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  weekBadge: {
-    flex: 1,
-    minWidth: '30%',
+  workstyleCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
+    padding: 20,
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
-  weekBadgeComplete: {
-    backgroundColor: '#F0F4F1',
-    borderColor: '#5A7F6A',
+  workstyleItem: {
+    marginBottom: 16,
   },
-  weekBadgeCurrent: {
-    backgroundColor: '#5A7F6A',
-  },
-  weekEmoji: {
-    fontSize: 24,
+  workstyleLabel: {
+    fontSize: 13,
+    color: '#666',
     marginBottom: 6,
   },
-  weekTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 2,
-  },
-  weekTitleComplete: {
+  workstyleText: {
+    fontSize: 16,
     color: '#2C2C2C',
+    fontWeight: '500',
   },
-  weekNumber: {
-    fontSize: 11,
-    color: '#999',
-  },
-  weekNumberComplete: {
-    color: '#5A7F6A',
-  },
-  northStarCard: {
+  networkCard: {
     backgroundColor: '#F0F4F1',
     borderRadius: 12,
     padding: 20,
     borderWidth: 1,
     borderColor: '#D4E5DA',
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  northStarEmoji: {
-    fontSize: 40,
-    marginBottom: 12,
+  networkContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
-  northStarText: {
-    fontSize: 16,
+  networkEmoji: {
+    fontSize: 32,
+    marginRight: 12,
+  },
+  networkInfo: {
+    flex: 1,
+  },
+  networkTitle: {
+    fontSize: 17,
+    fontWeight: '600',
     color: '#2C2C2C',
-    textAlign: 'center',
-    lineHeight: 24,
-    fontStyle: 'italic',
+    marginBottom: 2,
+  },
+  networkSubtitle: {
+    fontSize: 14,
+    color: '#5A7F6A',
+  },
+  networkArrow: {
+    fontSize: 24,
+    color: '#5A7F6A',
+    marginLeft: 8,
   },
   settingsList: {
     backgroundColor: '#fff',

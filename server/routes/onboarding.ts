@@ -1,61 +1,90 @@
-import type { Express } from "express";
+import { Router } from "express";
 import { z } from "zod";
+import { requireAuth } from "../auth";
 import { storage } from "../storage";
+import { generatePurposeSummary } from "../lib/ai-mvp";
 
-// Onboarding schema for validation (3 questions per spec)
-const onboardingSchema = z.object({
-  vision: z.string().min(1),
-  energy: z.string().min(1),
-  direction: z.string().min(1),
-});
+const router = Router();
 
-// Mobile MVP: North Star onboarding
-const northStarSchema = z.object({
-  northStar: z.string().min(10, "Please provide a meaningful vision for your future"),
-});
+// Save purpose prompts and generate summary
+router.post("/purpose", requireAuth, async (req, res) => {
+  try {
+    const schema = z.object({
+      prompt1: z.string().min(10, "Prompt 1 must be at least 10 characters"),
+      prompt2: z.string().min(10, "Prompt 2 must be at least 10 characters"),
+      prompt3: z.string().min(10, "Prompt 3 must be at least 10 characters"),
+    });
 
-// Middleware to ensure user is authenticated
-function requireAuth(req: any, res: any, next: any) {
-  if (!req.isAuthenticated()) {
-    return res.sendStatus(401);
+    const { prompt1, prompt2, prompt3 } = schema.parse(req.body);
+
+    // Generate AI summary
+    const purposeSummary = await generatePurposeSummary(prompt1, prompt2, prompt3);
+
+    // Update user with prompts and summary
+    const updatedUser = await storage.updateUser(req.user!.id, {
+      purposePrompt1: prompt1,
+      purposePrompt2: prompt2,
+      purposePrompt3: prompt3,
+      purposeSummary,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return user without password
+    const { password, ...safeUser } = updatedUser;
+
+    res.json({
+      success: true,
+      purposeSummary,
+      user: safeUser,
+      message: "Purpose saved and summary generated",
+    });
+  } catch (error: any) {
+    console.error("Error saving purpose:", error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: error.errors[0].message });
+    }
+    res.status(400).json({ message: "Failed to save purpose" });
   }
-  next();
-}
+});
 
-export function registerOnboardingRoutes(app: Express) {
-  // Original web app onboarding (3 questions)
-  app.post("/api/onboarding", requireAuth, async (req, res) => {
-    try {
-      const data = onboardingSchema.parse(req.body);
-      await storage.updateUser(req.user!.id, data);
-      res.json({ success: true });
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
+// Save method/workstyle profile
+router.post("/method", requireAuth, async (req, res) => {
+  try {
+    const schema = z.object({
+      workstyleBest: z.string().min(1, "Please select how you work best"),
+      workstyleStuck: z.string().optional(),
+    });
+
+    const { workstyleBest, workstyleStuck } = schema.parse(req.body);
+
+    // Update user with workstyle profile
+    const updatedUser = await storage.updateUser(req.user!.id, {
+      workstyleBest,
+      workstyleStuck: workstyleStuck || null,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
     }
-  });
 
-  // Mobile MVP: Save North Star
-  app.post("/api/onboarding/north-star", requireAuth, async (req, res) => {
-    try {
-      const { northStar } = northStarSchema.parse(req.body);
-      const updatedUser = await storage.updateUser(req.user!.id, { northStar });
+    // Return user without password
+    const { password, ...safeUser } = updatedUser;
 
-      if (!updatedUser) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      // Return user without password
-      const { password, ...safeUser } = updatedUser;
-      res.json({
-        success: true,
-        user: safeUser,
-        message: "North star saved successfully"
-      });
-    } catch (error: any) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.errors[0].message });
-      }
-      res.status(500).json({ error: error.message || "Failed to save north star" });
+    res.json({
+      success: true,
+      user: safeUser,
+      message: "Workstyle profile saved",
+    });
+  } catch (error: any) {
+    console.error("Error saving method:", error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: error.errors[0].message });
     }
-  });
-}
+    res.status(400).json({ message: "Failed to save workstyle" });
+  }
+});
+
+export default router;

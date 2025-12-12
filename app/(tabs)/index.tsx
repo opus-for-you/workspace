@@ -1,24 +1,10 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/auth-store';
-import { programAPI, tasksAPI, goalsAPI } from '@/lib/api';
-
-const WEEK_THEMES = [
-  { week: 0, title: 'Getting Started', emoji: '🚀' },
-  { week: 1, title: 'Purpose', emoji: '🎯' },
-  { week: 2, title: 'Rhythm', emoji: '⚡' },
-  { week: 3, title: 'Network', emoji: '🤝' },
-  { week: 4, title: 'Structure', emoji: '🏗️' },
-  { week: 5, title: 'Methods', emoji: '🔧' },
-];
+import { tasksAPI, goalsAPI } from '@/lib/api';
 
 export default function DashboardScreen() {
   const { user } = useAuthStore();
-
-  const { data: programData, isLoading: programLoading } = useQuery({
-    queryKey: ['program', 'current-week'],
-    queryFn: programAPI.getCurrentWeek,
-  });
 
   const { data: tasks = [], isLoading: tasksLoading } = useQuery({
     queryKey: ['tasks'],
@@ -30,12 +16,22 @@ export default function DashboardScreen() {
     queryFn: goalsAPI.getGoals,
   });
 
-  const currentWeek = user?.programWeek || 0;
-  const weekTheme = WEEK_THEMES[currentWeek] || WEEK_THEMES[0];
-  const todayTasks = tasks.filter((t: any) => t.status === 'todo').slice(0, 5);
   const activeGoals = goals.filter((g: any) => g.progress < 100);
+  const todayTasks = tasks.filter((t: any) => t.status === 'todo').slice(0, 5);
 
-  const isLoading = programLoading || tasksLoading || goalsLoading;
+  // Calculate completed this week
+  const now = new Date();
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - now.getDay());
+  weekStart.setHours(0, 0, 0, 0);
+
+  const completedThisWeek = tasks.filter((t: any) => {
+    if (t.status !== 'done') return false;
+    const taskDate = new Date(t.createdAt);
+    return taskDate >= weekStart;
+  });
+
+  const isLoading = tasksLoading || goalsLoading;
 
   if (isLoading) {
     return (
@@ -53,37 +49,62 @@ export default function DashboardScreen() {
         <Text style={styles.date}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</Text>
       </View>
 
-      {/* Week Progress */}
-      <View style={styles.weekCard}>
-        <View style={styles.weekHeader}>
-          <Text style={styles.weekEmoji}>{weekTheme.emoji}</Text>
-          <View style={styles.weekInfo}>
-            <Text style={styles.weekLabel}>Week {currentWeek} of 5</Text>
-            <Text style={styles.weekTitle}>{weekTheme.title}</Text>
+      {/* Purpose Summary Card */}
+      <View style={styles.purposeCard}>
+        <Text style={styles.purposeLabel}>Your Purpose</Text>
+        <Text style={styles.purposeText}>
+          {user?.purposeSummary || 'Define your purpose to get started'}
+        </Text>
+      </View>
+
+      {/* Quick Stats */}
+      <View style={styles.statsContainer}>
+        <View style={styles.statCard}>
+          <Text style={styles.statNumber}>{activeGoals.length}</Text>
+          <Text style={styles.statLabel}>Active Goals</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Text style={styles.statNumber}>{completedThisWeek.length}</Text>
+          <Text style={styles.statLabel}>Completed This Week</Text>
+        </View>
+      </View>
+
+      {/* Active Goals */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Active Goals</Text>
+          <Text style={styles.sectionCount}>{activeGoals.length}</Text>
+        </View>
+
+        {activeGoals.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyEmoji}>🎯</Text>
+            <Text style={styles.emptyText}>No active goals</Text>
+            <Text style={styles.emptyHint}>Set your first goal to begin</Text>
           </View>
-        </View>
-
-        <View style={styles.progressBar}>
-          {[1, 2, 3, 4, 5].map((week) => (
-            <View
-              key={week}
-              style={[
-                styles.progressSegment,
-                week <= currentWeek && styles.progressSegmentActive,
-              ]}
-            />
-          ))}
-        </View>
-
-        {user?.northStar && (
-          <View style={styles.northStarSection}>
-            <Text style={styles.northStarLabel}>Your North Star</Text>
-            <Text style={styles.northStarText}>{user.northStar}</Text>
+        ) : (
+          <View style={styles.goalsList}>
+            {activeGoals.map((goal: any) => (
+              <View key={goal.id} style={styles.goalCard}>
+                <View style={styles.goalHeader}>
+                  <Text style={styles.goalTitle}>{goal.title}</Text>
+                  <Text style={styles.goalProgress}>{goal.progress}%</Text>
+                </View>
+                <View style={styles.goalProgressBar}>
+                  <View
+                    style={[
+                      styles.goalProgressFill,
+                      { width: `${goal.progress}%` },
+                    ]}
+                  />
+                </View>
+              </View>
+            ))}
           </View>
         )}
       </View>
 
-      {/* Today's Tasks */}
+      {/* Today's Focus */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Today's Focus</Text>
@@ -116,53 +137,6 @@ export default function DashboardScreen() {
             ))}
           </View>
         )}
-      </View>
-
-      {/* Active Goals */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Active Goals</Text>
-          <Text style={styles.sectionCount}>{activeGoals.length}</Text>
-        </View>
-
-        {activeGoals.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>🎯</Text>
-            <Text style={styles.emptyText}>No active goals</Text>
-            <Text style={styles.emptyHint}>Set your first goal to begin</Text>
-          </View>
-        ) : (
-          <View style={styles.goalsList}>
-            {activeGoals.slice(0, 3).map((goal: any) => (
-              <View key={goal.id} style={styles.goalCard}>
-                <View style={styles.goalHeader}>
-                  <Text style={styles.goalTitle}>{goal.title}</Text>
-                  <Text style={styles.goalProgress}>{goal.progress}%</Text>
-                </View>
-                <View style={styles.goalProgressBar}>
-                  <View
-                    style={[
-                      styles.goalProgressFill,
-                      { width: `${goal.progress}%` },
-                    ]}
-                  />
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-      </View>
-
-      {/* Quick Actions */}
-      <View style={styles.quickActions}>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionEmoji}>➕</Text>
-          <Text style={styles.actionText}>Add Task</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionEmoji}>✨</Text>
-          <Text style={styles.actionText}>AI Suggest</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -197,71 +171,52 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
   },
-  weekCard: {
+  purposeCard: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    padding: 20,
+    padding: 24,
     marginBottom: 24,
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
-  weekHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  weekEmoji: {
-    fontSize: 36,
-    marginRight: 16,
-  },
-  weekInfo: {
-    flex: 1,
-  },
-  weekLabel: {
+  purposeLabel: {
     fontSize: 12,
     color: '#999',
     fontWeight: '500',
+    marginBottom: 12,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  weekTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  purposeText: {
+    fontSize: 16,
     color: '#2C2C2C',
-    marginTop: 2,
-  },
-  progressBar: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 16,
-  },
-  progressSegment: {
-    flex: 1,
-    height: 6,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 3,
-  },
-  progressSegmentActive: {
-    backgroundColor: '#5A7F6A',
-  },
-  northStarSection: {
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
-  },
-  northStarLabel: {
-    fontSize: 12,
-    color: '#999',
-    fontWeight: '500',
-    marginBottom: 6,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  northStarText: {
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
+    lineHeight: 24,
     fontStyle: 'italic',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 24,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  statNumber: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#5A7F6A',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
   },
   section: {
     marginBottom: 24,
@@ -281,6 +236,43 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     fontWeight: '500',
+  },
+  goalsList: {
+    gap: 12,
+  },
+  goalCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  goalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  goalTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#2C2C2C',
+    flex: 1,
+  },
+  goalProgress: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#5A7F6A',
+  },
+  goalProgressBar: {
+    height: 6,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  goalProgressFill: {
+    height: '100%',
+    backgroundColor: '#5A7F6A',
   },
   tasksList: {
     gap: 12,
@@ -325,43 +317,6 @@ const styles = StyleSheet.create({
     color: '#5A7F6A',
     fontWeight: '600',
   },
-  goalsList: {
-    gap: 12,
-  },
-  goalCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  goalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  goalTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#2C2C2C',
-    flex: 1,
-  },
-  goalProgress: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#5A7F6A',
-  },
-  goalProgressBar: {
-    height: 6,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  goalProgressFill: {
-    height: '100%',
-    backgroundColor: '#5A7F6A',
-  },
   emptyState: {
     alignItems: 'center',
     padding: 32,
@@ -383,27 +338,5 @@ const styles = StyleSheet.create({
   emptyHint: {
     fontSize: 14,
     color: '#999',
-  },
-  quickActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  actionButton: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  actionEmoji: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  actionText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#2C2C2C',
   },
 });

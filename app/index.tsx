@@ -24,11 +24,11 @@ export default function Index() {
 
   // User is logged in
   if (user) {
-    // Check if user has completed onboarding
-    if (user.northStar) {
+    // Check if user has completed onboarding (purposeSummary indicates completion)
+    if (user.purposeSummary) {
       return <Redirect href="/(tabs)" />;
     } else {
-      return <Redirect href="/(onboarding)/north-star" />;
+      return <Redirect href="/(onboarding)/purpose" />;
     }
   }
 

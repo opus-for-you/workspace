@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, TextInput, Modal } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, TextInput, Modal, Alert } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import { goalsAPI } from '@/lib/api';
 import { useAuthStore } from '@/lib/auth-store';
 
 export default function GoalsScreen() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showAISuggestions, setShowAISuggestions] = useState(false);
   const [newGoalTitle, setNewGoalTitle] = useState('');
   const [newGoalDescription, setNewGoalDescription] = useState('');
 
@@ -18,10 +19,13 @@ export default function GoalsScreen() {
   });
 
   const generateGoalsMutation = useMutation({
-    mutationFn: () => goalsAPI.generateGoals(user?.northStar || '', user?.programWeek || 1),
+    mutationFn: () => goalsAPI.generateGoals(user?.purposeSummary),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] });
-      setShowAISuggestions(false);
+      Alert.alert('Success', 'AI-generated goals created!');
+    },
+    onError: () => {
+      Alert.alert('Error', 'Failed to generate goals');
     },
   });
 
@@ -33,6 +37,9 @@ export default function GoalsScreen() {
       setNewGoalTitle('');
       setNewGoalDescription('');
     },
+    onError: () => {
+      Alert.alert('Error', 'Failed to create goal');
+    },
   });
 
   const handleCreateGoal = () => {
@@ -42,13 +49,13 @@ export default function GoalsScreen() {
         description: newGoalDescription,
         category: 'professional',
         progress: 0,
-        weekNumber: user?.programWeek || 1,
       });
     }
   };
 
-  const weekGoals = goals.filter((g: any) => g.weekNumber === user?.programWeek);
-  const otherGoals = goals.filter((g: any) => g.weekNumber !== user?.programWeek);
+  const handleGoalPress = (goalId: string) => {
+    router.push(`/goal-detail?id=${goalId}`);
+  };
 
   if (isLoading) {
     return (
@@ -67,7 +74,7 @@ export default function GoalsScreen() {
           <Text style={styles.subtitle}>Your transformation roadmap</Text>
         </View>
 
-        {/* AI Suggestions Banner */}
+        {/* AI Generation Banner */}
         <TouchableOpacity
           style={styles.aiPrompt}
           onPress={() => generateGoalsMutation.mutate()}
@@ -75,9 +82,9 @@ export default function GoalsScreen() {
         >
           <Text style={styles.aiPromptEmoji}>✨</Text>
           <View style={styles.aiPromptContent}>
-            <Text style={styles.aiPromptTitle}>Get AI Suggestions</Text>
+            <Text style={styles.aiPromptTitle}>Generate Goals with AI</Text>
             <Text style={styles.aiPromptText}>
-              Based on your north star and Week {user?.programWeek || 1}
+              Let AI create goals aligned with your purpose
             </Text>
           </View>
           {generateGoalsMutation.isPending && (
@@ -85,38 +92,26 @@ export default function GoalsScreen() {
           )}
         </TouchableOpacity>
 
-        {/* This Week's Goals */}
-        {weekGoals.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>This Week (Week {user?.programWeek})</Text>
-            <View style={styles.goalsList}>
-              {weekGoals.map((goal: any) => (
-                <GoalCard key={goal.id} goal={goal} />
-              ))}
-            </View>
-          </View>
-        )}
-
-        {/* Other Goals */}
-        {otherGoals.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>All Goals</Text>
-            <View style={styles.goalsList}>
-              {otherGoals.map((goal: any) => (
-                <GoalCard key={goal.id} goal={goal} />
-              ))}
-            </View>
-          </View>
-        )}
-
-        {/* Empty State */}
-        {goals.length === 0 && (
+        {/* All Goals */}
+        {goals.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyEmoji}>🎯</Text>
             <Text style={styles.emptyTitle}>No goals yet</Text>
             <Text style={styles.emptyText}>
-              Start by getting AI suggestions or create your own
+              Generate goals with AI or create your own
             </Text>
+          </View>
+        ) : (
+          <View style={styles.goalsList}>
+            {goals.map((goal: any) => (
+              <TouchableOpacity
+                key={goal.id}
+                onPress={() => handleGoalPress(goal.id)}
+                activeOpacity={0.7}
+              >
+                <GoalCard goal={goal} />
+              </TouchableOpacity>
+            ))}
           </View>
         )}
       </ScrollView>
@@ -165,6 +160,7 @@ export default function GoalsScreen() {
                 value={newGoalTitle}
                 onChangeText={setNewGoalTitle}
                 placeholder="What do you want to achieve?"
+                placeholderTextColor="#999"
                 autoFocus
               />
             </View>
@@ -176,6 +172,7 @@ export default function GoalsScreen() {
                 value={newGoalDescription}
                 onChangeText={setNewGoalDescription}
                 placeholder="Add more details..."
+                placeholderTextColor="#999"
                 multiline
                 numberOfLines={4}
                 textAlignVertical="top"
@@ -213,10 +210,9 @@ function GoalCard({ goal }: { goal: any }) {
             style={[styles.progressFill, { width: `${goal.progress}%` }]}
           />
         </View>
-        {goal.weekNumber && (
-          <Text style={styles.weekBadge}>Week {goal.weekNumber}</Text>
-        )}
       </View>
+
+      <Text style={styles.viewMilestones}>View milestones →</Text>
     </View>
   );
 }
@@ -277,15 +273,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#5A7F6A',
   },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#2C2C2C',
-    marginBottom: 12,
-  },
   goalsList: {
     gap: 12,
   },
@@ -323,12 +310,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   goalFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    marginBottom: 8,
   },
   progressBar: {
-    flex: 1,
     height: 6,
     backgroundColor: '#E0E0E0',
     borderRadius: 3,
@@ -338,9 +322,9 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#5A7F6A',
   },
-  weekBadge: {
-    fontSize: 12,
-    color: '#999',
+  viewMilestones: {
+    fontSize: 14,
+    color: '#5A7F6A',
     fontWeight: '500',
   },
   aiTag: {

@@ -8,12 +8,17 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
-  vision: text("vision"),
-  energy: text("energy"),
-  direction: text("direction"),
-  northStar: text("north_star"), // Mobile MVP: User's ultimate professional vision
-  programWeek: integer("program_week").default(0), // Mobile MVP: Current week in 5-week program (0-5)
-  programStartDate: timestamp("program_start_date"), // Mobile MVP: When user started the program
+
+  // Purpose Pillar (3 micro-prompts)
+  purposePrompt1: text("purpose_prompt_1"), // "Describe a moment when work felt perfectly aligned"
+  purposePrompt2: text("purpose_prompt_2"), // "Imagine your career 10 years from now"
+  purposePrompt3: text("purpose_prompt_3"), // "What's a career version you haven't imagined yet"
+  purposeSummary: text("purpose_summary"), // AI-generated 1-paragraph synthesis
+
+  // Method Pillar (workstyle profile)
+  workstyleBest: text("workstyle_best"), // "How do you work best?" (multiple choice)
+  workstyleStuck: text("workstyle_stuck"), // "What usually gets you stuck?" (free text)
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -37,8 +42,7 @@ export const goals = pgTable("goals", {
   category: text("category"),
   targetDate: date("target_date"),
   progress: integer("progress").default(0).notNull(),
-  aiGenerated: integer("ai_generated").default(0).notNull(), // Mobile MVP: 1 if AI-generated, 0 if user-created (using integer for boolean compatibility)
-  weekNumber: integer("week_number"), // Mobile MVP: Which program week this goal belongs to (1-5)
+  aiGenerated: integer("ai_generated").default(0).notNull(), // 1 if AI-generated, 0 if user-created (using integer for boolean compatibility)
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -72,12 +76,25 @@ export const weeklyReviews = pgTable("weekly_reviews", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Key People table - Network Pillar (track 3 key relationships)
+export const keyPeople = pgTable("key_people", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // "mentor", "peer", "collaborator"
+  why: text("why"), // Why this person matters
+  lastInteraction: date("last_interaction"), // Last time user connected
+  notes: text("notes"), // Optional notes about relationship
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   connections: many(connections),
   goals: many(goals),
   tasks: many(tasks),
   weeklyReviews: many(weeklyReviews),
+  keyPeople: many(keyPeople),
 }));
 
 export const connectionsRelations = relations(connections, ({ one }) => ({
@@ -113,6 +130,13 @@ export const weeklyReviewsRelations = relations(weeklyReviews, ({ one }) => ({
   }),
 }));
 
+export const keyPeopleRelations = relations(keyPeople, ({ one }) => ({
+  user: one(users, {
+    fields: [keyPeople.userId],
+    references: [users.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -143,6 +167,12 @@ export const insertWeeklyReviewSchema = createInsertSchema(weeklyReviews).omit({
   createdAt: true,
 });
 
+export const insertKeyPersonSchema = createInsertSchema(keyPeople).omit({
+  id: true,
+  userId: true,
+  createdAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -159,3 +189,6 @@ export type Task = typeof tasks.$inferSelect;
 
 export type InsertWeeklyReview = z.infer<typeof insertWeeklyReviewSchema>;
 export type WeeklyReview = typeof weeklyReviews.$inferSelect;
+
+export type InsertKeyPerson = z.infer<typeof insertKeyPersonSchema>;
+export type KeyPerson = typeof keyPeople.$inferSelect;

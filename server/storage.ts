@@ -1,11 +1,12 @@
 // Reference: javascript_auth_all_persistance and javascript_database blueprints
-import { 
-  users, 
-  connections, 
-  goals, 
-  tasks, 
+import {
+  users,
+  connections,
+  goals,
+  tasks,
   weeklyReviews,
-  type User, 
+  keyPeople,
+  type User,
   type InsertUser,
   type Connection,
   type InsertConnection,
@@ -14,7 +15,9 @@ import {
   type Task,
   type InsertTask,
   type WeeklyReview,
-  type InsertWeeklyReview
+  type InsertWeeklyReview,
+  type KeyPerson,
+  type InsertKeyPerson
 } from "@shared/schema";
 import { db } from "./db";
 import { pool } from "./db";
@@ -58,7 +61,14 @@ export interface IStorage {
   getWeeklyReview(id: string, userId: string): Promise<WeeklyReview | undefined>;
   createWeeklyReview(userId: string, review: InsertWeeklyReview): Promise<WeeklyReview>;
   deleteWeeklyReview(id: string, userId: string): Promise<boolean>;
-  
+
+  // Key People operations
+  getKeyPeople(userId: string): Promise<KeyPerson[]>;
+  getKeyPerson(id: string, userId: string): Promise<KeyPerson | undefined>;
+  createKeyPerson(userId: string, person: InsertKeyPerson): Promise<KeyPerson>;
+  updateKeyPerson(id: string, userId: string, updates: Partial<InsertKeyPerson>): Promise<KeyPerson | undefined>;
+  deleteKeyPerson(id: string, userId: string): Promise<boolean>;
+
   sessionStore: session.Store;
 }
 
@@ -237,6 +247,43 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(weeklyReviews)
       .where(and(eq(weeklyReviews.id, id), eq(weeklyReviews.userId, userId)));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  // Key People operations
+  async getKeyPeople(userId: string): Promise<KeyPerson[]> {
+    return await db.select().from(keyPeople).where(eq(keyPeople.userId, userId));
+  }
+
+  async getKeyPerson(id: string, userId: string): Promise<KeyPerson | undefined> {
+    const [person] = await db
+      .select()
+      .from(keyPeople)
+      .where(and(eq(keyPeople.id, id), eq(keyPeople.userId, userId)));
+    return person || undefined;
+  }
+
+  async createKeyPerson(userId: string, person: InsertKeyPerson): Promise<KeyPerson> {
+    const [newPerson] = await db
+      .insert(keyPeople)
+      .values({ ...person, userId })
+      .returning();
+    return newPerson;
+  }
+
+  async updateKeyPerson(id: string, userId: string, updates: Partial<InsertKeyPerson>): Promise<KeyPerson | undefined> {
+    const [updated] = await db
+      .update(keyPeople)
+      .set(updates)
+      .where(and(eq(keyPeople.id, id), eq(keyPeople.userId, userId)))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteKeyPerson(id: string, userId: string): Promise<boolean> {
+    const result = await db
+      .delete(keyPeople)
+      .where(and(eq(keyPeople.id, id), eq(keyPeople.userId, userId)));
     return result.rowCount !== null && result.rowCount > 0;
   }
 }

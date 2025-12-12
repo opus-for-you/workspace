@@ -4,9 +4,16 @@ import * as SecureStore from 'expo-secure-store';
 interface User {
   id: string;
   username: string;
-  northStar?: string;
-  programWeek?: number;
-  programStartDate?: string;
+
+  // NEW PURPOSE FIELDS
+  purposePrompt1?: string;
+  purposePrompt2?: string;
+  purposePrompt3?: string;
+  purposeSummary?: string;
+
+  // NEW METHOD FIELDS
+  workstyleBest?: string;
+  workstyleStuck?: string;
 }
 
 interface AuthState {
@@ -34,20 +41,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
 
       // Option 1: Skip onboarding (go straight to dashboard)
-      // const mockUser: User = {
-      //   id: 'mock-user-123',
-      //   username,
-      //   northStar: 'I want to become a trusted advisor in my industry',
-      //   programWeek: 2,
-      //   programStartDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-      // };
-
-      // Option 2: Show onboarding flow (recommended for first time)
       const mockUser: User = {
         id: 'mock-user-123',
         username,
-        programWeek: 0, // Not started yet - will show onboarding
+        purposePrompt1: 'When I\'m solving complex problems collaboratively',
+        purposePrompt2: 'Leading a product team at a mission-driven company',
+        purposePrompt3: 'Building my own consulting practice helping teams transform',
+        purposeSummary: 'I thrive when solving complex problems collaboratively. In ten years, I see myself leading a product team at a mission-driven company, helping others grow while building meaningful solutions. I\'m curious about building my own consulting practice, helping teams transform their ways of working.',
+        workstyleBest: 'deep-focus',
+        workstyleStuck: 'When there are too many meetings',
       };
+
+      // Option 2: Show onboarding flow (new user)
+      // const mockUser: User = {
+      //   id: 'mock-user-123',
+      //   username,
+      //   // No purpose or method fields - will show onboarding
+      // };
 
       await SecureStore.setItemAsync('auth_token', 'mock-token-123');
       set({ user: mockUser, token: 'mock-token-123' });
@@ -65,7 +75,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const mockUser: User = {
         id: 'mock-user-123',
         username,
-        programWeek: 0, // Not started yet
+        // New user - no purpose yet
       };
       await SecureStore.setItemAsync('auth_token', 'mock-token-123');
       set({ user: mockUser, token: 'mock-token-123' });
@@ -85,13 +95,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (MOCK_MODE) {
       const token = await SecureStore.getItemAsync('auth_token');
       if (token) {
-        // Mock user data
+        // Mock user data with completed onboarding
         const mockUser: User = {
           id: 'mock-user-123',
           username: 'demo',
-          northStar: 'I want to become a trusted advisor in my industry',
-          programWeek: 2,
-          programStartDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), // Started 8 days ago
+          purposePrompt1: 'When I\'m solving complex problems collaboratively',
+          purposePrompt2: 'Leading a product team at a mission-driven company',
+          purposePrompt3: 'Building my own consulting practice helping teams transform',
+          purposeSummary: 'I thrive when solving complex problems collaboratively. In ten years, I see myself leading a product team at a mission-driven company, helping others grow while building meaningful solutions. I\'m curious about building my own consulting practice, helping teams transform their ways of working.',
+          workstyleBest: 'deep-focus',
+          workstyleStuck: 'When there are too many meetings',
         };
         set({ user: mockUser, token, isLoading: false });
       } else {

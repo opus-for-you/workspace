@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { z } from "zod";
 import { storage } from "../storage";
 import { insertWeeklyReviewSchema } from "@shared/schema";
-import { analyzeReflection } from "../lib/ai-mobile/index";
+import { analyzeCheckIn } from "../lib/ai-mvp";
 
 // Middleware to ensure user is authenticated
 function requireAuth(req: any, res: any, next: any) {
@@ -37,8 +37,8 @@ export function registerReflectionRoutes(app: Express) {
   });
 
   /**
-   * POST /api/reflections/submit (Mobile MVP)
-   * Submit reflection with AI analysis
+   * POST /api/reflections/submit (MVP)
+   * Submit reflection with AI analysis (includes network nudges)
    */
   app.post("/api/reflections/submit", requireAuth, async (req, res) => {
     try {
@@ -47,32 +47,34 @@ export function registerReflectionRoutes(app: Express) {
       // Create the reflection
       const review = await storage.createWeeklyReview(req.user!.id, data);
 
-      // Get user's current goals and completed tasks for analysis
-      const goals = await storage.getGoals(req.user!.id);
-      const tasks = await storage.getTasks(req.user!.id);
-      const completedTasks = tasks.filter(t => t.status === 'done');
+      // Background: Analyze check-in (don't await to keep response fast)
+      (async () => {
+        try {
+          const goals = await storage.getGoals(req.user!.id);
+          const milestones = await storage.getTasks(req.user!.id);
+          const keyPeople = await storage.getKeyPeople(req.user!.id);
 
-      // Get user for week context
-      const user = await storage.getUser(req.user!.id);
-      const programWeek = user?.programWeek || 1;
+          const analysis = await analyzeCheckIn(
+            {
+              wins: data.wins || undefined,
+              lessons: data.lessons || undefined,
+              nextSteps: data.nextSteps || undefined
+            },
+            goals.map((g) => ({ title: g.title, progress: g.progress })),
+            milestones.filter((m) => m.status === "done").map((m) => ({ title: m.title, status: m.status })),
+            keyPeople.map((kp) => ({
+              name: kp.name,
+              type: kp.type,
+              lastInteraction: kp.lastInteraction ? new Date(kp.lastInteraction) : undefined
+            }))
+          );
 
-      // Analyze reflection in background (don't await to keep response fast)
-      analyzeReflection(
-        {
-          wins: data.wins || undefined,
-          lessons: data.lessons || undefined,
-          nextSteps: data.nextSteps || undefined
-        },
-        goals.map(g => ({ title: g.title, progress: g.progress })),
-        completedTasks.map(t => ({ title: t.title })),
-        programWeek
-      ).then(analysis => {
-        // Could store this analysis or use it to refine goals
-        // For now, just log it
-        console.log("Reflection analysis complete:", analysis);
-      }).catch(err => {
-        console.error("Error analyzing reflection:", err);
-      });
+          console.log("Check-in analysis complete:", analysis);
+          // TODO: Store analysis in database for future use
+        } catch (error) {
+          console.error("Background check-in analysis failed:", error);
+        }
+      })();
 
       res.status(201).json({
         review,
