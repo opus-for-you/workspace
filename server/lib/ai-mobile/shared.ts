@@ -1,14 +1,14 @@
-import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 
 /**
- * Shared AI clients, types, and utilities for all weeks
+ * Shared AI utilities for all weeks
+ * Using OpenAI GPT-5 family models exclusively
  */
 
-// Initialize AI clients
-export const anthropicClient = process.env.ANTHROPIC_API_KEY
-  ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-  : null;
+// Initialize OpenAI client
+if (!process.env.OPENAI_API_KEY) {
+  console.warn("WARNING: OPENAI_API_KEY not set. AI features will use fallback responses.");
+}
 
 export const openaiClient = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
@@ -38,43 +38,13 @@ export interface ReflectionAnalysis {
   nextWeekFocus: string;
 }
 
-// Shared utility: Call Claude for goals
-export async function callClaudeForGoals(prompt: string): Promise<MobileGoalSuggestion[] | null> {
-  if (!anthropicClient) return null;
-
-  try {
-    const response = await anthropicClient.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 2000,
-      temperature: 0.7,
-      messages: [{
-        role: "user",
-        content: prompt
-      }]
-    });
-
-    const content = response.content[0];
-    if (content.type === "text") {
-      const text = content.text.trim();
-      const jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    }
-  } catch (error) {
-    console.error("Claude error:", error);
-  }
-
-  return null;
-}
-
-// Shared utility: Call OpenAI for goals
+// Shared utility: Call OpenAI for goals (GPT-5.2 Thinking)
 export async function callOpenAIForGoals(prompt: string): Promise<MobileGoalSuggestion[] | null> {
   if (!openaiClient) return null;
 
   try {
     const response = await openaiClient.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5.2",
       messages: [{
         role: "system",
         content: "You are an expert professional coach. Return ONLY valid JSON, no markdown or explanations."
@@ -92,19 +62,19 @@ export async function callOpenAIForGoals(prompt: string): Promise<MobileGoalSugg
       return parsed.goals || parsed;
     }
   } catch (error) {
-    console.error("OpenAI error:", error);
+    console.error("OpenAI API error (goals):", error);
   }
 
   return null;
 }
 
-// Shared utility: Call OpenAI for tasks
+// Shared utility: Call OpenAI for tasks (GPT-5 Mini)
 export async function callOpenAIForTasks(prompt: string): Promise<MobileTaskSuggestion[] | null> {
   if (!openaiClient) return null;
 
   try {
     const response = await openaiClient.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-5-mini",
       messages: [{
         role: "system",
         content: "You are a task planning expert. Return ONLY valid JSON."
@@ -122,79 +92,19 @@ export async function callOpenAIForTasks(prompt: string): Promise<MobileTaskSugg
       return parsed.tasks || parsed;
     }
   } catch (error) {
-    console.error("OpenAI error:", error);
+    console.error("OpenAI API error (tasks):", error);
   }
 
   return null;
 }
 
-// Shared utility: Call Claude for tasks
-export async function callClaudeForTasks(prompt: string): Promise<MobileTaskSuggestion[] | null> {
-  if (!anthropicClient) return null;
-
-  try {
-    const response = await anthropicClient.messages.create({
-      model: "claude-3-5-haiku-20241022",
-      max_tokens: 1500,
-      temperature: 0.6,
-      messages: [{
-        role: "user",
-        content: prompt
-      }]
-    });
-
-    const content = response.content[0];
-    if (content.type === "text") {
-      const text = content.text.trim();
-      const jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    }
-  } catch (error) {
-    console.error("Claude error:", error);
-  }
-
-  return null;
-}
-
-// Shared utility: Call Claude for reflection analysis
-export async function callClaudeForReflection(prompt: string): Promise<ReflectionAnalysis | null> {
-  if (!anthropicClient) return null;
-
-  try {
-    const response = await anthropicClient.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 1500,
-      temperature: 0.7,
-      messages: [{
-        role: "user",
-        content: prompt
-      }]
-    });
-
-    const content = response.content[0];
-    if (content.type === "text") {
-      const text = content.text.trim();
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    }
-  } catch (error) {
-    console.error("Claude error:", error);
-  }
-
-  return null;
-}
-
-// Shared utility: Call OpenAI for reflection analysis
+// Shared utility: Call OpenAI for reflection analysis (GPT-5.2 Thinking)
 export async function callOpenAIForReflection(prompt: string): Promise<ReflectionAnalysis | null> {
   if (!openaiClient) return null;
 
   try {
     const response = await openaiClient.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5.2",
       messages: [{
         role: "system",
         content: "You are an empathetic professional coach. Return ONLY valid JSON."
@@ -211,7 +121,7 @@ export async function callOpenAIForReflection(prompt: string): Promise<Reflectio
       return JSON.parse(content);
     }
   } catch (error) {
-    console.error("OpenAI error:", error);
+    console.error("OpenAI API error (reflection):", error);
   }
 
   return null;

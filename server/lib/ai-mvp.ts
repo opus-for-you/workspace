@@ -1,9 +1,9 @@
 /**
  * AI MVP Service - Purpose-driven AI generation
- * Replaces week-specific AI modules with simplified, always-on approach
+ * Using OpenAI GPT-5 family models exclusively
  */
 
-import { anthropicClient, openaiClient } from "./ai-mobile/shared";
+import { openaiClient } from "./ai-mobile/shared";
 
 // ================== TYPES ==================
 
@@ -33,9 +33,7 @@ export interface CheckInAnalysis {
 
 /**
  * Synthesize 3 user prompts into a concise purpose statement
- * Primary: Claude (better at empathy and synthesis)
- * Fallback: OpenAI
- * Last resort: Concatenate prompts
+ * Uses GPT-5.2 for empathetic synthesis
  */
 export async function generatePurposeSummary(
   prompt1: string,
@@ -48,17 +46,6 @@ Prompt 2 (Decade vision): ${prompt2}
 Prompt 3 (Unexplored career): ${prompt3}
   `.trim();
 
-  // Try Claude first (better at synthesis)
-  if (anthropicClient) {
-    try {
-      const summary = await callClaudeForPurposeSummary(combinedPrompts);
-      if (summary) return summary;
-    } catch (error) {
-      console.error("Claude purpose summary failed:", error);
-    }
-  }
-
-  // Fallback to OpenAI
   if (openaiClient) {
     try {
       const summary = await callOpenAIForPurposeSummary(combinedPrompts);
@@ -68,13 +55,13 @@ Prompt 3 (Unexplored career): ${prompt3}
     }
   }
 
-  // Last resort: Return a formatted concatenation
+  // Fallback: Return a formatted concatenation
   return `My purpose centers on ${prompt1}. In ten years, ${prompt2}. I'm curious about ${prompt3}.`;
 }
 
 /**
  * Generate 2-3 goals aligned with user's purpose
- * No week context - purely purpose-driven
+ * Uses GPT-5.2 for purpose-driven goal generation
  */
 export async function generateGoalsFromPurpose(
   purposeSummary: string,
@@ -87,17 +74,6 @@ export async function generateGoalsFromPurpose(
     existingGoals: existingGoals || [],
   };
 
-  // Try Claude first (better for purpose alignment)
-  if (anthropicClient) {
-    try {
-      const goals = await callClaudeForGoals(context);
-      if (goals && goals.length > 0) return goals;
-    } catch (error) {
-      console.error("Claude goal generation failed:", error);
-    }
-  }
-
-  // Fallback to OpenAI
   if (openaiClient) {
     try {
       const goals = await callOpenAIForGoals(context);
@@ -113,8 +89,7 @@ export async function generateGoalsFromPurpose(
 
 /**
  * Break down a goal into 3-5 concrete milestones
- * Primary: OpenAI (better at task decomposition)
- * Fallback: Claude
+ * Uses GPT-5 Mini for cost-effective task decomposition
  */
 export async function generateMilestonesFromGoal(
   goal: { title: string; description: string },
@@ -127,7 +102,6 @@ export async function generateMilestonesFromGoal(
     workstyle: workstyleProfile || null,
   };
 
-  // Try OpenAI first (better at decomposition)
   if (openaiClient) {
     try {
       const milestones = await callOpenAIForMilestones(context);
@@ -137,23 +111,13 @@ export async function generateMilestonesFromGoal(
     }
   }
 
-  // Fallback to Claude
-  if (anthropicClient) {
-    try {
-      const milestones = await callClaudeForMilestones(context);
-      if (milestones && milestones.length > 0) return milestones;
-    } catch (error) {
-      console.error("Claude milestone generation failed:", error);
-    }
-  }
-
   // Generic fallback
   return getGenericMilestones(goal);
 }
 
 /**
  * Analyze weekly check-in and provide insights + network nudges
- * Primary: Claude (better at empathy and patterns)
+ * Uses GPT-5.2 for empathetic reflection analysis
  */
 export async function analyzeCheckIn(
   checkIn: {
@@ -176,17 +140,6 @@ export async function analyzeCheckIn(
     keyPeople,
   };
 
-  // Try Claude (preferred for reflection analysis)
-  if (anthropicClient) {
-    try {
-      const analysis = await callClaudeForCheckInAnalysis(context);
-      if (analysis) return analysis;
-    } catch (error) {
-      console.error("Claude check-in analysis failed:", error);
-    }
-  }
-
-  // Fallback to OpenAI
   if (openaiClient) {
     try {
       const analysis = await callOpenAIForCheckInAnalysis(context);
@@ -202,41 +155,12 @@ export async function analyzeCheckIn(
 
 // ================== AI HELPER FUNCTIONS ==================
 
-async function callClaudeForPurposeSummary(prompts: string): Promise<string | null> {
-  if (!anthropicClient) return null;
-
-  try {
-    const response = await anthropicClient.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 800,
-      temperature: 0.7,
-      messages: [{
-        role: "user",
-        content: `You are an executive coach helping someone clarify their professional purpose. Based on these three prompts, synthesize a concise 1-2 paragraph purpose statement that captures their authentic professional direction:
-
-${prompts}
-
-Write in first person, present tense. Make it inspiring but grounded. Focus on what matters to them, not generic career advice. Return ONLY the purpose statement, no preamble.`
-      }]
-    });
-
-    const content = response.content[0];
-    if (content.type === "text") {
-      return content.text.trim();
-    }
-  } catch (error) {
-    console.error("Claude purpose summary error:", error);
-  }
-
-  return null;
-}
-
 async function callOpenAIForPurposeSummary(prompts: string): Promise<string | null> {
   if (!openaiClient) return null;
 
   try {
     const response = await openaiClient.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5.2",
       messages: [{
         role: "system",
         content: "You are an executive coach. Write a concise, inspiring 1-2 paragraph purpose statement based on the user's responses."
@@ -257,61 +181,6 @@ async function callOpenAIForPurposeSummary(prompts: string): Promise<string | nu
   return null;
 }
 
-async function callClaudeForGoals(context: any): Promise<MobileGoalSuggestion[] | null> {
-  if (!anthropicClient) return null;
-
-  const workstyleContext = context.workstyle
-    ? `\n\nWorkstyle: They work best with ${context.workstyle.best}. They get stuck when ${context.workstyle.stuck}.`
-    : "";
-
-  const existingContext = context.existingGoals.length > 0
-    ? `\n\nExisting goals: ${context.existingGoals.map((g: any) => g.title).join(", ")}`
-    : "";
-
-  try {
-    const response = await anthropicClient.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 2000,
-      temperature: 0.7,
-      messages: [{
-        role: "user",
-        content: `You are a professional coach. Based on this person's purpose, suggest 2-3 concrete goals:
-
-Purpose: ${context.purpose}${workstyleContext}${existingContext}
-
-Generate 2-3 goals that:
-- Align directly with their purpose
-- Are specific and actionable
-- Mix quick wins with longer-term objectives
-- Avoid duplicating existing goals
-
-Return a JSON array with this structure:
-[{
-  "title": "Goal title (specific, actionable)",
-  "description": "What this goal involves (2-3 sentences)",
-  "category": "professional" | "personal" | "learning" | "health",
-  "reasoning": "Why this aligns with their purpose (1 sentence)"
-}]
-
-Return ONLY the JSON array, no markdown or explanation.`
-      }]
-    });
-
-    const content = response.content[0];
-    if (content.type === "text") {
-      const text = content.text.trim();
-      const jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    }
-  } catch (error) {
-    console.error("Claude goals error:", error);
-  }
-
-  return null;
-}
-
 async function callOpenAIForGoals(context: any): Promise<MobileGoalSuggestion[] | null> {
   if (!openaiClient) return null;
 
@@ -325,7 +194,7 @@ async function callOpenAIForGoals(context: any): Promise<MobileGoalSuggestion[] 
 
   try {
     const response = await openaiClient.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5.2",
       messages: [{
         role: "system",
         content: "You are a professional coach. Generate 2-3 specific, actionable goals. Return ONLY valid JSON."
@@ -358,7 +227,7 @@ async function callOpenAIForMilestones(context: any): Promise<MobileTaskSuggesti
 
   try {
     const response = await openaiClient.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-5-mini",
       messages: [{
         role: "system",
         content: "You are a task planning expert. Break goals into 3-5 concrete milestones. Return ONLY valid JSON."
@@ -382,119 +251,6 @@ async function callOpenAIForMilestones(context: any): Promise<MobileTaskSuggesti
   return null;
 }
 
-async function callClaudeForMilestones(context: any): Promise<MobileTaskSuggestion[] | null> {
-  if (!anthropicClient) return null;
-
-  const workstyleContext = context.workstyle
-    ? `Workstyle: ${context.workstyle.best} works best. Gets stuck with ${context.workstyle.stuck}.`
-    : "";
-
-  try {
-    const response = await anthropicClient.messages.create({
-      model: "claude-3-5-haiku-20241022",
-      max_tokens: 1500,
-      temperature: 0.6,
-      messages: [{
-        role: "user",
-        content: `Break this goal into 3-5 concrete milestones:
-
-Goal: ${context.goal.title}
-Description: ${context.goal.description}
-
-Purpose context: ${context.purpose}
-${workstyleContext}
-
-Return a JSON array:
-[{
-  "title": "Milestone title",
-  "description": "What to do (1-2 sentences)",
-  "recommendedSchedule": "Morning/Afternoon/Evening",
-  "estimatedTime": "X minutes/hours",
-  "reasoning": "Why this timing/approach works"
-}]
-
-Return ONLY the JSON array.`
-      }]
-    });
-
-    const content = response.content[0];
-    if (content.type === "text") {
-      const text = content.text.trim();
-      const jsonMatch = text.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    }
-  } catch (error) {
-    console.error("Claude milestones error:", error);
-  }
-
-  return null;
-}
-
-async function callClaudeForCheckInAnalysis(context: any): Promise<CheckInAnalysis | null> {
-  if (!anthropicClient) return null;
-
-  // Build network nudges context
-  const networkContext = context.keyPeople.map((person: any) => {
-    const daysSince = person.lastInteraction
-      ? Math.floor((Date.now() - new Date(person.lastInteraction).getTime()) / (1000 * 60 * 60 * 24))
-      : null;
-    return `${person.name} (${person.type})${daysSince ? ` - last contact ${daysSince} days ago` : " - no recent contact"}`;
-  }).join("\n");
-
-  try {
-    const response = await anthropicClient.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 1500,
-      temperature: 0.7,
-      messages: [{
-        role: "user",
-        content: `You are an empathetic professional coach. Analyze this weekly check-in:
-
-Wins: ${context.checkIn.wins || "Not provided"}
-Lessons: ${context.checkIn.lessons || "Not provided"}
-Next Steps: ${context.checkIn.nextSteps || "Not provided"}
-
-Active goals: ${context.goals.map((g: any) => `${g.title} (${g.progress}%)`).join(", ")}
-Completed milestones: ${context.completedMilestones.map((m: any) => m.title).join(", ") || "None"}
-
-Key people in their network:
-${networkContext}
-
-Provide:
-1. 2-3 insights about their progress and patterns
-2. 1-2 behavioral patterns you notice
-3. 2-3 actionable recommendations
-4. 1-2 network nudges (suggest connecting with someone, especially if >14 days since contact)
-
-Return JSON:
-{
-  "insights": ["insight 1", "insight 2"],
-  "patterns": ["pattern 1"],
-  "recommendations": ["recommendation 1", "recommendation 2"],
-  "networkNudges": ["Consider reaching out to..."]
-}
-
-Return ONLY the JSON.`
-      }]
-    });
-
-    const content = response.content[0];
-    if (content.type === "text") {
-      const text = content.text.trim();
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-    }
-  } catch (error) {
-    console.error("Claude check-in analysis error:", error);
-  }
-
-  return null;
-}
-
 async function callOpenAIForCheckInAnalysis(context: any): Promise<CheckInAnalysis | null> {
   if (!openaiClient) return null;
 
@@ -507,7 +263,7 @@ async function callOpenAIForCheckInAnalysis(context: any): Promise<CheckInAnalys
 
   try {
     const response = await openaiClient.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-5.2",
       messages: [{
         role: "system",
         content: "You are an empathetic professional coach. Analyze check-ins and provide insights. Return ONLY valid JSON."

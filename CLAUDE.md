@@ -4,26 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Opus** is a 5-week professional transformation program with both web and mobile applications. The system uses AI (Claude + OpenAI) to generate personalized goals, tasks, and reflections based on the user's "north star" vision and current program week.
+**Opus** is a professional transformation tool with a mobile application. The system uses AI (Claude) to help users clarify their purpose, generate goals, and build their professional network through three core pillars: **Purpose**, **Method**, and **Network**.
 
-### The Opus Framework
+### The Opus Framework (3 Pillars)
 
-The core of this application is a **5-week transformation program**. Each week has a specific theme and coaching approach:
+The core of this application is built around **3 foundational pillars**:
 
-1. **Week 1: Purpose** 🎯 - Clarifying vision and identifying meaningful work
-2. **Week 2: Rhythm** ⚡ - Building daily habits and consistent practices
-3. **Week 3: Network** 🌐 - Strengthening connections and building relationships
-4. **Week 4: Structure** 🏗️ - Designing systems and frameworks
-5. **Week 5: Methods** 🔧 - Refining techniques and optimizing approach
+1. **Purpose Pillar** 🎯 - Three micro-prompts help users articulate their career vision:
+   - "Describe a moment when work felt perfectly aligned"
+   - "Imagine your career 10 years from now"
+   - "What's a career version you haven't imagined yet"
+   - AI generates a 1-paragraph synthesis from these prompts
 
-**Framework Implementation:** `/server/lib/opus-framework.ts`
+2. **Method Pillar** 🔧 - Workstyle profile to understand how users work best:
+   - "How do you work best?" (multiple choice)
+   - "What usually gets you stuck?" (free text)
 
-Each week includes:
-- Theme and focus area
-- AI prompt guidance for goal generation
-- AI prompt guidance for task generation
-- Reflection prompts
-- Specific coaching philosophy
+3. **Network Pillar** 🌐 - Track 3 key professional relationships:
+   - **Mentor** - Someone who guides your development
+   - **Peer** - Someone you support each other with
+   - **Collaborator** - Someone you work with on projects
+
+**Framework Implementation:** Schema defined in `/shared/schema.ts`, AI synthesis in `/server/lib/ai-mvp.ts`
 
 ## Commands
 
@@ -77,8 +79,9 @@ This is a **mobile-first application** with the mobile app at the root level:
 
 ### Data Layer (`shared/schema.ts`)
 All database tables are defined using Drizzle ORM with TypeScript types and Zod validation schemas:
-- `users` - User accounts with onboarding data (vision, energy, direction, northStar)
-- `connections` - Professional relationships and contacts
+- `users` - User accounts with Purpose Pillar data (purposePrompt1-3, purposeSummary) and Method Pillar data (workstyleBest, workstyleStuck)
+- `keyPeople` - Network Pillar: Track 3 key relationships (mentor, peer, collaborator) with last interaction dates
+- `connections` - Additional professional relationships and contacts (legacy)
 - `goals` - Personal/professional objectives (supports AI-generated goals with `aiGenerated` flag)
 - `tasks` - Task management with goal associations (supports AI-generated tasks)
 - `weeklyReviews` - Weekly reflection entries
@@ -90,10 +93,17 @@ Implements `IStorage` interface for all CRUD operations. All queries are user-sc
 
 ### API Layer (`server/routes.ts` and `server/routes/*.ts`)
 RESTful endpoints with modular route files:
-- Main routes in `server/routes.ts` (auth, user)
-- Feature routes in `server/routes/` (connections, goals, tasks, reflections, ai, onboarding)
+- Main routes in `server/routes.ts` (auth, user via `setupAuth()`)
+- Feature routes in `server/routes/`:
+  - `onboarding.ts` - Purpose and Method pillar endpoints (Router-based)
+  - `key-people.ts` - Network pillar endpoints (Router-based)
+  - `goals.ts` - Goal management (function-based registration)
+  - `tasks.ts` - Task management (function-based registration)
+  - `connections.ts` - Legacy connections (function-based registration)
+  - `reflections.ts` - Weekly reviews (function-based registration)
+  - `ai.ts` - AI generation endpoints (function-based registration)
 - All protected routes use `requireAuth` middleware
-- Request validation using Zod schemas from shared schema
+- Request validation using Zod schemas
 
 ### Authentication (`server/auth.ts`)
 - Passport.js with local strategy
@@ -103,37 +113,24 @@ RESTful endpoints with modular route files:
 
 ### AI Integration
 
-**Mobile MVP AI Service** (`server/lib/ai-mobile/`):
-The app uses a **hybrid AI approach** with intelligent fallbacks and week-specific implementations:
+**Current AI Service** (`server/lib/ai-mvp.ts`):
+The app uses **Claude (Anthropic)** for AI-powered features:
 
-**Claude (Anthropic)** - Primary for coaching/empathy:
-- Goal generation from north star vision (`generateGoalsFromNorthStar()`)
-- Reflection analysis and insights (`analyzeReflection()`)
-- Personalized guidance and recommendations
+**Primary AI Functions:**
+- `generatePurposeSummary()` - Synthesizes user's 3 purpose prompts into a cohesive 1-paragraph summary
+- `generateGoalsFromPurpose()` - Generates 3-4 goals based on the purpose summary
+- `generateMilestonesFromGoal()` - Breaks down a goal into actionable milestones
+- `analyzeCheckIn()` - Analyzes weekly check-ins and provides insights with network nudges
 
-**OpenAI (GPT-4)** - Primary for structured tasks:
-- Task decomposition from goals (`generateTasksFromGoal()`)
-- Scheduling recommendations
-- Time estimation
+**Key Features:**
+- Uses Claude Sonnet 4.5 model
+- All functions have error handling with fallback responses
+- Check-in analysis includes "network nudges" to remind users to connect with key people
+- AI responses are conversational and coaching-focused
 
-**Fallback System:**
-1. Try primary AI provider
-2. If fails, try secondary provider
-3. If both fail, return sensible default suggestions
-
-**Week-Specific AI Modules** (`server/lib/ai-mobile/`):
-Each week has dedicated AI implementations:
-- `purpose.ts` - Week 1: Goal/task generation for clarity and vision
-- `rhythm.ts` - Week 2: Goal/task generation for habits and consistency
-- `network.ts` - Week 3: Goal/task generation for relationships
-- `structure.ts` - Week 4: Goal/task generation for systems
-- `methods.ts` - Week 5: Goal/task generation for optimization
-- `shared.ts` - Shared utilities and AI wrapper functions
-- `index.ts` - Router that delegates to week-specific modules
-
-**Web AI Service** (`server/lib/ai.ts`):
-- Legacy implementation (deprecated)
-- Two main functions: `generateGoalSuggestions()` and `generateReflectionPrompt()`
+**Legacy AI Services:**
+- `/server/lib/ai.ts` - Old implementation (deprecated)
+- `/server/lib/ai-mobile/` - Old week-based implementation (deprecated)
 
 ### Frontend Architecture
 
@@ -154,18 +151,24 @@ The app is **mobile-first** with the following stack:
 ├── _layout.tsx           # Root layout (React Query provider)
 ├── index.tsx             # Entry point (routing logic) ⚠️ USES REDIRECT PATTERN
 ├── (auth)/               # Auth group (stack)
+│   ├── _layout.tsx
 │   ├── login.tsx
 │   └── register.tsx
-├── (onboarding)/         # Onboarding group (stack)
-│   ├── north-star.tsx
-│   └── program-intro.tsx
-└── (tabs)/               # Main app (tabs) ⚠️ USES TEXT FOR ICONS
-    ├── _layout.tsx       # Tab navigation
-    ├── index.tsx         # Dashboard
-    ├── goals.tsx         # Goals screen
-    ├── tasks.tsx         # Tasks screen
-    ├── reflections.tsx   # Reflections screen
-    └── profile.tsx       # Profile screen
+├── (onboarding)/         # Onboarding group (stack) - 3 Pillars
+│   ├── _layout.tsx
+│   ├── purpose.tsx       # Purpose Pillar: 3 micro-prompts → AI summary
+│   ├── method.tsx        # Method Pillar: workstyle profile
+│   ├── key-people.tsx    # Network Pillar: 3 key relationships
+│   └── goals.tsx         # AI-generated goals from purpose summary
+├── (tabs)/               # Main app (tabs) ⚠️ USES TEXT FOR ICONS
+│   ├── _layout.tsx       # Tab navigation
+│   ├── index.tsx         # Dashboard
+│   ├── goals.tsx         # Goals screen
+│   ├── tasks.tsx         # Tasks screen
+│   ├── reflections.tsx   # Reflections screen (check-ins)
+│   └── profile.tsx       # Profile screen
+├── goal-detail.tsx       # Goal detail with milestones
+└── key-people.tsx        # Key people management
 ```
 
 **Additional Directories:**
@@ -256,13 +259,20 @@ const goal = {
 };
 ```
 
-### Mobile MVP Fields
-The schema includes mobile-specific fields for a 5-week onboarding program:
-- `users.northStar` - User's ultimate professional vision
-- `users.programWeek` - Current week (0-5)
-- `users.programStartDate` - Program start timestamp
-- `goals.weekNumber` - Which week the goal belongs to (1-5)
-- `tasks.recommendedSchedule` - AI-suggested timing
+### Important Schema Fields
+The schema includes fields for the 3-pillar onboarding:
+- **Purpose Pillar Fields** (users table):
+  - `purposePrompt1`, `purposePrompt2`, `purposePrompt3` - User's responses to 3 micro-prompts
+  - `purposeSummary` - AI-generated 1-paragraph synthesis
+- **Method Pillar Fields** (users table):
+  - `workstyleBest` - How user works best (multiple choice)
+  - `workstyleStuck` - What usually gets user stuck (free text)
+- **Network Pillar Fields** (keyPeople table):
+  - `name`, `type` (mentor/peer/collaborator), `why`, `lastInteraction`
+- **AI-Generated Content**:
+  - `goals.aiGenerated` - Integer flag (1 if AI-generated, 0 if user-created)
+  - `tasks.aiGenerated` - Integer flag (1 if AI-generated, 0 if user-created)
+  - `tasks.recommendedSchedule` - AI-suggested timing/day
 
 ### Authentication Flow
 - Login/register via `/api/login` or `/api/register`
@@ -291,11 +301,15 @@ Required for development:
 ```env
 DATABASE_URL=postgresql://...
 SESSION_SECRET=random-secret-key
-
-# Optional (AI features won't work without these)
-ANTHROPIC_API_KEY=sk-...
-OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...  # REQUIRED for AI features (Claude Sonnet 4.5)
 ```
+
+Optional:
+```env
+PORT=5000  # Backend server port (defaults to 5000)
+```
+
+**Note:** The app currently only uses Claude (Anthropic) for AI features. OpenAI is not required.
 
 ## Database Configuration
 
@@ -312,23 +326,43 @@ Uses Neon serverless PostgreSQL. Connection pooling configured in `server/db.ts`
 
 The Express backend serves both web and mobile clients. Mobile app makes HTTP requests to the same API endpoints. Ensure authentication works cross-platform (session cookies for web, token/header auth may be needed for mobile in future).
 
-### Mobile MVP API Endpoints
+### Key API Endpoints
 
-**Onboarding:**
-- `POST /api/onboarding/north-star` - Save user's north star vision
+**Authentication:**
+- `POST /api/register` - Create new user account
+- `POST /api/login` - Login with username/password
+- `POST /api/logout` - End session
+- `GET /api/user` - Get current authenticated user
 
-**Program Management:**
-- `POST /api/program/start` - Initialize 5-week program (sets week to 1)
-- `GET /api/program/current-week` - Get current week, theme, and progress
-- `POST /api/program/advance-week` - Manually advance to next week (testing)
+**Onboarding (3 Pillars):**
+- `POST /api/onboarding/purpose` - Save 3 purpose prompts, get AI-generated summary
+- `POST /api/onboarding/method` - Save workstyle profile
+
+**Network Pillar:**
+- `GET /api/key-people` - Get user's key people
+- `POST /api/key-people` - Add a key person
+- `POST /api/key-people/bulk` - Add multiple key people
+- `PUT /api/key-people/:id` - Update a key person
+- `DELETE /api/key-people/:id` - Remove a key person
+
+**Goals & Tasks:**
+- `GET /api/goals` - Get all goals
+- `POST /api/goals` - Create a goal
+- `PUT /api/goals/:id` - Update a goal
+- `DELETE /api/goals/:id` - Delete a goal
+- `GET /api/tasks` - Get all tasks
+- `POST /api/tasks` - Create a task
+- `PUT /api/tasks/:id` - Update a task
+- `DELETE /api/tasks/:id` - Delete a task
 
 **AI Generation:**
-- `POST /api/ai/generate-goals` - Generate goals from north star (auto-creates in DB)
-- `POST /api/ai/generate-tasks` - Generate tasks from goal (auto-creates in DB)
-- `POST /api/ai/refine-goals` - Analyze reflection and get insights
+- `POST /api/ai/generate-goals` - Generate goals from purpose summary (auto-creates in DB)
+- `POST /api/ai/generate-milestones` - Generate milestones from goal (auto-creates as tasks in DB)
+- `POST /api/ai/analyze-check-in` - Analyze check-in and provide insights with network nudges
 
 **Reflections:**
-- `POST /api/reflections/submit` - Submit reflection with AI analysis
+- `GET /api/reviews` - Get all weekly reviews
+- `POST /api/reflections/submit` - Submit weekly check-in
 
 ---
 
@@ -418,37 +452,47 @@ const API_BASE_URL = __DEV__
 
 ## Important Implementation Notes
 
-### Week Progression Logic
-- Program starts when user hits "Start Program" (week becomes 1)
-- Week automatically advances every 7 days based on `programStartDate`
-- Current week calculated in `/server/routes/program.ts`:
-  ```typescript
-  const daysSinceStart = Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-  const calculatedWeek = Math.min(Math.floor(daysSinceStart / 7) + 1, 5);
-  ```
+### Onboarding Flow (3 Pillars)
+1. **Purpose Pillar** (`/(onboarding)/purpose.tsx`):
+   - User answers 3 micro-prompts about their career vision
+   - Frontend calls `POST /api/onboarding/purpose`
+   - Backend uses Claude to generate a 1-paragraph synthesis (`purposeSummary`)
+   - Summary is saved to user profile and displayed to user
 
-### AI Goal Generation Flow
-1. User completes north star input
-2. Frontend calls `POST /api/ai/generate-goals`
-3. Backend fetches Opus Framework guidance for current week
-4. Claude generates 3-4 goals aligned with week theme
-5. Goals auto-created in database with `aiGenerated: 1` and `weekNumber`
-6. Frontend displays goals with AI badge
+2. **Method Pillar** (`/(onboarding)/method.tsx`):
+   - User selects workstyle preferences (multiple choice + free text)
+   - Frontend calls `POST /api/onboarding/method`
+   - Saves `workstyleBest` and `workstyleStuck` to user profile
 
-### AI Task Generation Flow
-1. User selects a goal and requests tasks
-2. Frontend calls `POST /api/ai/generate-tasks`
-3. Backend uses GPT-4o-mini to break down goal
-4. Tasks include recommended scheduling (morning/afternoon/evening)
-5. Tasks auto-created in database with `aiGenerated: 1`
-6. Frontend displays tasks with schedule recommendations
+3. **Network Pillar** (`/(onboarding)/key-people.tsx`):
+   - User adds 3 key relationships (mentor, peer, collaborator)
+   - Frontend calls `POST /api/key-people/bulk`
+   - Each person includes: name, type, why they matter, last interaction date
 
-### Reflection Analysis Flow
-1. User submits weekly reflection (wins, lessons, next steps)
-2. Backend saves reflection to database
-3. Claude analyzes reflection in background
-4. Returns patterns, insights, and recommendations
-5. (Currently not stored - future enhancement)
+4. **Goal Generation** (`/(onboarding)/goals.tsx`):
+   - User triggers AI goal generation
+   - Frontend calls `POST /api/ai/generate-goals` with `purposeSummary`
+   - Claude generates 3-4 goals aligned with user's purpose
+   - Goals auto-created in database with `aiGenerated: 1`
+   - User reviews and can edit/delete before completing onboarding
+
+### AI Milestone Generation Flow
+1. User selects a goal and requests milestones
+2. Frontend calls `POST /api/ai/generate-milestones` with `goalId`
+3. Backend uses Claude to break down goal into actionable milestones
+4. Milestones created as tasks with `aiGenerated: 1` and `recommendedSchedule`
+5. Frontend displays milestones with schedule recommendations
+
+### Check-In Analysis Flow
+1. User submits weekly check-in (wins, lessons, next steps)
+2. Frontend calls `POST /api/reflections/submit`
+3. Backend saves to `weeklyReviews` table
+4. Frontend can call `POST /api/ai/analyze-check-in` separately
+5. Claude analyzes check-in and returns:
+   - Insights about progress and patterns
+   - Recommendations for next steps
+   - **Network nudges** - reminders to connect with key people based on last interaction dates
+6. Analysis displayed to user (not currently stored)
 
 ---
 
@@ -465,19 +509,24 @@ const API_BASE_URL = __DEV__
 ### Backend Core Files
 - `/server/index.ts` - Express server entry point
 - `/server/routes.ts` - Route registration hub
-- `/server/lib/opus-framework.ts` - 5-week program structure
-- `/server/lib/ai-mobile/` - Week-specific AI implementations (directory)
-  - `index.ts` - AI router
-  - `purpose.ts`, `rhythm.ts`, `network.ts`, `structure.ts`, `methods.ts` - Week modules
-  - `shared.ts` - Shared AI utilities
-- `/server/lib/ai.ts` - Legacy AI service (deprecated)
+- `/server/lib/ai-mvp.ts` - **CURRENT AI SERVICE** - Claude integration for MVP
 - `/server/lib/auth.ts` - Passport.js authentication (scrypt)
 - `/server/lib/storage.ts` - Database queries (Drizzle ORM)
 - `/server/lib/scheduler.ts` - Background cron jobs
-- `/server/routes/program.ts` - Program management endpoints
-- `/server/routes/onboarding.ts` - Onboarding endpoints
-- `/server/routes/ai.ts` - AI generation endpoints
-- `/server/routes/reflections.ts` - Reflection endpoints with AI analysis
+- `/server/db.ts` - Database connection (Neon PostgreSQL)
+- `/server/routes/onboarding.ts` - **Purpose & Method Pillar** endpoints (Router-based)
+- `/server/routes/key-people.ts` - **Network Pillar** endpoints (Router-based)
+- `/server/routes/ai.ts` - AI generation endpoints (function-based)
+- `/server/routes/goals.ts` - Goal management endpoints (function-based)
+- `/server/routes/tasks.ts` - Task management endpoints (function-based)
+- `/server/routes/reflections.ts` - Check-in endpoints (function-based)
+- `/server/routes/connections.ts` - Legacy connections (function-based)
+
+**Deprecated/Legacy Files:**
+- `/server/lib/ai.ts` - Old AI service (deprecated)
+- `/server/lib/ai-mobile/` - Old week-based AI implementation (deprecated)
+- `/server/lib/opus-framework.ts` - Old 5-week program structure (deprecated)
+- `/server/routes/program.ts` - Old program management (deprecated)
 
 ### Shared Files
 - `/shared/schema.ts` - Database schema and Zod validation
@@ -486,13 +535,14 @@ const API_BASE_URL = __DEV__
 ### Documentation
 - `/CLAUDE.md` - This file (main developer guide)
 - `/docs/README.md` - Documentation index
-- `/docs/opus-framework-5-pillars.md` - Core philosophy
+- `/docs/opus-framework-5-pillars.md` - Core philosophy (3 pillars)
 - `/docs/roadmap.md` - Project vision and future plans
 - `/docs/technical/architecture.md` - System architecture
 - `/docs/technical/api_endpoints.md` - API reference
-- `/docs/technical/mobile-mvp-plan.md` - Mobile implementation
+- `/docs/technical/mobile-mvp-plan.md` - Mobile implementation guide
 - `/docs/technical/setup_guide.md` - Development setup
 - `/docs/design/design-system-reference.md` - UI/UX guidelines
+- `/scripts/README.md` - Documentation for all helper scripts
 
 ---
 
@@ -518,8 +568,7 @@ To make the app work with real backend:
    ```bash
    DATABASE_URL=postgresql://user:password@host:5432/database
    SESSION_SECRET=your_random_secret_here
-   ANTHROPIC_API_KEY=sk-ant-xxx  # At least ONE AI key required
-   OPENAI_API_KEY=sk-xxx         # Recommended for best results
+   ANTHROPIC_API_KEY=sk-ant-xxx  # REQUIRED for AI features
    ```
 
 2. **Push database schema changes**
@@ -537,47 +586,49 @@ To make the app work with real backend:
    - In `/lib/auth-store.ts`: Set `MOCK_MODE = false`
 
 5. **Test the full flow**
-   - Register → North Star → Program Start → AI Goals → Tasks
+   - Register → Purpose → Method → Network → AI Goals → Milestones
 
 ---
 
 ## Recent Changes & Fixes
 
-**November 2025 - Mobile MVP Implementation:**
-- ✅ Created complete mobile app with all screens
-- ✅ Built Opus Framework with 5-week program structure
-- ✅ Enhanced AI service with Claude + OpenAI hybrid approach
-- ✅ Added 7 new API endpoints for mobile features
-- ✅ Updated database schema with mobile-specific fields
-- ✅ Fixed navigation error (useRouter → Redirect pattern)
-- ✅ Fixed tab icon error (span → Text component)
-- ✅ Implemented mock mode for testing without backend
-- ✅ Created comprehensive documentation
+**December 2025 - Refactored to 3-Pillar MVP:**
+- ✅ Simplified from 5-week program to 3-pillar onboarding (Purpose, Method, Network)
+- ✅ Created new AI service (`server/lib/ai-mvp.ts`) with Claude Sonnet 4.5
+- ✅ Added Purpose Pillar: 3 micro-prompts → AI synthesis
+- ✅ Added Method Pillar: Workstyle profile questions
+- ✅ Added Network Pillar: Track 3 key people (mentor, peer, collaborator)
+- ✅ Updated schema with new fields (purposePrompt1-3, purposeSummary, workstyleBest, workstyleStuck)
+- ✅ Added `keyPeople` table and routes for Network Pillar
+- ✅ Created full onboarding flow screens in mobile app
+- ✅ Deprecated old week-based AI service and program management
 
 **November 2025 - Mobile-First Restructure:**
 - ✅ Moved mobile app to root level (app/, lib/, assets/)
 - ✅ Removed deprecated web app (client/)
 - ✅ Merged package.json files for simplified dependency management
-- ✅ Updated tsconfig.json to include both mobile and backend
-- ✅ Single `npm start` command now runs mobile app
+- ✅ Fixed navigation error (useRouter → Redirect pattern)
+- ✅ Fixed tab icon error (span → Text component)
+- ✅ Implemented MOCK_MODE for testing without backend
 
-**Files Modified/Created:**
-- Created: `server/lib/opus-framework.ts`, `server/lib/ai-mobile/` (directory with week modules), `server/routes/program.ts`
-- Modified: `server/routes/onboarding.ts`, `server/routes/ai.ts`, `server/routes/reflections.ts`, `server/routes.ts`, `shared/schema.ts`
-- Mobile: Entire mobile app now at root level (/app, /lib, /assets)
-
-**Total Lines of Code Added:** ~1,200+ lines
+**Key Files in Current Implementation:**
+- **Active**: `server/lib/ai-mvp.ts`, `server/routes/onboarding.ts`, `server/routes/key-people.ts`
+- **Deprecated**: `server/lib/ai-mobile/`, `server/lib/opus-framework.ts`, `server/routes/program.ts`
 
 ---
 
 ## Summary for New Claude Instances
 
-This is a **mobile-first application** for a 5-week professional transformation program called Opus. It has:
+This is a **mobile-first professional transformation tool** called Opus, built around **3 foundational pillars**:
 
 1. **Mobile app** (React Native + Expo) - Primary user interface (✅ WORKING IN MOCK MODE)
 2. **Backend API** (Express + PostgreSQL) - RESTful API (✅ FULLY BUILT)
-3. **AI Service** - Claude + OpenAI hybrid with week-specific modules (✅ FULLY BUILT)
-4. **Web app** - Deprecated/removed (focus is mobile-first)
+3. **AI Service** - Claude Sonnet 4.5 for purpose synthesis, goal generation, and check-in analysis (✅ FULLY BUILT)
+
+**The 3 Pillars Framework:**
+- **Purpose** 🎯 - 3 micro-prompts → AI-generated summary of career vision
+- **Method** 🔧 - Workstyle profile (how you work best, what gets you stuck)
+- **Network** 🌐 - Track 3 key people (mentor, peer, collaborator) with interaction dates
 
 **The mobile app is currently FULLY FUNCTIONAL in MOCK_MODE** - all screens work, all flows tested, ready for real backend integration.
 
@@ -587,8 +638,9 @@ This is a **mobile-first application** for a 5-week professional transformation 
 - ⚠️ Mobile app is at root level (/app, /lib, /assets) - not in /mobile directory
 - ⚠️ Use `<Redirect>` not `useRouter().replace()` for initial navigation in `/app/index.tsx`
 - ⚠️ Use `<Text>` not `<span>` for React Native components
-- Opus Framework defines week-specific AI coaching
-- All AI functions have graceful fallbacks
+- ⚠️ Current AI service is in `/server/lib/ai-mvp.ts` (NOT the deprecated ai-mobile/ directory)
+- All database queries MUST be user-scoped for data isolation
+- AI-generated content uses integer flags: `aiGenerated: 1` (not boolean `true`)
 - Schema changes require `npm run db:push`
 - MOCK_MODE allows testing without backend
 - Single package.json at root with all dependencies merged
